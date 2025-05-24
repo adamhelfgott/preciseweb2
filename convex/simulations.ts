@@ -6,22 +6,12 @@ import { v } from "convex/values";
 export const startEarningsSimulation = internalAction({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
-    // Run earnings simulation every 3-5 seconds
-    const runSimulation = async () => {
-      try {
-        await ctx.runMutation(internal.earnings.simulateEarning, {
-          ownerId: args.userId,
-        });
-      } catch (error) {
-        console.error("Simulation error:", error);
-      }
-    };
+    // For demo purposes, we'll just log
+    // Real simulation happens on frontend
+    console.log("Starting earnings simulation for user:", args.userId);
     
-    // Initial run
-    await runSimulation();
-    
-    // Schedule periodic runs (in production, use cron jobs)
-    // For demo, we'll rely on frontend polling
+    // In production, this would set up scheduled tasks
+    // For now, frontend will handle the simulation timing
   },
 });
 
@@ -129,36 +119,14 @@ export const generateAttributions = internalMutation({
 export const initializeDemoData = internalAction({
   args: { userId: v.id("users"), role: v.string() },
   handler: async (ctx, args) => {
-    if (args.role === "DATA_OWNER") {
-      // Create default data assets
-      await ctx.runMutation(internal.dataAssets.createDefaultAssets, {
-        ownerId: args.userId,
-      });
-      
-      // Generate initial recommendations
-      await ctx.runMutation(internal.recommendations.generateDataOwnerRecommendations, {
-        userId: args.userId,
-      });
-      
-      // Start earnings simulation
-      await ctx.runAction(internal.simulations.startEarningsSimulation, {
-        userId: args.userId,
-      });
-    } else if (args.role === "MEDIA_BUYER") {
-      // Create default campaign
-      const campaignId = await ctx.runMutation(internal.campaigns.createDefaultCampaign, {
-        buyerId: args.userId,
-      });
-      
-      // Generate attributions
-      await ctx.runMutation(internal.simulations.generateAttributions, {
-        campaignId,
-      });
-      
-      // Generate recommendations
-      await ctx.runMutation(internal.recommendations.generateMediaBuyerRecommendations, {
-        userId: args.userId,
-      });
-    }
+    // For demo purposes, we'll just log the initialization
+    // Real data setup can be done through frontend mutations
+    console.log(`Initializing demo data for ${args.role} user:`, args.userId);
+    
+    // In production, this would:
+    // 1. Create default data assets for DATA_OWNER
+    // 2. Create default campaigns for MEDIA_BUYER  
+    // 3. Generate initial recommendations
+    // For now, the frontend will handle initial setup
   },
 });

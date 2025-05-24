@@ -14,7 +14,7 @@ export default function CalculatorSection() {
     preference: false,
   });
 
-  const hasData = industry && mau && Object.values(dataTypes).some(v => v);
+  const hasData = Boolean(industry && mau && Object.values(dataTypes).some(v => v));
 
   return (
     <section id="calculator" className="section-padding bg-soft-white">
