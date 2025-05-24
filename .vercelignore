@@ -1,0 +1,9 @@
+.git
+.gitignore
+README.md
+.env.local
+scripts
+SETUP.md
+DEPLOYMENT_GUIDE.md
+PRODUCT_IMPROVEMENTS.md
+MESSAGING_GUIDELINES.md
