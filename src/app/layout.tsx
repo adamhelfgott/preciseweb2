@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Precise.ai - Free proof service for the AI-orchestrated ad economy",
-  description: "As DSPs commoditize and agents run campaigns, data verification becomes the differentiator. Mint proofs for free. Earn royalties automatically through Shapley value attribution.",
-  keywords: "data verification, advertising technology, AI agents, DSP, Shapley value, data monetization",
+  title: "Precise - Infrastructure for the AI Data Economy",
+  description: "The first platform that enables privacy-preserving data collaboration between advertisers and data owners, powered by verifiable credentials and fair attribution.",
+  keywords: "data collaboration, privacy-preserving, advertising infrastructure, verifiable credentials, Shapley value, data economy",
   openGraph: {
-    title: "Precise.ai - Free proof service for the AI-orchestrated ad economy",
-    description: "Mint proofs for free. Earn royalties automatically through Shapley value attribution. No contracts, no upfront costs—just like Stripe for data.",
+    title: "Precise - Infrastructure for the AI Data Economy",
+    description: "The first platform that enables privacy-preserving data collaboration between advertisers and data owners, powered by verifiable credentials and fair attribution.",
     type: "website",
     url: "https://precise.ai",
     images: [
@@ -15,16 +15,17 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Precise.ai",
+        alt: "Precise - Infrastructure for the AI Data Economy",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Precise.ai - Free proof service for the AI-orchestrated ad economy",
-    description: "Mint proofs for free. Earn royalties automatically through Shapley value attribution.",
+    title: "Precise - Infrastructure for the AI Data Economy",
+    description: "Privacy-preserving data collaboration platform with verifiable credentials and fair attribution.",
     images: ["/og-image.png"],
   },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://precise.ai'),
 };
 
 export default function RootLayout({
