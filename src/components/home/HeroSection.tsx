@@ -16,15 +16,14 @@ export default function HeroSection() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-display-hero font-bold text-dark-gray mb-6">
-              Free proof service for the{" "}
-              <span className="text-gradient">AI-orchestrated</span> ad economy
+              Infrastructure for the{" "}
+              <span className="text-gradient">AI Data Economy</span>
             </h1>
             
             <p className="text-body-large text-medium-gray mb-8 leading-relaxed">
-              As DSPs commoditize and agents run campaigns, data verification
-              becomes the differentiator. Mint proofs for free. Earn royalties
-              automatically through Shapley value attribution. No contracts,
-              no upfront costs—just like Stripe for data.
+              The first platform that enables privacy-preserving data collaboration 
+              between advertisers and data owners, powered by verifiable credentials 
+              and fair attribution.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
@@ -38,9 +37,9 @@ export default function HeroSection() {
             </div>
 
             <div className="grid grid-cols-3 gap-6">
-              <TrustItem icon="🆓" label="Free to start" />
-              <TrustItem icon="🧮" label="Shapley value attribution" />
-              <TrustItem icon="⚡" label="Automatic royalties" />
+              <TrustItem icon="🔐" label="Privacy-preserving" />
+              <TrustItem icon="🧮" label="Fair attribution" />
+              <TrustItem icon="⚡" label="Real-time settlement" />
             </div>
           </motion.div>
 

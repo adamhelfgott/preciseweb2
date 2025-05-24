@@ -53,7 +53,7 @@ export default function Footer() {
               <span className="font-semibold text-xl text-dark-gray">Precise</span>
             </Link>
             <p className="text-medium-gray text-sm">
-              Free proof service for the AI-orchestrated ad economy
+              Infrastructure for the AI Data Economy
             </p>
           </div>
 
