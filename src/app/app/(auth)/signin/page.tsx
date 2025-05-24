@@ -42,7 +42,7 @@ export default function SignInPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -144,7 +144,7 @@ export default function SignInPage() {
       </div>
 
       {/* Right side - Visual */}
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-brand-green/10 to-bright-purple/10 items-center justify-center p-8">
+      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-brand-green/10 to-bright-purple/10 items-center justify-center p-4 sm:p-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -156,25 +156,25 @@ export default function SignInPage() {
               <span className="text-white text-5xl font-bold">P</span>
             </div>
             <h2 className="text-display-medium font-bold text-dark-gray mb-4">
-              The future of data monetization
+              Infrastructure for Privacy-Preserving Collaboration
             </h2>
             <p className="text-body-large text-medium-gray max-w-md mx-auto">
-              Turn your data into verified credentials and earn automatic royalties through Shapley value attribution.
+              Join the network where data owners and advertisers collaborate to create better outcomes for everyone.
             </p>
           </div>
 
           <div className="grid grid-cols-3 gap-6 max-w-md mx-auto">
             <div className="text-center">
-              <div className="text-3xl font-bold text-brand-green">$47K</div>
-              <div className="text-sm text-medium-gray">Avg monthly earnings</div>
+              <div className="text-3xl font-bold text-brand-green">45%</div>
+              <div className="text-sm text-medium-gray">CAC reduction</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-bright-purple">94%</div>
-              <div className="text-sm text-medium-gray">Quality score</div>
+              <div className="text-3xl font-bold text-bright-purple">3.2x</div>
+              <div className="text-sm text-medium-gray">Better attribution</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-electric-blue">12K+</div>
-              <div className="text-sm text-medium-gray">Active companies</div>
+              <div className="text-sm text-medium-gray">Network participants</div>
             </div>
           </div>
         </motion.div>
