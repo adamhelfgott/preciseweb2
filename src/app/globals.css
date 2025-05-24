@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base Palette - Apple-inspired neutrals */
+    --pure-white: #FFFFFF;
+    --soft-white: #FAFAFA;
+    --light-gray: #F5F5F7;
+    --medium-gray: #86868B;
+    --dark-gray: #1D1D1F;
+    --pure-black: #000000;
+    
+    /* Accent Colors - Spotify energy */
+    --brand-green: #1DB954;
+    --bright-purple: #7B4FFF;
+    --electric-blue: #1E90FF;
+    --warm-coral: #FF6B6B;
+    
+    /* Luxury Accents - Hermès touches */
+    --champagne: #F7E7CE;
+    --deep-bronze: #804A00;
+    --silk-gray: #E5E5E7;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--dark-gray);
+    background: var(--pure-white);
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'SF Display', system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  code, pre {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply bg-brand-green text-white px-8 py-4 rounded-full font-semibold text-base 
+           transition-all duration-200 hover:scale-105 hover:bg-[#1ed760] active:scale-100
+           flex items-center gap-2;
+  }
+
+  .btn-secondary {
+    @apply bg-transparent text-dark-gray px-8 py-4 rounded-full font-medium text-base 
+           border border-silk-gray transition-all duration-200 hover:bg-light-gray 
+           hover:border-medium-gray flex items-center gap-2;
+  }
+
+  .card {
+    @apply bg-white border border-silk-gray rounded-2xl p-8 
+           transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  .section-padding {
+    @apply py-20 md:py-32;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-green to-bright-purple bg-clip-text text-transparent;
+  }
+
+  .glass-effect {
+    @apply backdrop-blur-xl bg-white/70 border border-silk-gray/50;
+  }
+}
+
+@layer utilities {
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+  
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+}

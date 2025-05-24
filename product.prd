@@ -1,0 +1,1861 @@
+# Precise Prototype Implementation PRD
+## For Claude Code - Building the Future of Commoditized DSPs
+
+### Executive Summary: What We're Actually Building
+
+**This is a prototype demonstrating Precise as a "Stripe for Proof-Stamped Advertising Data" - a free-to-proof service that automatically distributes royalties using Shapley value attribution.**
+
+Key Context:
+- **Free-to-Proof**: Any data owner can POST events and get Verifiable Credentials (no upfront cost)
+- **Shapley Value Attribution**: Fair mathematical distribution of campaign value to all contributors
+- **Automatic Royalties**: When cohorts drive spend, payments auto-split to every contributing node
+- **DSP Commoditization**: As DSPs become execution layers, verification/attribution becomes the moat
+
+---
+
+## Free-to-Proof Service Model
+
+### Why "Free" Matters (Stripe Analogy)
+- **Zero Friction Onboarding**: Like Stripe's free account creation
+- **Usage-Based Revenue**: Take percentage of value created, not upfront fees
+- **Network Effects**: More data → better cohorts → higher CPMs → more royalties
+- **Compliance as Default**: Once one RFP requires Proof badge, everyone needs it
+
+### Service Tiers
+```javascript
+const serviceTiers = {
+  free: {
+    events: 1000000, // 1M events/month
+    cohorts: 'unlimited',
+    catalog: 'basic listing',
+    royalties: 'next-day ACH',
+    analytics: 'aggregate only'
+  },
+  paid: {
+    events: 'unlimited',
+    analytics: 'deep benchmarking',
+    royalties: 'same-day priority',
+    support: 'dedicated success manager',
+    pricing: '$0.0001 per event over 1M'
+  }
+};
+```
+
+---
+
+## Shapley Value Attribution in Practice
+
+### How It Works
+```javascript
+// Example: Campaign using multiple data sources
+const campaign = {
+  revenue: 50000,
+  spend: 10000,
+  roas: 5.0,
+  contributors: [
+    { id: 'whoop-fitness', type: 'seed-data' },
+    { id: 'liveramp-identity', type: 'identity-graph' },
+    { id: 'precise-model', type: 'lookalike-model' }
+  ]
+};
+
+// Shapley value calculation for each contributor
+const calculateShapleyValues = (campaign) => {
+  // For each contributor, calculate marginal contribution
+  // across all possible coalitions
+  const values = {};
+  
+  // Example simplified calculation:
+  // Whoop alone: ROAS = 0 (can't target without identity)
+  // LiveRamp alone: ROAS = 0 (no audience to target)
+  // Model alone: ROAS = 0 (no data to model)
+  // Whoop + LiveRamp: ROAS = 2.5
+  // Whoop + Model: ROAS = 0 
+  // LiveRamp + Model: ROAS = 0
+  // All three: ROAS = 5.0
+  
+  // Shapley values distribute the $40K profit fairly:
+  values['whoop-fitness'] = 13333; // 33.3%
+  values['liveramp-identity'] = 13333; // 33.3%
+  values['precise-model'] = 13334; // 33.3%
+  
+  return values;
+};
+```
+
+### Visual Representation
+```jsx
+const ShapleyAttribution = () => {
+  return (
+    <AttributionContainer>
+      <TotalValue>
+        <Label>Campaign Profit</Label>
+        <Value>$40,000</Value>
+      </TotalValue>
+      
+      <ContributorBreakdown>
+        <Contributor>
+          <Icon>💪</Icon>
+          <Name>Whoop Fitness Data</Name>
+          <Attribution>$13,333 (33.3%)</Attribution>
+          <Explanation>Provided seed audience</Explanation>
+        </Contributor>
+        
+        <Contributor>
+          <Icon>🔗</Icon>
+          <Name>LiveRamp Identity</Name>
+          <Attribution>$13,333 (33.3%)</Attribution>
+          <Explanation>Enabled cross-device targeting</Explanation>
+        </Contributor>
+        
+        <Contributor>
+          <Icon>🤖</Icon>
+          <Name>Precise Lookalike Model</Name>
+          <Attribution>$13,334 (33.3%)</Attribution>
+          <Explanation>Expanded audience 10x</Explanation>
+        </Contributor>
+      </ContributorBreakdown>
+    </AttributionContainer>
+  );
+};
+```
+
+---
+
+## Prototype Scope & Constraints
+
+### What to Build (Functional)
+1. **Authentication Flow** - Simple email/password with role selection
+2. **Dashboard Views** - Show real-time data flows (simulated)
+3. **Marketplace Browser** - Interactive solution packages
+4. **Attribution Visualizations** - Animated Sankey diagrams
+5. **API Integration UI** - Show MadHive data in Precise
+
+### What to Simulate (Mock Data)
+1. **Live Earnings** - Use realistic intervals ($0.02-0.15 per event)
+2. **Campaign Performance** - Pull from realistic ranges
+3. **Cohort Quality Scores** - 60-95 range
+4. **Attribution Percentages** - Multi-source contributions
+5. **Network Effects** - Show growing value
+
+### What NOT to Build
+1. Actual blockchain integration (show UI only)
+2. Real API connections (use mock services)
+3. Complex authentication (basic is fine)
+4. Mobile responsiveness (desktop only for prototype)
+5. Real payment processing
+
+---
+
+## Core User Flows to Implement
+
+### Flow 1: Data Owner Journey
+```
+Landing → Sign Up → Connect Data Source → See First Earnings → View Attribution
+```
+
+**Screens Needed:**
+1. Landing page with value prop
+2. Sign up (role selection: Data Owner vs Media Buyer)
+3. Data source connection wizard
+4. Dashboard showing live earnings ticker
+5. Attribution view showing value flow
+
+### Flow 2: Media Buyer Journey  
+```
+Landing → Sign Up → Browse Marketplace → Activate Solution → View Campaign Performance
+```
+
+**Screens Needed:**
+1. Same landing (different CTA)
+2. Sign up with DSP selection
+3. Marketplace with filterable solutions
+4. Campaign dashboard (showing MadHive data)
+5. Attribution intelligence view
+
+### Flow 3: Solution Creator Journey
+```
+Dashboard → Create Solution → Package Cohorts → Set Pricing → Publish
+```
+
+**Screens Needed:**
+1. Solution builder interface
+2. Cohort selector with drag-drop
+3. Strategy configuration
+4. Pricing/revenue model setup
+5. Preview before publish
+
+---
+
+## Data Architecture for Prototype
+
+### Core Components (From Free-to-Proof Model)
+```javascript
+// Component Stack
+const preciseStack = {
+  sdk: {
+    name: 'Proof SDK',
+    languages: ['Go', 'Python', 'JavaScript'],
+    function: 'Hash & stamp data locally',
+    cost: 'FREE'
+  },
+  gateway: {
+    name: 'Proof-Attribution Service (PAS)',
+    function: 'Receives events, mints VCs, writes to Alicenet',
+    cost: 'FREE (1M events/mo)'
+  },
+  ledger: {
+    name: 'Alicenet Registry',
+    function: 'Stores cohort & VC hashes',
+    fee: '10% rail fee'
+  },
+  engine: {
+    name: 'LCV Engine',
+    function: 'Tracks cohort reuse, triggers royalty calc',
+    method: 'Shapley values'
+  },
+  royalties: {
+    name: 'Royalty Distribution',
+    distribution: {
+      alicenet: '10%',
+      precise: '45%',
+      dataContributors: '45%'
+    }
+  }
+};
+```
+
+### Mock Data Structure
+```javascript
+// Enhanced campaign data with multi-DSP execution
+const campaigns = [
+  {
+    id: 'nike-summer-2025',
+    name: 'Nike Summer Fitness',
+    status: 'active',
+    currentCAC: 31.20,
+    previousCAC: 47.50,
+    cacReduction: -34.3,
+    ltv: 131.04,
+    preciseLaunchDate: '2025-04-15',
+    cacHistory: [
+      { date: '2025-04-01', value: 47.50 },
+      { date: '2025-04-15', value: 42.30 }, // Precise activated
+      { date: '2025-04-30', value: 36.80 },
+      { date: '2025-05-15', value: 31.20 }
+    ],
+    dsps: ['madhive', 'ttd', 'amazon'],
+    dspBreakdown: [
+      {
+        id: 'madhive',
+        name: 'MadHive',
+        logo: '/madhive.svg',
+        spend: 45000,
+        currentECPM: 42.50,
+        ecpmTrend: -12,
+        roas: 5.2,
+        status: 'optimizing'
+      },
+      {
+        id: 'ttd',
+        name: 'The Trade Desk',
+        logo: '/ttd.svg',
+        spend: 32000,
+        currentECPM: 38.20,
+        ecpmTrend: -18,
+        roas: 4.8,
+        status: 'saturated'
+      },
+      {
+        id: 'amazon',
+        name: 'Amazon DSP',
+        logo: '/amazon.svg',
+        spend: 23000,
+        currentECPM: 51.30,
+        ecpmTrend: -5,
+        roas: 4.2,
+        status: 'scaling'
+      }
+    ],
+    topDataSources: [
+      {
+        id: 'whoop-fitness',
+        name: 'Whoop Fitness Data',
+        cacReduction: 12.30,
+        percentage: 41
+      },
+      {
+        id: 'liveramp-identity',
+        name: 'LiveRamp Identity Graph',
+        cacReduction: 8.70,
+        percentage: 29
+      },
+      {
+        id: 'precise-lookalike',
+        name: 'Precise AI Model',
+        cacReduction: 6.50,
+        percentage: 22
+      }
+    ]
+  }
+];
+
+// Enhanced data assets with recommendations
+const dataAssets = [
+  {
+    id: 'fitness-activity',
+    name: 'Fitness Activity Events',
+    qualityScore: 94,
+    revenuePerK: 12.50,
+    industryAvgPerK: 8.30,
+    usageRate: 78,
+    monthlyRevenue: 23400,
+    recommendations: [
+      {
+        id: 'add-sleep',
+        icon: '💤',
+        text: 'Add sleep data for +$18.4K/mo',
+        value: 'high'
+      },
+      {
+        id: 'increase-freshness',
+        icon: '⚡',
+        text: 'Update every 6hr for +18% quality',
+        value: 'quick'
+      }
+    ],
+    campaignImpact: [
+      { brand: 'Nike', cacReduction: 12.30 },
+      { brand: 'Adidas', cacReduction: 8.70 },
+      { brand: 'Under Armour', cacReduction: 10.20 }
+    ]
+  },
+  {
+    id: 'user-demographics',
+    name: 'User Demographics',
+    qualityScore: 88,
+    revenuePerK: 6.20,
+    industryAvgPerK: 7.10,
+    usageRate: 45,
+    monthlyRevenue: 11200,
+    recommendations: [
+      {
+        id: 'add-income',
+        icon: '💰',
+        text: 'Add income bands for premium CPMs',
+        value: 'medium'
+      },
+      {
+        id: 'verify-age',
+        icon: '✓',
+        text: 'Age verification increases trust',
+        value: 'quick'
+      }
+    ]
+  }
+];
+
+// Marketplace solutions
+const marketplaceSolutions = [
+  {
+    id: 'fitness-acquisition-blueprint',
+    name: 'Premium Fitness Acquisition Blueprint',
+    creator: {
+      name: 'Precise Team',
+      avatar: '/precise-team.jpg',
+      verified: true
+    },
+    description: 'Complete acquisition strategy combining morning fitness enthusiasts, premium equipment buyers, and health-conscious millennials.',
+    featured: true,
+    components: {
+      cohorts: 3,
+      totalReach: 2300000,
+      avgQualityScore: 94
+    },
+    strategy: {
+      dsps: ['madhive', 'ttd', 'amazon'],
+      objective: 'acquisition',
+      targetCAC: 28,
+      targetROAS: 4.5
+    },
+    performance: {
+      activations: 127,
+      avgCAC: 24.50,
+      successRate: 94,
+      totalSpend: 12700000,
+      totalRevenue: 57150000
+    },
+    pricing: {
+      model: 'performance',
+      details: '2% of ad spend + $0.50 per conversion'
+    }
+  }
+];
+
+// Recommendations engine data
+const recommendations = {
+  mediaBuyer: [
+    {
+      id: 'add-fitness-cohort',
+      priority: 'high',
+      icon: '🎯',
+      text: 'Add "Premium Fitness Enthusiasts" cohort to Nike campaign for projected -$8.20 CAC reduction',
+      estimatedImpact: {
+        cacReduction: 8.20,
+        roasIncrease: 0.8
+      }
+    },
+    {
+      id: 'daypart-optimization',
+      priority: 'medium',
+      icon: '⏰',
+      text: 'Shift 30% budget to 6-8am targeting based on attribution data showing 3.2x higher conversion',
+      estimatedImpact: {
+        cacReduction: 4.50,
+        roasIncrease: 0.5
+      }
+    }
+  ],
+  dataOwner: [
+    {
+      id: 'add-sleep-data',
+      value: 'high',
+      icon: '💎',
+      title: 'Add Sleep Data to Fitness Events',
+      description: 'Cohorts with sleep + fitness data earn 3.2x higher CPMs.',
+      estimatedRevenue: 18400,
+      requirements: ['sleep_duration', 'sleep_quality', 'wake_time']
+    },
+    {
+      id: 'enable-cross-device',
+      value: 'medium',
+      icon: '🔗',
+      title: 'Enable Cross-Device Matching',
+      description: 'Partner with LiveRamp to increase match rates by 45%.',
+      cpmIncrease: '12-15',
+      partner: 'LiveRamp'
+    }
+  ]
+};
+```
+
+### Live Data Simulation
+```javascript
+// Multi-DSP eCPM optimization simulation
+const simulateECPMOptimization = (campaignId) => {
+  const dsps = ['madhive', 'ttd', 'amazon', 'dv360', 'adobe'];
+  let ecpmData = {};
+  
+  // Initialize eCPM for each DSP
+  dsps.forEach(dsp => {
+    ecpmData[dsp] = {
+      initial: Math.random() * 30 + 70, // $70-100 starting eCPM
+      current: 0,
+      saturationPoint: Math.random() * 20 + 30, // Saturates at $30-50
+      decayRate: Math.random() * 0.02 + 0.01 // 1-3% decay per day
+    };
+  });
+  
+  // Simulate eCPM decay over time
+  const generateECPMCurve = (dsp, day) => {
+    const data = ecpmData[dsp];
+    const decayFactor = Math.exp(-data.decayRate * day);
+    data.current = data.saturationPoint + 
+                   (data.initial - data.saturationPoint) * decayFactor;
+    return data.current;
+  };
+  
+  return { ecpmData, generateECPMCurve };
+};
+
+// CAC/LTV tracking simulation
+const simulateCACReduction = () => {
+  let currentCAC = 47.50;
+  const targetCAC = 28.00;
+  const reductionRate = 0.02; // 2% daily improvement
+  
+  const updateCAC = () => {
+    if (currentCAC > targetCAC) {
+      currentCAC *= (1 - reductionRate);
+      currentCAC = Math.max(currentCAC, targetCAC);
+    }
+    return currentCAC;
+  };
+  
+  return { currentCAC, updateCAC };
+};
+
+// Real-time recommendation generation
+const generateRecommendations = (userData) => {
+  const recommendations = [];
+  
+  if (userData.type === 'dataOwner') {
+    // Analyze data gaps
+    if (!userData.assets.find(a => a.type === 'sleep')) {
+      recommendations.push({
+        priority: 'high',
+        value: 18400,
+        title: 'Add Sleep Data',
+        description: 'Sleep + fitness data commands 3.2x higher CPMs'
+      });
+    }
+    
+    // Check data freshness
+    if (userData.updateFrequency > 24) {
+      recommendations.push({
+        priority: 'quick-win',
+        value: 'quality',
+        title: 'Increase Update Frequency',
+        description: 'Update every 6 hours for +18% quality score'
+      });
+    }
+  } else if (userData.type === 'mediaBuyer') {
+    // Analyze campaign performance
+    userData.campaigns.forEach(campaign => {
+      if (campaign.cac > campaign.targetCAC * 1.2) {
+        recommendations.push({
+          priority: 'high',
+          impact: calculateCACReduction(campaign),
+          title: `Optimize ${campaign.name}`,
+          description: `Add verified cohorts for -${calculateCACReduction(campaign)} CAC`
+        });
+      }
+    });
+  }
+  
+  return recommendations;
+};
+
+// Live earnings simulation
+const generateEarning = () => {
+  const brands = ['Nike', 'Adidas', 'Under Armour', 'Peloton', 'Apple Fitness'];
+  const campaigns = ['Summer Fitness', 'Morning Warriors', 'Premium Athletes'];
+  
+  return {
+    timestamp: Date.now(),
+    amount: (Math.random() * 0.13 + 0.02).toFixed(2),
+    campaign: `${randomChoice(brands)} ${randomChoice(campaigns)}`,
+    impressions: Math.floor(Math.random() * 1000 + 100),
+    dataAssets: randomChoice([
+      ['fitness-activity'],
+      ['fitness-activity', 'demographics'],
+      ['fitness-activity', 'location', 'preferences']
+    ])
+  };
+};
+
+// Shapley value calculation simulation
+const calculateRoyalties = (campaign) => {
+  const { revenue, spend, contributors } = campaign;
+  const profit = revenue - spend;
+  
+  // Calculate marginal contributions
+  const marginalContributions = {};
+  
+  // Simulate coalition values
+  const coalitions = generateCoalitions(contributors);
+  coalitions.forEach(coalition => {
+    const coalitionValue = calculateCoalitionValue(coalition, campaign);
+    
+    coalition.forEach(contributor => {
+      if (!marginalContributions[contributor.id]) {
+        marginalContributions[contributor.id] = [];
+      }
+      
+      // Calculate marginal value when adding this contributor
+      const coalitionWithout = coalition.filter(c => c.id !== contributor.id);
+      const valueWithout = calculateCoalitionValue(coalitionWithout, campaign);
+      const marginalValue = coalitionValue - valueWithout;
+      
+      marginalContributions[contributor.id].push(marginalValue);
+    });
+  });
+  
+  // Average marginal contributions (simplified Shapley)
+  const shapleyValues = {};
+  Object.entries(marginalContributions).forEach(([id, values]) => {
+    shapleyValues[id] = values.reduce((a, b) => a + b, 0) / values.length;
+  });
+  
+  // Apply fee structure
+  const distributions = {};
+  Object.entries(shapleyValues).forEach(([id, value]) => {
+    distributions[id] = {
+      gross: value,
+      alicenetFee: value * 0.10,
+      preciseFee: value * 0.45,
+      net: value * 0.45
+    };
+  });
+  
+  return distributions;
+};
+
+// Helper functions
+const randomChoice = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+const generateCoalitions = (contributors) => {
+  // Generate all possible subsets
+  const coalitions = [];
+  const n = contributors.length;
+  
+  for (let i = 0; i < (1 << n); i++) {
+    const coalition = [];
+    for (let j = 0; j < n; j++) {
+      if (i & (1 << j)) {
+        coalition.push(contributors[j]);
+      }
+    }
+    if (coalition.length > 0) {
+      coalitions.push(coalition);
+    }
+  }
+  
+  return coalitions;
+};
+
+const calculateCoalitionValue = (coalition, campaign) => {
+  // Simulate how different coalitions perform
+  // More contributors generally = higher value, but with diminishing returns
+  const baseValue = campaign.profit;
+  const contributorCount = coalition.length;
+  const synergyFactor = 1 + (contributorCount - 1) * 0.3; // 30% synergy per additional contributor
+  
+  return (baseValue / campaign.contributors.length) * contributorCount * synergyFactor;
+};
+```
+
+---
+
+## Specific Components to Build
+
+### 1. Free-to-Proof Onboarding
+```jsx
+const ProofOnboarding = () => {
+  const [step, setStep] = useState(1);
+  
+  return (
+    <OnboardingFlow>
+      {step === 1 && (
+        <WelcomeStep>
+          <Hero>
+            <Title>Start earning from your data in 5 minutes</Title>
+            <Subtitle>No contracts. No fees. Just proof.</Subtitle>
+          </Hero>
+          
+          <ValueProps>
+            <Prop>
+              <Icon>🎯</Icon>
+              <PropText>Free for up to 1M events/month</PropText>
+            </Prop>
+            <Prop>
+              <Icon>💰</Icon>
+              <PropText>Automatic royalties via Shapley values</PropText>
+            </Prop>
+            <Prop>
+              <Icon>🔒</Icon>
+              <PropText>Your data never leaves your infrastructure</PropText>
+            </Prop>
+          </ValueProps>
+          
+          <CTAButton onClick={() => setStep(2)}>
+            Get Started Free →
+          </CTAButton>
+        </WelcomeStep>
+      )}
+      
+      {step === 2 && (
+        <InstallStep>
+          <StepTitle>Install the Proof SDK</StepTitle>
+          
+          <CodeTabs>
+            <Tab active>Python</Tab>
+            <Tab>JavaScript</Tab>
+            <Tab>Go</Tab>
+          </CodeTabs>
+          
+          <CodeBlock>
+{`pip install precise-sdk
+
+from precise import mint_proof
+
+# Mint your first proof
+proof = mint_proof(
+    data=your_dataframe,
+    owner="your-company",
+    consent_type="explicit"
+)
+
+print(f"Minted VC: {proof.vc_id}")
+print(f"Quality Score: {proof.quality_score}/100")`}
+          </CodeBlock>
+          
+          <NextButton onClick={() => setStep(3)}>
+            I've installed the SDK →
+          </NextButton>
+        </InstallStep>
+      )}
+    </OnboardingFlow>
+  );
+};
+```
+
+### 2. Enhanced Media Buyer Campaign Dashboard
+```jsx
+const MediaBuyerDashboard = () => {
+  const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [timeRange, setTimeRange] = useState('7d');
+  
+  return (
+    <DashboardContainer>
+      <ViewHeader>
+        <Title>Campaign Command Center</Title>
+        <HeaderMetrics>
+          <MetricCard featured>
+            <Label>Portfolio CAC</Label>
+            <CurrentValue>$31.20</CurrentValue>
+            <PreviousValue>was $47.50</PreviousValue>
+            <Improvement>-34.3%</Improvement>
+            <MiniChart data={cacTrend} color="green" />
+          </MetricCard>
+          <MetricCard>
+            <Label>Blended LTV:CAC</Label>
+            <CurrentValue>4.2:1</CurrentValue>
+            <PreviousValue>was 2.8:1</PreviousValue>
+            <Improvement>+50%</Improvement>
+          </MetricCard>
+          <MetricCard>
+            <Label>Active DSPs</Label>
+            <Value>5</Value>
+            <DSPLogos>
+              <img src="/madhive.svg" />
+              <img src="/ttd.svg" />
+              <img src="/amazon.svg" />
+              <span>+2</span>
+            </DSPLogos>
+          </MetricCard>
+        </HeaderMetrics>
+      </ViewHeader>
+      
+      <RecommendationsBar>
+        <RecommendationTitle>
+          <Icon>💡</Icon>
+          AI-Powered Optimizations
+        </RecommendationTitle>
+        <Recommendations>
+          <Recommendation priority="high">
+            <RecIcon>🎯</RecIcon>
+            <RecText>
+              Add "Premium Fitness Enthusiasts" cohort to Nike campaign 
+              for projected -$8.20 CAC reduction
+            </RecText>
+            <ApplyButton>Apply</ApplyButton>
+          </Recommendation>
+          <Recommendation>
+            <RecIcon>⏰</RecIcon>
+            <RecText>
+              Shift 30% budget to 6-8am targeting based on 
+              attribution data showing 3.2x higher conversion
+            </RecText>
+            <ApplyButton>Test</ApplyButton>
+          </Recommendation>
+        </Recommendations>
+      </RecommendationsBar>
+      
+      <CampaignGrid>
+        {campaigns.map(campaign => (
+          <CampaignCard 
+            key={campaign.id}
+            onClick={() => setSelectedCampaign(campaign)}
+          >
+            <CampaignHeader>
+              <CampaignName>{campaign.name}</CampaignName>
+              <MultiDSPIndicator>
+                <DSPCount>{campaign.dsps.length} DSPs</DSPCount>
+                <ViewBreakdown>View breakdown →</ViewBreakdown>
+              </MultiDSPIndicator>
+            </CampaignHeader>
+            
+            <CACLTVMetrics>
+              <CACMetric>
+                <Label>CAC</Label>
+                <CurrentValue>${campaign.currentCAC}</CurrentValue>
+                <Change direction={campaign.cacTrend}>
+                  {campaign.cacTrend > 0 ? '+' : ''}{campaign.cacTrend}%
+                </Change>
+              </CACMetric>
+              
+              <LTVMetric>
+                <Label>LTV</Label>
+                <CurrentValue>${campaign.ltv}</CurrentValue>
+                <Ratio>LTV:CAC = {(campaign.ltv/campaign.currentCAC).toFixed(1)}:1</Ratio>
+              </LTVMetric>
+            </CACLTVMetrics>
+            
+            <PerformanceChart>
+              <ChartTitle>CAC Trend (Last 30 Days)</ChartTitle>
+              <LineChart 
+                data={campaign.cacHistory}
+                highlight={campaign.preciseLaunchDate}
+                annotation="Precise data activated"
+              />
+            </PerformanceChart>
+            
+            <DataContribution>
+              <ContributionTitle>Top Contributing Data</ContributionTitle>
+              <TopSources>
+                {campaign.topDataSources.map(source => (
+                  <DataSource key={source.id}>
+                    <SourceName>{source.name}</SourceName>
+                    <Impact>-${source.cacReduction} CAC</Impact>
+                    <Percentage>{source.percentage}%</Percentage>
+                  </DataSource>
+                ))}
+              </TopSources>
+            </DataContribution>
+          </CampaignCard>
+        ))}
+      </CampaignGrid>
+      
+      {selectedCampaign && (
+        <CampaignDetailModal>
+          <ModalHeader>
+            <CampaignName>{selectedCampaign.name}</CampaignName>
+            <CloseButton onClick={() => setSelectedCampaign(null)}>×</CloseButton>
+          </ModalHeader>
+          
+          <MultiDSPExecution>
+            <SectionTitle>Cross-DSP Execution Analysis</SectionTitle>
+            <DSPPerformanceChart>
+              <svg viewBox="0 0 800 400">
+                {/* eCPM over time across DSPs */}
+                <text x="20" y="30" fontSize="16" fontWeight="bold">
+                  eCPM Optimization Across DSPs
+                </text>
+                
+                {/* Y-axis: eCPM ($0-100) */}
+                <line x1="60" y1="50" x2="60" y2="350" stroke="#ccc" />
+                <text x="20" y="55" fontSize="12">$100</text>
+                <text x="20" y="200" fontSize="12">$50</text>
+                <text x="20" y="345" fontSize="12">$0</text>
+                
+                {/* X-axis: Time */}
+                <line x1="60" y1="350" x2="760" y2="350" stroke="#ccc" />
+                
+                {/* DSP performance lines */}
+                <path d="M 60 100 Q 200 120 350 140 T 700 180" 
+                      stroke="#1DB954" strokeWidth="3" fill="none" />
+                <text x="710" y="185" fontSize="12" fill="#1DB954">MadHive</text>
+                
+                <path d="M 60 120 Q 200 140 350 170 T 700 220" 
+                      stroke="#FF6B6B" strokeWidth="3" fill="none" />
+                <text x="710" y="225" fontSize="12" fill="#FF6B6B">TTD</text>
+                
+                <path d="M 60 140 Q 200 160 350 200 T 700 260" 
+                      stroke="#4ECDC4" strokeWidth="3" fill="none" />
+                <text x="710" y="265" fontSize="12" fill="#4ECDC4">Amazon</text>
+                
+                {/* Annotation */}
+                <rect x="250" y="300" width="300" height="40" fill="#f0f0f0" rx="5" />
+                <text x="400" y="325" textAnchor="middle" fontSize="12">
+                  eCPM decreases as inventory saturates, 
+                  AI rotates to next DSP
+                </text>
+              </svg>
+            </DSPPerformanceChart>
+            
+            <DSPBreakdown>
+              {selectedCampaign.dspBreakdown.map(dsp => (
+                <DSPCard key={dsp.id}>
+                  <DSPLogo src={dsp.logo} />
+                  <DSPMetrics>
+                    <Metric>
+                      <Label>Spend</Label>
+                      <Value>${dsp.spend.toLocaleString()}</Value>
+                    </Metric>
+                    <Metric>
+                      <Label>eCPM</Label>
+                      <Value>${dsp.currentECPM}</Value>
+                      <Trend>{dsp.ecpmTrend}%</Trend>
+                    </Metric>
+                    <Metric>
+                      <Label>ROAS</Label>
+                      <Value>{dsp.roas}x</Value>
+                    </Metric>
+                  </DSPMetrics>
+                  <OptimizationStatus>
+                    {dsp.status === 'scaling' && <Status color="green">Scaling</Status>}
+                    {dsp.status === 'optimizing' && <Status color="yellow">Optimizing</Status>}
+                    {dsp.status === 'saturated' && <Status color="red">Saturated</Status>}
+                  </OptimizationStatus>
+                </DSPCard>
+              ))}
+            </DSPBreakdown>
+          </MultiDSPExecution>
+        </CampaignDetailModal>
+      )}
+    </DashboardContainer>
+  );
+};
+```
+
+### 3. Enhanced Data Owner Dashboard with Recommendations
+```jsx
+const DataOwnerDashboard = () => {
+  const [selectedAsset, setSelectedAsset] = useState(null);
+  
+  return (
+    <DashboardContainer>
+      <ViewHeader>
+        <Title>Data Monetization Center</Title>
+        <EarningsOverview>
+          <TotalEarnings>
+            <Label>Monthly Recurring Revenue</Label>
+            <Amount>$47,230</Amount>
+            <Growth>+127% MoM</Growth>
+          </TotalEarnings>
+          <ProjectedEarnings>
+            <Label>Projected Next Month</Label>
+            <Amount>$72,450</Amount>
+            <Confidence>87% confidence</Confidence>
+          </ProjectedEarnings>
+        </EarningsOverview>
+      </ViewHeader>
+      
+      <DataOptimizationPanel>
+        <PanelTitle>
+          <Icon>🚀</Icon>
+          Monetization Opportunities
+        </PanelTitle>
+        <Opportunities>
+          <Opportunity value="high">
+            <OpportunityIcon>💎</OpportunityIcon>
+            <OpportunityContent>
+              <Title>Add Sleep Data to Fitness Events</Title>
+              <Description>
+                Cohorts with sleep + fitness data earn 3.2x higher CPMs. 
+                Your estimated additional revenue: +$18,400/month
+              </Description>
+              <DataRequirements>
+                Required: sleep_duration, sleep_quality, wake_time
+              </DataRequirements>
+            </OpportunityContent>
+            <CTAButton>See Integration Guide</CTAButton>
+          </Opportunity>
+          
+          <Opportunity value="medium">
+            <OpportunityIcon>🔗</OpportunityIcon>
+            <OpportunityContent>
+              <Title>Enable Cross-Device Matching</Title>
+              <Description>
+                Partner with LiveRamp to increase match rates by 45%. 
+                Projected CPM increase: +$12-15
+              </Description>
+            </OpportunityContent>
+            <CTAButton>Connect Partner</CTAButton>
+          </Opportunity>
+          
+          <Opportunity value="quick-win">
+            <OpportunityIcon>⚡</OpportunityIcon>
+            <OpportunityContent>
+              <Title>Optimize Data Freshness</Title>
+              <Description>
+                Update data every 6 hours instead of daily for 
+                +18% quality score improvement
+              </Description>
+            </OpportunityContent>
+            <CTAButton>Update Settings</CTAButton>
+          </Opportunity>
+        </Opportunities>
+      </DataOptimizationPanel>
+      
+      <AssetPerformanceGrid>
+        <GridHeader>
+          <Title>Your Data Assets</Title>
+          <ViewToggle>
+            <Option active>Performance View</Option>
+            <Option>Technical View</Option>
+          </ViewToggle>
+        </GridHeader>
+        
+        {dataAssets.map(asset => (
+          <AssetCard key={asset.id} onClick={() => setSelectedAsset(asset)}>
+            <AssetHeader>
+              <AssetName>{asset.name}</AssetName>
+              <QualityScore score={asset.qualityScore}>
+                <ScoreValue>{asset.qualityScore}</ScoreValue>
+                <ScoreLabel>Quality</ScoreLabel>
+              </QualityScore>
+            </AssetHeader>
+            
+            <AssetMetrics>
+              <RevenueMetrics>
+                <MetricGroup>
+                  <Label>Revenue/1K Records</Label>
+                  <Value>${asset.revenuePerK}</Value>
+                  <Benchmark>
+                    Industry avg: ${asset.industryAvgPerK}
+                    {asset.revenuePerK > asset.industryAvgPerK ? 
+                      <BenchmarkStatus color="green">↑ Above avg</BenchmarkStatus> :
+                      <BenchmarkStatus color="red">↓ Below avg</BenchmarkStatus>
+                    }
+                  </Benchmark>
+                </MetricGroup>
+                
+                <MetricGroup>
+                  <Label>Usage Rate</Label>
+                  <UsageBar>
+                    <UsageFill width={asset.usageRate} />
+                  </UsageBar>
+                  <UsageText>{asset.usageRate}% of campaigns</UsageText>
+                </MetricGroup>
+              </RevenueMetrics>
+              
+              <ImpactMetrics>
+                <ImpactTitle>Campaign Impact</ImpactTitle>
+                <ImpactList>
+                  <Impact>
+                    <Brand>Nike</Brand>
+                    <CACReduction>-$12.30 CAC</CACReduction>
+                  </Impact>
+                  <Impact>
+                    <Brand>Adidas</Brand>
+                    <CACReduction>-$8.70 CAC</CACReduction>
+                  </Impact>
+                </ImpactList>
+              </ImpactMetrics>
+            </AssetMetrics>
+            
+            <AssetRecommendations>
+              <RecLabel>Optimization Tips</RecLabel>
+              <Tips>
+                {asset.recommendations.map(rec => (
+                  <Tip key={rec.id}>
+                    <TipIcon>{rec.icon}</TipIcon>
+                    <TipText>{rec.text}</TipText>
+                  </Tip>
+                ))}
+              </Tips>
+            </AssetRecommendations>
+          </AssetCard>
+        ))}
+      </AssetPerformanceGrid>
+      
+      <CohortBuilderPrompt>
+        <PromptContent>
+          <Icon>🧪</Icon>
+          <Text>
+            Your data could create 12 new high-value cohorts. 
+            AI-powered cohort builder can help.
+          </Text>
+          <LaunchButton>Launch Cohort Builder</LaunchButton>
+        </PromptContent>
+      </CohortBuilderPrompt>
+    </DashboardContainer>
+  );
+};
+```
+
+### 4. Marketplace for Packaged Solutions
+```jsx
+const SolutionMarketplace = () => {
+  const [filters, setFilters] = useState({
+    industry: 'all',
+    objective: 'all',
+    budgetRange: 'all'
+  });
+  
+  return (
+    <MarketplaceContainer>
+      <MarketplaceHeader>
+        <Title>Ready-to-Run Campaign Solutions</Title>
+        <Description>
+          Pre-packaged strategies with verified data, proven tactics, 
+          and guaranteed performance benchmarks
+        </Description>
+        <CreateSolutionButton>
+          <Icon>+</Icon>
+          Create Your Own Solution
+        </CreateSolutionButton>
+      </MarketplaceHeader>
+      
+      <MarketplaceStats>
+        <Stat>
+          <StatValue>2,347</StatValue>
+          <StatLabel>Active Solutions</StatLabel>
+        </Stat>
+        <Stat>
+          <StatValue>-31%</StatValue>
+          <StatLabel>Avg CAC Reduction</StatLabel>
+        </Stat>
+        <Stat>
+          <StatValue>$12.7M</StatValue>
+          <StatLabel>Value Created (30d)</StatLabel>
+        </Stat>
+      </MarketplaceStats>
+      
+      <FilterBar>
+        <Filter>
+          <Label>Industry</Label>
+          <Select value={filters.industry} onChange={(e) => setFilter('industry', e.target.value)}>
+            <option value="all">All Industries</option>
+            <option value="fitness">Fitness & Wellness</option>
+            <option value="finance">Financial Services</option>
+            <option value="retail">Retail & E-commerce</option>
+            <option value="automotive">Automotive</option>
+          </Select>
+        </Filter>
+        
+        <Filter>
+          <Label>Campaign Objective</Label>
+          <Select value={filters.objective} onChange={(e) => setFilter('objective', e.target.value)}>
+            <option value="all">All Objectives</option>
+            <option value="acquisition">Customer Acquisition</option>
+            <option value="retention">Retention</option>
+            <option value="awareness">Brand Awareness</option>
+            <option value="conversion">Conversion</option>
+          </Select>
+        </Filter>
+        
+        <Filter>
+          <Label>Budget Range</Label>
+          <Select value={filters.budgetRange} onChange={(e) => setFilter('budgetRange', e.target.value)}>
+            <option value="all">Any Budget</option>
+            <option value="small">Under $50K</option>
+            <option value="medium">$50K - $500K</option>
+            <option value="large">$500K+</option>
+          </Select>
+        </Filter>
+      </FilterBar>
+      
+      <SolutionsGrid>
+        <FeaturedSolution>
+          <FeaturedBadge>Featured</FeaturedBadge>
+          <SolutionHeader>
+            <SolutionName>Premium Fitness Acquisition Blueprint</SolutionName>
+            <Creator>
+              <CreatorAvatar src="/precise-team.jpg" />
+              <CreatorName>Precise Team</CreatorName>
+              <VerifiedBadge />
+            </Creator>
+          </SolutionHeader>
+          
+          <SolutionDescription>
+            Complete acquisition strategy combining morning fitness enthusiasts, 
+            premium equipment buyers, and health-conscious millennials. 
+            Proven across 127 campaigns.
+          </SolutionDescription>
+          
+          <IncludedComponents>
+            <Component>
+              <ComponentIcon>👥</ComponentIcon>
+              <ComponentDetails>
+                <ComponentName>3 Verified Cohorts</ComponentName>
+                <ComponentInfo>2.3M total reach, 94+ quality score</ComponentInfo>
+              </ComponentDetails>
+            </Component>
+            
+            <Component>
+              <ComponentIcon>🎯</ComponentIcon>
+              <ComponentDetails>
+                <ComponentName>Multi-DSP Strategy</ComponentName>
+                <ComponentInfo>Optimized for MadHive, TTD, Amazon</ComponentInfo>
+              </ComponentDetails>
+            </Component>
+            
+            <Component>
+              <ComponentIcon>📊</ComponentIcon>
+              <ComponentDetails>
+                <ComponentName>Performance Benchmarks</ComponentName>
+                <ComponentInfo>Target: $28 CAC, 4.5x ROAS</ComponentInfo>
+              </ComponentDetails>
+            </Component>
+          </IncludedComponents>
+          
+          <PerformanceHistory>
+            <HistoryTitle>Historical Performance</HistoryTitle>
+            <PerformanceChart>
+              <AreaChart 
+                data={solutionPerformance}
+                metric="CAC"
+                benchmark={28}
+                achievedAverage={24.5}
+              />
+            </PerformanceChart>
+            <PerformanceStats>
+              <Stat>
+                <Label>Avg CAC</Label>
+                <Value>$24.50</Value>
+                <vs>vs $28 target</vs>
+              </Stat>
+              <Stat>
+                <Label>Success Rate</Label>
+                <Value>94%</Value>
+                <Detail>of campaigns hit target</Detail>
+              </Stat>
+            </PerformanceStats>
+          </PerformanceHistory>
+          
+          <Pricing>
+            <PricingModel>Performance-Based Pricing</PricingModel>
+            <PricingDetails>
+              2% of ad spend + $0.50 per conversion
+              <EstimatedCost>Est. cost for $100K campaign: $4,500</EstimatedCost>
+            </PricingDetails>
+          </Pricing>
+          
+          <ActivationCTA>
+            <Button primary large>
+              Activate in Your DSP
+              <Subtitle>One-click deployment</Subtitle>
+            </Button>
+            <PreviewButton>
+              Preview Full Strategy
+            </PreviewButton>
+          </ActivationCTA>
+        </FeaturedSolution>
+        
+        {solutions.map(solution => (
+          <SolutionCard key={solution.id}>
+            {/* Regular solution cards */}
+          </SolutionCard>
+        ))}
+      </SolutionsGrid>
+    </MarketplaceContainer>
+  );
+};
+```
+
+### 4. Shapley Attribution Visualizer
+```jsx
+const ShapleyAttributionFlow = () => {
+  const [selectedCampaign, setSelectedCampaign] = useState(null);
+  
+  return (
+    <AttributionContainer>
+      <FlowDiagram>
+        <svg viewBox="0 0 1200 600">
+          {/* Data Sources */}
+          <g transform="translate(50, 100)">
+            <rect x="0" y="0" width="200" height="80" fill="#E8F5E9" />
+            <text x="100" y="45">Whoop Fitness</text>
+            <text x="100" y="65" fontSize="12" fill="#666">2.3M records</text>
+          </g>
+          
+          <g transform="translate(50, 250)">
+            <rect x="0" y="0" width="200" height="80" fill="#E3F2FD" />
+            <text x="100" y="45">LiveRamp ID</text>
+            <text x="100" y="65" fontSize="12" fill="#666">Identity graph</text>
+          </g>
+          
+          <g transform="translate(50, 400)">
+            <rect x="0" y="0" width="200" height="80" fill="#F3E5F5" />
+            <text x="100" y="45">Precise Model</text>
+            <text x="100" y="65" fontSize="12" fill="#666">Lookalike AI</text>
+          </g>
+          
+          {/* Coalition Values */}
+          <g transform="translate(400, 200)">
+            <circle cx="100" cy="100" r="80" fill="#FFF8E1" />
+            <text x="100" y="90" textAnchor="middle">Coalition Value</text>
+            <text x="100" y="110" textAnchor="middle" fontSize="24" fontWeight="bold">
+              ROAS: 5.0x
+            </text>
+          </g>
+          
+          {/* Shapley Distribution */}
+          <g transform="translate(700, 100)">
+            <rect x="0" y="0" width="250" height="400" fill="#F5F5F5" stroke="#DDD" />
+            <text x="125" y="30" textAnchor="middle" fontWeight="bold">
+              Shapley Value Distribution
+            </text>
+            
+            {/* Distribution bars */}
+            <g transform="translate(20, 60)">
+              <rect x="0" y="0" width="210" height="60" fill="#4CAF50" opacity="0.8" />
+              <text x="10" y="35" fill="white">Whoop: $13,333 (33.3%)</text>
+            </g>
+            
+            <g transform="translate(20, 140)">
+              <rect x="0" y="0" width="210" height="60" fill="#2196F3" opacity="0.8" />
+              <text x="10" y="35" fill="white">LiveRamp: $13,333 (33.3%)</text>
+            </g>
+            
+            <g transform="translate(20, 220)">
+              <rect x="0" y="0" width="210" height="60" fill="#9C27B0" opacity="0.8" />
+              <text x="10" y="35" fill="white">Model: $13,334 (33.4%)</text>
+            </g>
+            
+            <text x="125" y="350" textAnchor="middle" fontSize="14" fill="#666">
+              Total Profit: $40,000
+            </text>
+          </g>
+          
+          {/* Animated flow lines */}
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                    refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#666" />
+            </marker>
+          </defs>
+          
+          <path d="M 250 140 Q 350 200 400 280" 
+                stroke="#666" strokeWidth="2" fill="none" 
+                markerEnd="url(#arrowhead)"
+                className="flow-path" />
+          <path d="M 250 290 Q 350 280 400 280" 
+                stroke="#666" strokeWidth="2" fill="none" 
+                markerEnd="url(#arrowhead)"
+                className="flow-path" />
+          <path d="M 250 440 Q 350 360 400 280" 
+                stroke="#666" strokeWidth="2" fill="none" 
+                markerEnd="url(#arrowhead)"
+                className="flow-path" />
+        </svg>
+      </FlowDiagram>
+      
+      <ExplanationPanel>
+        <PanelTitle>How Shapley Values Work</PanelTitle>
+        <Explanation>
+          Each data contributor receives a fair share based on their
+          marginal contribution to campaign success. The algorithm
+          considers all possible combinations to ensure mathematical
+          fairness.
+        </Explanation>
+        
+        <Formula>
+          φᵢ = (1/n) Σ [V(S∪{`{i}`}) - V(S)]
+        </Formula>
+      </ExplanationPanel>
+    </AttributionContainer>
+  );
+};
+```
+
+### 5. Proof Badge Component
+```jsx
+const ProofBadge = ({ vcId, qualityScore, size = 'medium' }) => {
+  const [showDetails, setShowDetails] = useState(false);
+  
+  return (
+    <BadgeContainer 
+      size={size}
+      onMouseEnter={() => setShowDetails(true)}
+      onMouseLeave={() => setShowDetails(false)}
+    >
+      <BadgeIcon>
+        <svg viewBox="0 0 100 100" width="100%" height="100%">
+          {/* Shield shape */}
+          <path 
+            d="M50 5 L85 25 L85 60 C85 75 70 90 50 95 C30 90 15 75 15 60 L15 25 Z"
+            fill="#4CAF50"
+            opacity="0.9"
+          />
+          
+          {/* Checkmark */}
+          <path 
+            d="M30 50 L45 65 L70 35"
+            stroke="white"
+            strokeWidth="5"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          
+          {/* Quality score */}
+          <text x="50" y="85" textAnchor="middle" fill="white" fontSize="16" fontWeight="bold">
+            {qualityScore}
+          </text>
+        </svg>
+      </BadgeIcon>
+      
+      {showDetails && (
+        <BadgeTooltip>
+          <TooltipTitle>Verified Credential</TooltipTitle>
+          <TooltipRow>
+            <Label>VC ID:</Label>
+            <Value>{vcId.slice(0, 8)}...</Value>
+          </TooltipRow>
+          <TooltipRow>
+            <Label>Quality Score:</Label>
+            <Value>{qualityScore}/100</Value>
+          </TooltipRow>
+          <TooltipRow>
+            <Label>Consent:</Label>
+            <Value>GDPR/CCPA ✓</Value>
+          </TooltipRow>
+          <ViewProofLink>View on Alicenet →</ViewProofLink>
+        </BadgeTooltip>
+      )}
+    </BadgeContainer>
+  );
+};
+```
+
+### 6. Royalty Distribution Timeline
+```jsx
+const RoyaltyTimeline = () => {
+  const [distributions, setDistributions] = useState([
+    {
+      timestamp: '2025-05-23T14:00:00Z',
+      campaign: 'Nike Summer Run',
+      totalValue: 40000,
+      yourShare: 13333,
+      status: 'distributed'
+    },
+    {
+      timestamp: '2025-05-23T10:00:00Z',
+      campaign: 'Adidas Fitness',
+      totalValue: 25000,
+      yourShare: 8333,
+      status: 'pending'
+    }
+  ]);
+  
+  return (
+    <TimelineContainer>
+      <TimelineHeader>
+        <Title>Royalty Distributions</Title>
+        <TotalEarned>
+          Total: ${distributions
+            .filter(d => d.status === 'distributed')
+            .reduce((sum, d) => sum + d.yourShare, 0)
+            .toLocaleString()}
+        </TotalEarned>
+      </TimelineHeader>
+      
+      <Timeline>
+        {distributions.map((dist, index) => (
+          <TimelineItem key={index}>
+            <TimelineMarker status={dist.status} />
+            <TimelineContent>
+              <Timestamp>{formatTime(dist.timestamp)}</Timestamp>
+              <Campaign>{dist.campaign}</Campaign>
+              <Attribution>
+                <TotalValue>
+                  Campaign value: ${dist.totalValue.toLocaleString()}
+                </TotalValue>
+                <YourShare status={dist.status}>
+                  Your share: ${dist.yourShare.toLocaleString()}
+                </YourShare>
+              </Attribution>
+              {dist.status === 'pending' && (
+                <PendingNote>Processing... (next ACH batch)</PendingNote>
+              )}
+            </TimelineContent>
+          </TimelineItem>
+        ))}
+      </Timeline>
+    </TimelineContainer>
+  );
+};
+```
+
+---
+
+## Design System for Prototype
+
+### Colors (CSS Variables)
+```css
+:root {
+  /* Core Brand */
+  --precise-black: #000000;
+  --precise-white: #FFFFFF;
+  --precise-gray: #F5F5F7;
+  
+  /* Accent Colors */
+  --precise-green: #00D97E;  /* Success, earnings */
+  --precise-blue: #1E90FF;   /* Links, primary actions */
+  --precise-purple: #7B4FFF; /* Premium, verified */
+  --precise-orange: #FF6B35; /* Warnings */
+  
+  /* Semantic */
+  --background: var(--precise-white);
+  --surface: var(--precise-gray);
+  --text-primary: var(--precise-black);
+  --text-secondary: #666;
+  --border: #E5E5E7;
+}
+```
+
+### Typography
+```css
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+h1 { font-size: 48px; font-weight: 700; }
+h2 { font-size: 32px; font-weight: 600; }
+h3 { font-size: 24px; font-weight: 600; }
+h4 { font-size: 20px; font-weight: 500; }
+```
+
+### Animation Patterns
+```css
+/* Earnings pulse */
+@keyframes earningPulse {
+  0% { background-color: transparent; }
+  50% { background-color: rgba(0, 217, 126, 0.1); }
+  100% { background-color: transparent; }
+}
+
+.earning-new {
+  animation: earningPulse 1s ease-out;
+}
+
+/* Value flow */
+@keyframes flowPath {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.flow-path {
+  stroke-dasharray: 100;
+  animation: flowPath 2s ease-in-out infinite;
+}
+```
+
+---
+
+## Implementation Stages
+
+### Stage 1: Foundation
+- [ ] Set up Next.js project with TypeScript
+- [ ] Create authentication flow with role selection
+- [ ] Build navigation and layout components
+- [ ] Implement mock data structure and API layer
+- [ ] Create basic dashboard views for both user types
+
+### Stage 2: Data Owner Experience
+- [ ] Dashboard with live earnings ticker
+- [ ] Data source connection flow
+- [ ] Asset quality scoring and recommendations
+- [ ] Campaign usage visibility
+- [ ] Revenue attribution breakdown
+
+### Stage 3: Media Buyer Experience  
+- [ ] Campaign performance dashboard
+- [ ] Multi-DSP execution view
+- [ ] Real-time CAC/LTV tracking
+- [ ] Marketplace browsing and activation
+- [ ] Attribution intelligence with recommendations
+
+### Stage 4: Marketplace & Intelligence
+- [ ] Solution builder interface
+- [ ] Marketplace search and filtering
+- [ ] One-click activation flow
+- [ ] Shapley value visualization
+- [ ] Cross-DSP performance comparison
+
+### Stage 5: Polish & Demo Readiness
+- [ ] Real-time animations and transitions
+- [ ] Loading and error states
+- [ ] Performance optimizations
+- [ ] Final UI polish
+- [ ] Demo data scenarios
+
+---
+
+## Preferred Tech Stack
+
+### Frontend
+```javascript
+{
+  "framework": "Next.js 14+ (App Router)",
+  "language": "TypeScript",
+  "styling": "Tailwind CSS + CSS-in-JS (Emotion)",
+  "state": "React Context + useReducer",
+  "data-fetching": "TanStack Query (React Query)",
+  "animations": "Framer Motion",
+  "charts": "Recharts + D3.js for custom visualizations",
+  "forms": "React Hook Form + Zod validation",
+  "ui-components": "Radix UI primitives + custom components"
+}
+```
+
+### Backend (Mock Services)
+```javascript
+{
+  "api": "Next.js API Routes",
+  "database": "In-memory for prototype (can add Postgres later)",
+  "realtime": "Server-Sent Events for live data",
+  "auth": "NextAuth.js with mock provider"
+}
+```
+
+### Development Tools
+```javascript
+{
+  "bundler": "Turbopack (Next.js)",
+  "linting": "ESLint + Prettier",
+  "testing": "Vitest + React Testing Library",
+  "deployment": "Vercel",
+  "version-control": "Git with conventional commits"
+}
+```
+
+---
+
+## Key Messages to Reinforce
+
+1. **DSPs are becoming commoditized** - Show how easy it is to run campaigns across multiple
+2. **Data verification is the moat** - Emphasize VCs and quality scores
+3. **Attribution drives value** - Make the money flow transparent
+4. **Agents will orchestrate** - Show API-first design
+5. **Federation enables privacy** - Data never moves, only verified proofs
+
+---
+
+## What This Prototype Proves
+
+1. **Technical Feasibility** - One-line integration really works
+2. **Business Model** - Clear value flow from data to outcomes  
+3. **Market Timing** - DSP commoditization is inevitable
+4. **Network Effects** - More data + more buyers = more value
+5. **Future Vision** - Agent-based campaign orchestration
+
+This prototype should feel like a glimpse into 2026, when running ads is as simple as describing your goal to an AI agent that orchestrates across commoditized DSPs using verified data from federated sources.
+
+---
+
+## Additional Implementation Details
+
+### State Management
+Use React Context + useReducer for global state:
+```javascript
+const AppContext = createContext();
+
+const initialState = {
+  user: null,
+  earnings: { today: 0, total: 0, events: [] },
+  campaigns: [],
+  cohorts: [],
+  solutions: [],
+  attribution: {}
+};
+
+const appReducer = (state, action) => {
+  switch(action.type) {
+    case 'ADD_EARNING':
+      return {
+        ...state,
+        earnings: {
+          today: state.earnings.today + action.payload.amount,
+          total: state.earnings.total + action.payload.amount,
+          events: [action.payload, ...state.earnings.events.slice(0, 49)]
+        }
+      };
+    // ... other cases
+  }
+};
+```
+
+### Loading & Error States
+```jsx
+// Loading state component
+const LoadingState = ({ message = "Loading..." }) => (
+  <LoadingContainer>
+    <Spinner />
+    <LoadingText>{message}</LoadingText>
+  </LoadingContainer>
+);
+
+// Error state component  
+const ErrorState = ({ error, retry }) => (
+  <ErrorContainer>
+    <ErrorIcon>⚠️</ErrorIcon>
+    <ErrorMessage>{error.message}</ErrorMessage>
+    {retry && <RetryButton onClick={retry}>Try Again</RetryButton>}
+  </ErrorContainer>
+);
+
+// Empty state component
+const EmptyState = ({ title, description, action }) => (
+  <EmptyContainer>
+    <EmptyIcon>📭</EmptyIcon>
+    <EmptyTitle>{title}</EmptyTitle>
+    <EmptyDescription>{description}</EmptyDescription>
+    {action && <ActionButton onClick={action.onClick}>{action.label}</ActionButton>}
+  </EmptyContainer>
+);
+```
+
+### Mock Service Layer
+```javascript
+// services/mockApi.js
+class MockAPI {
+  constructor() {
+    this.latency = 500; // Simulate network latency
+  }
+  
+  async delay() {
+    await new Promise(resolve => setTimeout(resolve, this.latency));
+  }
+  
+  async getCampaigns(userId) {
+    await this.delay();
+    return campaigns.filter(c => c.userId === userId);
+  }
+  
+  async activateSolution(solutionId, campaignConfig) {
+    await this.delay();
+    // Simulate MadHive API call
+    const campaign = {
+      id: generateId(),
+      solutionId,
+      status: 'active',
+      platform: 'madhive',
+      ...campaignConfig
+    };
+    return campaign;
+  }
+  
+  async getEarningsStream(userId) {
+    // Return an event emitter for real-time simulation
+    const emitter = new EventEmitter();
+    
+    setInterval(() => {
+      emitter.emit('earning', generateEarning());
+    }, Math.random() * 3000 + 2000);
+    
+    return emitter;
+  }
+}
+
+export const api = new MockAPI();
+```
+
+### User Roles & Permissions
+```javascript
+const roles = {
+  DATA_OWNER: {
+    canView: ['dashboard', 'assets', 'earnings', 'attribution'],
+    canEdit: ['assets', 'settings'],
+    defaultRoute: '/dashboard'
+  },
+  MEDIA_BUYER: {
+    canView: ['campaigns', 'marketplace', 'attribution'],
+    canEdit: ['campaigns'],
+    defaultRoute: '/campaigns'
+  },
+  SOLUTION_CREATOR: {
+    canView: ['marketplace', 'solutions', 'analytics'],
+    canEdit: ['solutions'],
+    defaultRoute: '/solutions'
+  }
+};
+
+// Route guard component
+const ProtectedRoute = ({ children, requiredRole }) => {
+  const { user } = useContext(AppContext);
+  
+  if (!user || !roles[user.role].canView.includes(requiredRole)) {
+    return <Navigate to="/unauthorized" />;
+  }
+  
+  return children;
+};
+```
+
+### Testing Approach
+```javascript
+// Mock data generators for testing
+export const generateMockCampaign = (overrides = {}) => ({
+  id: faker.datatype.uuid(),
+  name: faker.company.catchPhrase(),
+  platform: 'madhive',
+  status: faker.helpers.arrayElement(['active', 'paused', 'completed']),
+  impressions: faker.datatype.number({ min: 10000, max: 1000000 }),
+  spend: faker.datatype.number({ min: 1000, max: 50000 }),
+  roas: faker.datatype.float({ min: 0.5, max: 25, precision: 0.1 }),
+  ...overrides
+});
+
+// E2E test scenarios
+describe('Precise Prototype E2E', () => {
+  it('Data owner can see earnings within 30 seconds', async () => {
+    await login('dataowner@test.com');
+    await navigateTo('/dashboard');
+    await waitForElement('.earnings-ticker');
+    const initialEarnings = await getEarningsValue();
+    await wait(30000);
+    const newEarnings = await getEarningsValue();
+    expect(newEarnings).toBeGreaterThan(initialEarnings);
+  });
+  
+  it('Media buyer can activate marketplace solution', async () => {
+    await login('mediabuyer@test.com');
+    await navigateTo('/marketplace');
+    await clickElement('.solution-card:first-child .activate-button');
+    await waitForElement('.activation-success');
+    await navigateTo('/campaigns');
+    await expectElement('.campaign-card.new');
+  });
+});
+```
+
+### Performance Optimizations
+```javascript
+// Use React.memo for expensive components
+const AttributionSankey = React.memo(({ data }) => {
+  // Expensive D3 visualization
+  return <SankeyDiagram data={data} />;
+}, (prevProps, nextProps) => {
+  // Only re-render if data actually changed
+  return JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data);
+});
+
+// Virtualize long lists
+import { FixedSizeList } from 'react-window';
+
+const CohortList = ({ cohorts }) => (
+  <FixedSizeList
+    height={600}
+    itemCount={cohorts.length}
+    itemSize={120}
+    width="100%"
+  >
+    {({ index, style }) => (
+      <div style={style}>
+        <CohortCard cohort={cohorts[index]} />
+      </div>
+    )}
+  </FixedSizeList>
+);
+```
+
+### Environment Configuration
+```javascript
+// .env.local
+NEXT_PUBLIC_API_URL=http://localhost:3000/api
+NEXT_PUBLIC_MOCK_MODE=true
+NEXT_PUBLIC_EARNINGS_RATE_MIN=0.02
+NEXT_PUBLIC_EARNINGS_RATE_MAX=0.15
+NEXT_PUBLIC_EARNINGS_INTERVAL_MIN=2000
+NEXT_PUBLIC_EARNINGS_INTERVAL_MAX=5000
+```
+
+---
+
+## Key Messages to Reinforce
+
+1. **DSPs are becoming commoditized** - Show how easy it is to run campaigns across multiple
+2. **Data verification is the moat** - Emphasize VCs and quality scores
+3. **Attribution drives value** - Make the money flow transparent
+4. **Agents will orchestrate** - Show API-first design
+5. **Federation enables privacy** - Data never moves, only verified proofs
+
+---
+
+## What This Prototype Proves
+
+1. **Technical Feasibility** - One-line integration really works
+2. **Business Model** - Clear value flow from data to outcomes  
+3. **Market Timing** - DSP commoditization is inevitable
+4. **Network Effects** - More data + more buyers = more value
+5. **Future Vision** - Agent-based campaign orchestration
+
+This prototype should feel like a glimpse into 2026, when running ads is as simple as describing your goal to an AI agent that orchestrates across commoditized DSPs using verified data from federated sources.
