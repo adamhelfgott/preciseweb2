@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, DollarSign, Target, Activity, Plus, ChevronRight } from "lucide-react";
+import { TrendingUp, DollarSign, Target, Activity, Plus, ChevronRight, Brain, Layers } from "lucide-react";
 import { 
   LineChart, 
   Line, 
@@ -13,6 +13,9 @@ import {
   ResponsiveContainer,
   Legend 
 } from "recharts";
+import CreativeCarousel from "@/components/app/campaigns/CreativeCarousel";
+import DSPArbitrage from "@/components/app/campaigns/DSPArbitrage";
+import MultiTouchAttribution from "@/components/app/campaigns/MultiTouchAttribution";
 
 // Mock campaign data
 const mockCampaigns = [
@@ -70,21 +73,53 @@ export default function CampaignsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-dark-gray mb-2">Campaign Command Center</h1>
-          <p className="text-medium-gray">
-            Monitor and optimize your campaigns across all DSPs
+          <h1 className="text-2xl sm:text-3xl font-bold text-dark-gray mb-2">Campaign Command Center</h1>
+          <p className="text-sm sm:text-base text-medium-gray">
+            AI-powered campaign optimization with Precise data infrastructure
           </p>
         </div>
-        <button className="btn-primary">
+        <button className="btn-primary w-full sm:w-auto">
           <Plus size={20} />
           New Campaign
         </button>
       </div>
 
+      {/* Value Proposition Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gradient-to-r from-black to-gray-800 text-white rounded-xl p-6"
+      >
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-white/10 rounded-lg">
+              <Brain className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold mb-1">Precise AdOps Intelligence</h2>
+              <p className="text-sm text-gray-300">
+                Real-time attribution • DSP arbitrage • Creative fatigue detection • 
+                Privacy-preserving data collaboration
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-6">
+            <div className="text-center">
+              <p className="text-2xl font-bold">45%</p>
+              <p className="text-xs text-gray-300">Avg CAC reduction</p>
+            </div>
+            <div className="text-center">
+              <p className="text-2xl font-bold">3.2x</p>
+              <p className="text-xs text-gray-300">Better ROAS</p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
       {/* Portfolio Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -96,9 +131,9 @@ export default function CampaignsPage() {
               -34.3%
             </span>
           </div>
-          <p className="text-sm text-medium-gray mb-1">Portfolio CAC</p>
-          <p className="text-2xl font-bold text-dark-gray">${avgCAC.toFixed(2)}</p>
-          <p className="text-xs text-medium-gray">was $47.50</p>
+          <p className="text-xs sm:text-sm text-medium-gray mb-1">Portfolio CAC</p>
+          <p className="text-xl sm:text-2xl font-bold text-dark-gray">${avgCAC.toFixed(2)}</p>
+          <p className="text-xs text-medium-gray hidden sm:block">was $47.50</p>
         </motion.div>
 
         <motion.div
@@ -149,31 +184,13 @@ export default function CampaignsPage() {
         </motion.div>
       </div>
 
-      {/* AI Recommendations */}
-      <div className="bg-gradient-to-r from-brand-green/10 to-bright-purple/10 rounded-xl p-6 border border-brand-green/20">
-        <div className="flex items-start justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-dark-gray mb-2 flex items-center gap-2">
-              💡 AI-Powered Optimizations
-            </h2>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">🎯</span>
-                <p className="text-sm text-dark-gray">
-                  Add "Premium Fitness Enthusiasts" cohort to Nike campaign for projected -$8.20 CAC reduction
-                </p>
-                <button className="ml-auto btn-primary text-sm">Apply</button>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">⏰</span>
-                <p className="text-sm text-dark-gray">
-                  Shift 30% budget to 6-8am targeting based on attribution data showing 3.2x higher conversion
-                </p>
-                <button className="ml-auto btn-secondary text-sm">Test</button>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Creative Performance */}
+      <CreativeCarousel />
+
+      {/* Advanced Analytics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <DSPArbitrage />
+        <MultiTouchAttribution />
       </div>
 
       {/* Campaigns Grid */}
@@ -190,22 +207,27 @@ export default function CampaignsPage() {
             }}
           >
             {/* Campaign Header */}
-            <div className="p-6 border-b border-silk-gray">
+            <div className="p-4 sm:p-6 border-b border-silk-gray">
               <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-1">
+                <div className="flex-1">
+                  <h3 className="text-lg sm:text-xl font-semibold text-dark-gray mb-1">
                     {campaign.name}
                   </h3>
-                  <div className="flex items-center gap-3 text-sm text-medium-gray">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-medium-gray">
                     <span className="flex items-center gap-1">
                       <div className="w-2 h-2 bg-brand-green rounded-full" />
                       Active
                     </span>
-                    <span>•</span>
+                    <span className="hidden sm:inline">•</span>
                     <span>{campaign.dsps?.length || 0} DSPs</span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="flex items-center gap-1">
+                      <Layers className="w-3 h-3" />
+                      Precise Enhanced
+                    </span>
                   </div>
                 </div>
-                <ChevronRight className="text-medium-gray" size={20} />
+                <ChevronRight className="text-medium-gray hidden sm:block" size={20} />
               </div>
 
               {/* CAC/LTV Metrics */}
