@@ -66,7 +66,7 @@ const MOCK_SEARCH_RESULTS: Record<string, SearchResult[]> = {
       description: "Active • CAC $31.20 • ROAS 5.0x",
       type: "campaign",
       icon: TrendingUp,
-      href: "/app/campaigns"
+      href: "/app/campaigns?campaign=1"
     },
     {
       id: "2",
@@ -74,7 +74,7 @@ const MOCK_SEARCH_RESULTS: Record<string, SearchResult[]> = {
       description: "Active • CAC $42.80 • ROAS 4.5x",
       type: "campaign",
       icon: TrendingUp,
-      href: "/app/campaigns"
+      href: "/app/campaigns?campaign=2"
     },
     {
       id: "3",

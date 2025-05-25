@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
 import { TrendingUp, DollarSign, Target, Activity, Plus, ChevronRight, Brain, Layers, LayoutGrid, BarChart3 } from "lucide-react";
 import { 
   LineChart, 
@@ -72,9 +73,27 @@ const mockCampaigns = [
 ];
 
 export default function CampaignsPage() {
+  const searchParams = useSearchParams();
   const [selectedCampaign, setSelectedCampaign] = useState(mockCampaigns[0]);
   const [showDetails, setShowDetails] = useState(false);
   const [activeView, setActiveView] = useState<"overview" | "health" | "budget" | "audience" | "creatives">("overview");
+
+  // Handle campaign selection from URL
+  useEffect(() => {
+    const campaignId = searchParams.get('campaign');
+    if (campaignId) {
+      const campaign = mockCampaigns.find(c => c.id === campaignId);
+      if (campaign) {
+        setSelectedCampaign(campaign);
+        setShowDetails(true);
+        // Scroll to campaign section
+        setTimeout(() => {
+          const element = document.getElementById('campaign-details');
+          element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+    }
+  }, [searchParams]);
 
   const totalSpend = mockCampaigns.reduce((sum, c) => sum + c.spend, 0);
   const avgROAS = mockCampaigns.reduce((sum, c) => sum + c.roas, 0) / mockCampaigns.length;
@@ -283,6 +302,48 @@ export default function CampaignsPage() {
 
       {/* Competitive Intelligence */}
       <CompetitiveIntelligence />
+
+      {/* Campaign Details Modal */}
+      {showDetails && selectedCampaign && (
+        <div id="campaign-details" className="mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-r from-electric-blue to-bright-purple rounded-xl p-6 text-white"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">{selectedCampaign.name}</h2>
+                <p className="text-white/80">Campaign ID: {selectedCampaign.id}</p>
+              </div>
+              <button
+                onClick={() => setShowDetails(false)}
+                className="text-white/80 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <p className="text-white/70 text-sm">Current CAC</p>
+                <p className="text-2xl font-bold">${selectedCampaign.currentCAC.toFixed(2)}</p>
+              </div>
+              <div>
+                <p className="text-white/70 text-sm">ROAS</p>
+                <p className="text-2xl font-bold">{selectedCampaign.roas}x</p>
+              </div>
+              <div>
+                <p className="text-white/70 text-sm">Budget</p>
+                <p className="text-2xl font-bold">${(selectedCampaign.budget / 1000).toFixed(0)}K</p>
+              </div>
+              <div>
+                <p className="text-white/70 text-sm">Spend</p>
+                <p className="text-2xl font-bold">${(selectedCampaign.spend / 1000).toFixed(0)}K</p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       {/* Campaigns Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
