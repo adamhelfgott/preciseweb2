@@ -16,7 +16,8 @@ import {
   Menu,
   X,
   GitBranch,
-  Layers
+  Layers,
+  Bot
 } from "lucide-react";
 import { useState } from "react";
 import GlobalSearch from "./GlobalSearch";
@@ -65,6 +66,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
             <div className="flex items-center gap-4">
               <GlobalSearch />
+              
+              {user.role === "MEDIA_BUYER" && (
+                <div className="hidden lg:flex items-center gap-1 text-xs text-medium-gray">
+                  <Bot size={14} />
+                  <span>Press <kbd className="px-1.5 py-0.5 bg-light-gray rounded text-xs font-mono">⌘J</kbd> for AI</span>
+                </div>
+              )}
               
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-medium text-dark-gray">{user.name}</p>
