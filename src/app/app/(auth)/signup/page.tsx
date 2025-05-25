@@ -38,7 +38,7 @@ export default function SignUpPage() {
   const roles = [
     {
       id: "DATA_OWNER",
-      title: "Data Owner",
+      title: "Data Controller",
       description: "I have data to monetize",
       icon: "💎",
     },

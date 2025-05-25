@@ -72,14 +72,14 @@ export default function EarningsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-dark-gray mb-2">Earnings</h1>
+          <h1 className="text-3xl font-bold text-dark-gray mb-2">Query Permissions</h1>
           <p className="text-medium-gray">
-            Track your revenue and payment history
+            Manage query access and track intelligence usage
           </p>
         </div>
         <button className="btn-secondary">
           <Download size={20} />
-          Export Report
+          Export Query Log
         </button>
       </div>
 
@@ -94,7 +94,7 @@ export default function EarningsPage() {
                 : "text-medium-gray hover:text-dark-gray"
             }`}
           >
-            Overview
+            Permissions
           </button>
           <button
             onClick={() => setViewType("transactions")}
@@ -104,7 +104,7 @@ export default function EarningsPage() {
                 : "text-medium-gray hover:text-dark-gray"
             }`}
           >
-            Transactions
+            Query History
           </button>
           <button
             onClick={() => setViewType("analytics")}
@@ -114,7 +114,7 @@ export default function EarningsPage() {
                 : "text-medium-gray hover:text-dark-gray"
             }`}
           >
-            Analytics
+            Usage Analytics
           </button>
         </div>
       </div>

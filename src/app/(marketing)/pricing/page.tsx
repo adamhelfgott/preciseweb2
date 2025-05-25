@@ -214,7 +214,7 @@ export default function PricingPage() {
                       className="w-full px-4 py-2 border border-silk-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-green"
                     >
                       <option value="">Select role</option>
-                      <option value="data-owner">Data Owner</option>
+                      <option value="data-owner">Data Controller</option>
                       <option value="media-buyer">Media Buyer / Advertiser</option>
                       <option value="agency">Agency</option>
                       <option value="other">Other</option>

@@ -75,7 +75,7 @@ export default function SignInPage() {
                 onClick={() => fillDemoCredentials("dataowner")}
                 className="w-full text-left text-sm p-2 hover:bg-brand-green/10 rounded transition-colors"
               >
-                <strong>Data Owner:</strong> dataowner@demo.com / demo123
+                <strong>Data Controller:</strong> dataowner@demo.com / demo123
               </button>
               <button
                 onClick={() => fillDemoCredentials("mediabuyer")}
@@ -159,7 +159,7 @@ export default function SignInPage() {
               Infrastructure for Privacy-Preserving Collaboration
             </h2>
             <p className="text-body-large text-medium-gray max-w-md mx-auto">
-              Join the network where data owners and advertisers collaborate to create better outcomes for everyone.
+              Join the network where data controllers and advertisers collaborate to create better outcomes for everyone.
             </p>
           </div>
 

@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
     // Build the system prompt based on user context
     const systemPrompt = context?.userRole === "DATA_OWNER" 
-      ? `You are an AI assistant for Precise.ai, helping data owners maximize the value of their data assets.
+      ? `You are an AI assistant for Precise.ai, helping data controllers maximize the value of their data assets.
          
          You have access to their dashboard showing:
          - Real-time earnings and attribution data

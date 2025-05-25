@@ -7,23 +7,23 @@ export default function BenefitsSection() {
   const benefits = [
     {
       icon: TrendingUp,
-      title: "Predictive CAC Forecasting",
-      description: "AI-powered predictions show your CAC trajectory 4 weeks ahead with confidence intervals. Stop flying blind.",
+      title: "Federated Model Training",
+      description: "Train models across distributed data without centralizing it. Algorithms move to data sources, maintaining complete privacy.",
     },
     {
       icon: BarChart3,
-      title: "Custom Attribution Windows",
-      description: "Configure attribution models that match your business. From first-touch to data-driven, see what really drives conversions.",
+      title: "Closed-Loop Attribution",
+      description: "Measure campaign outcomes using privacy-preserving techniques. No raw data joins, only verified signals with cryptographic proof.",
     },
     {
       icon: CheckCircle,
-      title: "Incrementality Testing",
-      description: "Built-in holdout testing reveals true campaign impact. Know which campaigns actually move the needle.",
+      title: "Secure Query Execution",
+      description: "Submit approved queries that execute in secure enclaves. Get aggregated insights without ever accessing individual records.",
     },
     {
       icon: Shield,
-      title: "Creative Fatigue Alerts",
-      description: "AI monitors creative performance and alerts you before fatigue impacts results. Stay ahead of declining CTRs.",
+      title: "Compliance by Design",
+      description: "Built-in consent verification and usage rights. Every query includes proof of permissions, ensuring GDPR/CCPA compliance.",
     },
   ];
 
@@ -37,7 +37,7 @@ export default function BenefitsSection() {
           className="text-center mb-16"
         >
           <h2 className="text-display-medium font-bold text-dark-gray">
-            Advanced analytics that improve every campaign
+            Privacy-preserving intelligence at scale
           </h2>
         </motion.div>
 

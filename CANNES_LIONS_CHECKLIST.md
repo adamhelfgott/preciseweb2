@@ -1,7 +1,7 @@
 # Cannes Lions Production Readiness Checklist
 
 ## Context
-Preparing Precise.ai for Cannes Lions presentation as "Infrastructure for the AI Data Economy" - a privacy-preserving data collaboration platform that enables brands and data owners to work together without sharing raw data.
+Preparing Precise.ai for Cannes Lions presentation as "Infrastructure for the AI Data Economy" - a privacy-preserving data collaboration platform that enables brands and data controllers to work together without sharing raw data.
 
 ## ✅ Completed
 - [x] Updated messaging from "Free proof service" to "Infrastructure for the AI Data Economy"
@@ -86,7 +86,7 @@ Preparing Precise.ai for Cannes Lions presentation as "Infrastructure for the AI
 - [x] **Media Credits**: Earned from data contribution with redemption marketplace
 - [x] **Lift Analysis**: Compare performance with/without data collaboration
 
-### For Data Owners
+### For Data Controllers
 - [x] **Real-time earnings dashboard**
 - [x] **Asset management with verification status**
 - [x] **Attribution transparency with Shapley values**
@@ -99,7 +99,7 @@ Preparing Precise.ai for Cannes Lions presentation as "Infrastructure for the AI
 ## Demo Flow Notes
 1. Professional login experience with test credentials:
    - Media Buyer: mediabuyer@demo.com / demo123
-   - Data Owner: dataowner@demo.com / demo123
+   - Data Controller: dataowner@demo.com / demo123
 2. AI Assistant provides instant insights
 3. Campaign health shows clear ROI improvements
 4. Switch to Data Owner view to show ecosystem

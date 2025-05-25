@@ -30,14 +30,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   const navigation = user.role === "DATA_OWNER" ? [
     { name: "Dashboard", href: "/app/dashboard", icon: LayoutDashboard },
-    { name: "Data Assets", href: "/app/assets", icon: Database },
-    { name: "Earnings", href: "/app/earnings", icon: DollarSign },
+    { name: "Intelligence Assets", href: "/app/assets", icon: Database },
+    { name: "Query Permissions", href: "/app/earnings", icon: DollarSign },
     { name: "Attribution", href: "/app/attribution", icon: TrendingUp },
   ] : [
     { name: "Campaigns", href: "/app/campaigns", icon: TrendingUp },
-    { name: "Attribution", href: "/app/attribution-analysis", icon: GitBranch },
-    { name: "Data Impact", href: "/app/data-impact", icon: Layers },
-    { name: "Marketplace", href: "/app/marketplace", icon: Store },
+    { name: "Query Management", href: "/app/attribution-analysis", icon: GitBranch },
+    { name: "Intelligence Impact", href: "/app/data-impact", icon: Layers },
+    { name: "Federated Insights", href: "/app/marketplace", icon: Store },
     { name: "Optimization", href: "/app/optimization", icon: ShoppingBag },
   ];
 

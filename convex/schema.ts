@@ -14,7 +14,7 @@ export default defineSchema({
     .index("by_email", ["email"])
     .index("by_role", ["role"]),
 
-  // Data assets for data owners
+  // Data assets for data controllers
   dataAssets: defineTable({
     ownerId: v.id("users"),
     name: v.string(),

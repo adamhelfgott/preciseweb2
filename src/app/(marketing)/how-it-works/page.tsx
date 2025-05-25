@@ -50,7 +50,7 @@ export default function HowItWorksPage() {
               }`}
             >
               <Database className="inline w-5 h-5 mr-2" />
-              For Data Owners
+              For Data Controllers
             </button>
             <button
               onClick={() => setActiveTab("media-buyer")}
@@ -78,7 +78,7 @@ export default function HowItWorksPage() {
           <section className="py-12 bg-white">
             <div className="container max-w-6xl">
               <h2 className="text-3xl font-bold text-center text-dark-gray mb-12">
-                Market Intelligence That Maximizes Your Data Value
+                Enable Collaboration Without Becoming a Data Broker
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <motion.div
@@ -90,9 +90,9 @@ export default function HowItWorksPage() {
                   <div className="w-16 h-16 bg-brand-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Lock className="w-8 h-8 text-brand-green" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Health Score Analysis</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Maintain Control</h3>
                   <p className="text-medium-gray">
-                    AI evaluates your data quality across 5 dimensions with improvement tips.
+                    Your data never leaves your infrastructure. Approve query types, not data access.
                   </p>
                 </motion.div>
                 <motion.div
@@ -104,9 +104,9 @@ export default function HowItWorksPage() {
                   <div className="w-16 h-16 bg-electric-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <DollarSign className="w-8 h-8 text-electric-blue" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Competitive Pricing</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Stay Compliant</h3>
                   <p className="text-medium-gray">
-                    Benchmark your rates against market standards to capture full value.
+                    Maintain GDPR/CCPA controller status. Never become a data broker.
                   </p>
                 </motion.div>
                 <motion.div
@@ -118,9 +118,9 @@ export default function HowItWorksPage() {
                   <div className="w-16 h-16 bg-bright-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Brain className="w-8 h-8 text-bright-purple" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Demand Matching</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Query Governance</h3>
                   <p className="text-medium-gray">
-                    Match your assets to buyer requests with AI-powered compatibility scores.
+                    Set fine-grained permissions on what insights can be derived from your data.
                   </p>
                 </motion.div>
               </div>
@@ -131,7 +131,7 @@ export default function HowItWorksPage() {
           <section className="py-16 md:py-24">
             <div className="container max-w-6xl">
               <h2 className="text-3xl font-bold text-center text-dark-gray mb-16">
-                How Data Owners Monetize
+                How Federated Intelligence Works
               </h2>
               
               <div className="space-y-16">
@@ -147,10 +147,10 @@ export default function HowItWorksPage() {
                       <div className="w-12 h-12 bg-brand-green text-white rounded-full flex items-center justify-center font-bold text-xl">
                         1
                       </div>
-                      <h3 className="text-2xl font-bold text-dark-gray">Connect Your Data</h3>
+                      <h3 className="text-2xl font-bold text-dark-gray">Deploy Query Infrastructure</h3>
                     </div>
                     <p className="text-lg text-medium-gray mb-6">
-                      Install our lightweight SDK or use our APIs to connect your data sources. Your data never leaves your infrastructure.
+                      Install secure enclaves that enable privacy-preserving computation. Data stays in place while algorithms come to you.
                     </p>
                     <ul className="space-y-3">
                       <li className="flex items-start gap-3">
@@ -331,7 +331,7 @@ precise.createCredentials({
           <section className="py-12 bg-white">
             <div className="container max-w-6xl">
               <h2 className="text-3xl font-bold text-center text-dark-gray mb-12">
-                AI-Powered Campaign Intelligence That Drives Results
+                Query Intelligence Without Accessing Raw Data
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <motion.div
@@ -343,9 +343,9 @@ precise.createCredentials({
                   <div className="w-16 h-16 bg-brand-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Target className="w-8 h-8 text-brand-green" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Predictive Analytics</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Federated Queries</h3>
                   <p className="text-medium-gray">
-                    AI forecasts CAC 4 weeks ahead with confidence intervals.
+                    Submit approved queries that execute in secure enclaves.
                   </p>
                 </motion.div>
                 <motion.div
@@ -357,9 +357,9 @@ precise.createCredentials({
                   <div className="w-16 h-16 bg-electric-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <BarChart3 className="w-8 h-8 text-electric-blue" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Custom Attribution</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Privacy-Preserving</h3>
                   <p className="text-medium-gray">
-                    Design attribution windows that match your business model.
+                    Get aggregated insights without seeing individual records.
                   </p>
                 </motion.div>
                 <motion.div
@@ -371,9 +371,9 @@ precise.createCredentials({
                   <div className="w-16 h-16 bg-bright-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Shield className="w-8 h-8 text-bright-purple" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Incrementality Testing</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Verified Results</h3>
                   <p className="text-medium-gray">
-                    Measure true campaign impact with automated holdout groups.
+                    Every query response includes cryptographic proof of compliance.
                   </p>
                 </motion.div>
               </div>

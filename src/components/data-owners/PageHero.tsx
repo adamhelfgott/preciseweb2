@@ -14,27 +14,26 @@ export default function PageHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <p className="text-brand-green font-medium mb-4">For Data Owners</p>
+            <p className="text-brand-green font-medium mb-4">For Data Controllers</p>
             
             <h1 className="text-display-hero font-bold text-dark-gray mb-6">
-              Market intelligence for{" "}
-              <span className="text-gradient">maximum revenue</span>.
+              Enable intelligence{" "}
+              <span className="text-gradient">without sharing data</span>
             </h1>
             
             <p className="text-body-large text-medium-gray mb-8 leading-relaxed">
-              Go beyond basic monetization with AI-powered pricing optimization,
-              competitive benchmarking, and quality scoring. See what buyers want,
-              match your assets to demand, and get recommendations to increase
-              value. Stop leaving money on the table.
+              Maintain complete control while enabling privacy-preserving queries.
+              Approve query types, set fine-grained permissions, and generate revenue
+              from insights—all without becoming a data broker. Your data never moves.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/get-started" className="btn-primary">
-                Explore the platform
+                Configure permissions
                 <ArrowRight size={20} />
               </Link>
-              <Link href="#calculator" className="btn-secondary">
-                Calculate your potential
+              <Link href="#compliance" className="btn-secondary">
+                Learn about compliance
               </Link>
             </div>
           </motion.div>

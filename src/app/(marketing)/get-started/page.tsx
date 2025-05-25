@@ -47,7 +47,7 @@ export default function GetStartedPage() {
               Turn your data into verified credentials and earn automatic royalties
             </p>
             <span className="text-brand-green font-medium group-hover:text-dark-gray transition-colors">
-              Get started as data owner →
+              Get started as data controller →
             </span>
           </motion.button>
 

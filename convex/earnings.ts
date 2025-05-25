@@ -1,7 +1,7 @@
 import { mutation, query, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 
-// Get earnings for a data owner
+// Get earnings for a data controller
 export const getEarnings = query({
   args: { 
     ownerId: v.id("users"),

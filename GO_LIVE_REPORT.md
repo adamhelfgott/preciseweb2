@@ -37,7 +37,7 @@ All data is currently mocked. Need to either:
 - Budget pacing and forecasting
 - Audience insights
 
-### Data Owner Features
+### Data Controller Features
 - Comprehensive earnings dashboard
 - Valence Enhanced Shapley attribution
 - Asset performance breakdowns
@@ -62,7 +62,7 @@ All data is currently mocked. Need to either:
 4. **Smart Budget Reallocation** - AI suggestions for budget optimization
 5. **Incrementality Testing** - Built-in holdout group management
 
-#### For Data Owners
+#### For Data Controllers
 1. **Data Quality Scoring** - Show quality metrics for each asset
 2. **Earnings Predictor** - ML forecast of next month's revenue
 3. **Market Rate Benchmarking** - Compare pricing to similar providers

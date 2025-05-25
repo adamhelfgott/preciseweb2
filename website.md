@@ -76,7 +76,7 @@ A sophisticated blend of three design languages:
     
     <NavLinks>
       <NavItem>How it works</NavItem>
-      <NavItem>For data owners</NavItem>
+      <NavItem>For data controllers</NavItem>
       <NavItem>For advertisers</NavItem>
       <NavItem>Developers</NavItem>
       <NavItem>Company</NavItem>
@@ -272,14 +272,14 @@ A sophisticated blend of three design languages:
 
 ---
 
-### 2. For Data Owners Page
+### 2. For Data Controllers Page
 
 #### Complete Copy & Layout
 ```jsx
 <DataOwnersPage>
   <PageHero>
     <HeroContent>
-      <EyebrowText>For Data Owners</EyebrowText>
+      <EyebrowText>For Data Controllers</EyebrowText>
       
       <Headline>
         Turn your data into
@@ -906,7 +906,7 @@ console.log(asset.verificationStatus); // 'verified'`}
 
 ### 5. Onboarding Flows
 
-#### Data Owner Onboarding
+#### Data Controller Onboarding
 ```jsx
 const DataOwnerOnboarding = () => {
   const [step, setStep] = useState(1);

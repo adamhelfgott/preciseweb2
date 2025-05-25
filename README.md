@@ -1,6 +1,6 @@
 # Precise.ai - Infrastructure for the AI Data Economy
 
-A privacy-preserving data collaboration platform that enables brands and data owners to work together without sharing raw data.
+A privacy-preserving data collaboration platform that enables brands and data controllers to work together without sharing raw data.
 
 ## Features
 
@@ -11,7 +11,7 @@ A privacy-preserving data collaboration platform that enables brands and data ow
 - **Multi-touch Attribution**: Shapley value attribution across channels
 - **Audience Insights**: Verified audience data with overlap analysis
 
-### For Data Owners
+### For Data Controllers
 - **Real-time Earnings Dashboard**: Track revenue from data usage
 - **Attribution Transparency**: See fair contribution via Shapley values
 - **Privacy Dashboard**: Monitor differential privacy metrics
@@ -56,7 +56,7 @@ npm run dev
 ### Demo Credentials
 
 - **Media Buyer**: `mediabuyer@demo.com` / `demo123`
-- **Data Owner**: `dataowner@demo.com` / `demo123`
+- **Data Controller**: `dataowner@demo.com` / `demo123`
 
 ## Deployment
 

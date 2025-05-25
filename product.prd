@@ -6,7 +6,7 @@
 **This is a prototype demonstrating Precise as a "Stripe for Proof-Stamped Advertising Data" - a free-to-proof service that automatically distributes royalties using Shapley value attribution.**
 
 Key Context:
-- **Free-to-Proof**: Any data owner can POST events and get Verifiable Credentials (no upfront cost)
+- **Free-to-Proof**: Any data controller can POST events and get Verifiable Credentials (no upfront cost)
 - **Shapley Value Attribution**: Fair mathematical distribution of campaign value to all contributors
 - **Automatic Royalties**: When cohorts drive spend, payments auto-split to every contributing node
 - **DSP Commoditization**: As DSPs become execution layers, verification/attribution becomes the moat
@@ -149,14 +149,14 @@ const ShapleyAttribution = () => {
 
 ## Core User Flows to Implement
 
-### Flow 1: Data Owner Journey
+### Flow 1: Data Controller Journey
 ```
 Landing → Sign Up → Connect Data Source → See First Earnings → View Attribution
 ```
 
 **Screens Needed:**
 1. Landing page with value prop
-2. Sign up (role selection: Data Owner vs Media Buyer)
+2. Sign up (role selection: Data Controller vs Media Buyer)
 3. Data source connection wizard
 4. Dashboard showing live earnings ticker
 5. Attribution view showing value flow
@@ -899,7 +899,7 @@ const MediaBuyerDashboard = () => {
 };
 ```
 
-### 3. Enhanced Data Owner Dashboard with Recommendations
+### 3. Enhanced Data Controller Dashboard with Recommendations
 ```jsx
 const DataOwnerDashboard = () => {
   const [selectedAsset, setSelectedAsset] = useState(null);
@@ -1529,7 +1529,7 @@ h4 { font-size: 20px; font-weight: 500; }
 - [ ] Implement mock data structure and API layer
 - [ ] Create basic dashboard views for both user types
 
-### Stage 2: Data Owner Experience
+### Stage 2: Data Controller Experience
 - [ ] Dashboard with live earnings ticker
 - [ ] Data source connection flow
 - [ ] Asset quality scoring and recommendations
@@ -1776,7 +1776,7 @@ export const generateMockCampaign = (overrides = {}) => ({
 
 // E2E test scenarios
 describe('Precise Prototype E2E', () => {
-  it('Data owner can see earnings within 30 seconds', async () => {
+  it('Data controller can see earnings within 30 seconds', async () => {
     await login('dataowner@test.com');
     await navigateTo('/dashboard');
     await waitForElement('.earnings-ticker');

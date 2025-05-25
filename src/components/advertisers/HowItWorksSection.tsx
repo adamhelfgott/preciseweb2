@@ -6,18 +6,18 @@ export default function HowItWorksSection() {
   const steps = [
     {
       number: 1,
-      title: "Connect your campaigns",
-      description: "Integrate with your existing DSP and ad platforms. Our AI begins analyzing your historical performance immediately.",
+      title: "Define query parameters",
+      description: "Specify the types of insights you need. Set up approved query templates that respect data controller permissions.",
     },
     {
       number: 2,
-      title: "Get predictive insights",
-      description: "See CAC forecasts 4 weeks ahead, configure custom attribution windows, and receive creative fatigue alerts before performance drops.",
+      title: "Execute federated queries",
+      description: "Queries run in secure enclaves at data sources. Get aggregated results without moving or accessing raw data.",
     },
     {
       number: 3,
-      title: "Optimize with confidence",
-      description: "Run incrementality tests to prove true impact. Our AI recommendations help you reallocate budget to winning strategies.",
+      title: "Measure with privacy",
+      description: "Use closed-loop attribution to prove campaign impact. Verified credentials ensure every insight is compliant and auditable.",
     },
   ];
 
@@ -31,7 +31,7 @@ export default function HowItWorksSection() {
           className="text-center mb-16"
         >
           <h2 className="text-display-medium font-bold text-dark-gray">
-            Simple activation, powerful insights
+            Query intelligence without accessing data
           </h2>
         </motion.div>
 
