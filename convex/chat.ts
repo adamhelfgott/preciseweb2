@@ -3,12 +3,17 @@ import { mutation, query } from "./_generated/server";
 
 // Get chat history for a user
 export const getChatHistory = query({
-  args: { userId: v.id("users") },
+  args: { userId: v.string() }, // Changed to v.string() to handle mock IDs
   handler: async (ctx, args) => {
+    // For demo purposes, return empty array if using mock user IDs
+    if (args.userId.startsWith("user_")) {
+      return [];
+    }
+    
     // Get the last 50 messages for this user
     const messages = await ctx.db
       .query("chatMessages")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .withIndex("by_user", (q) => q.eq("userId", args.userId as any))
       .order("desc")
       .take(50);
     
@@ -20,13 +25,18 @@ export const getChatHistory = query({
 // Save a new chat message
 export const saveMessage = mutation({
   args: {
-    userId: v.id("users"),
+    userId: v.string(), // Changed to v.string() to handle mock IDs
     role: v.union(v.literal("user"), v.literal("assistant"), v.literal("system")),
     content: v.string(),
   },
   handler: async (ctx, args) => {
+    // For demo purposes, skip saving if using mock user IDs
+    if (args.userId.startsWith("user_")) {
+      return null;
+    }
+    
     return await ctx.db.insert("chatMessages", {
-      userId: args.userId,
+      userId: args.userId as any,
       role: args.role,
       content: args.content,
       timestamp: Date.now(),
@@ -36,11 +46,16 @@ export const saveMessage = mutation({
 
 // Clear chat history for a user (optional feature)
 export const clearChatHistory = mutation({
-  args: { userId: v.id("users") },
+  args: { userId: v.string() }, // Changed to v.string() to handle mock IDs
   handler: async (ctx, args) => {
+    // For demo purposes, skip if using mock user IDs
+    if (args.userId.startsWith("user_")) {
+      return { deleted: 0 };
+    }
+    
     const messages = await ctx.db
       .query("chatMessages")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .withIndex("by_user", (q) => q.eq("userId", args.userId as any))
       .collect();
     
     // Delete all messages for this user
@@ -52,11 +67,16 @@ export const clearChatHistory = mutation({
 
 // Get recent chat summary (for displaying preview)
 export const getChatSummary = query({
-  args: { userId: v.id("users") },
+  args: { userId: v.string() }, // Changed to v.string() to handle mock IDs
   handler: async (ctx, args) => {
+    // For demo purposes, return null if using mock user IDs
+    if (args.userId.startsWith("user_")) {
+      return null;
+    }
+    
     const recentMessages = await ctx.db
       .query("chatMessages")
-      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .withIndex("by_user", (q) => q.eq("userId", args.userId as any))
       .order("desc")
       .take(3);
     
