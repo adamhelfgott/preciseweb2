@@ -8,7 +8,7 @@ import FAQSection from "@/components/data-owners/FAQSection";
 import CTASection from "@/components/home/CTASection";
 
 export const metadata: Metadata = {
-  title: "For Data Owners - Precise.ai",
+  title: "For Data Controllers - Precise.ai",
   description: "Turn your data into passive income. Start minting verified credentials in 5 minutes. No contracts, no negotiations, no upfront costs.",
 };
 

@@ -16,30 +16,30 @@ export default function HeroSection() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-display-hero font-bold text-dark-gray mb-6">
-              Infrastructure for the{" "}
-              <span className="text-gradient">AI Data Economy</span>
+              Federated intelligence{" "}
+              <span className="text-gradient">without data sharing</span>
             </h1>
             
             <p className="text-body-large text-medium-gray mb-8 leading-relaxed">
-              The first platform that enables privacy-preserving data collaboration 
-              between advertisers and data owners, powered by verifiable credentials 
-              and fair attribution.
+              The privacy-preserving infrastructure that enables intelligent collaboration 
+              between brands and intelligence users. Algorithms move to data, not the 
+              other way around. Stay compliant, maintain control, unlock value.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
               <Link href="/get-started" className="btn-primary">
-                Start building
+                Enable federated intelligence
                 <ArrowRight size={20} />
               </Link>
               <Link href="/developers" className="btn-secondary">
-                View documentation
+                View architecture
               </Link>
             </div>
 
             <div className="grid grid-cols-3 gap-6">
-              <TrustItem icon="🔐" label="Privacy-preserving" />
-              <TrustItem icon="🧮" label="Fair attribution" />
-              <TrustItem icon="⚡" label="Real-time settlement" />
+              <TrustItem icon="🔐" label="Zero data movement" />
+              <TrustItem icon="🛡️" label="Maintain controller status" />
+              <TrustItem icon="⚡" label="Query-based intelligence" />
             </div>
           </motion.div>
 

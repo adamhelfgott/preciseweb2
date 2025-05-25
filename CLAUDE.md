@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 Precise.ai is a privacy-preserving data collaboration platform for advertising campaigns. The platform enables:
-- **Data Owners**: Monetize data through verified credentials while maintaining privacy
+- **Data Controllers**: Monetize data through verified credentials while maintaining privacy
 - **Media Buyers**: Access high-quality audience data with transparent attribution
 
 Key differentiators:
@@ -40,7 +40,7 @@ Key differentiators:
 - **Custom Attribution Windows**: Configurable attribution models with visual impact analysis
 - **Incrementality Testing**: Holdout group testing for true campaign impact
 
-#### Data Owner Features
+#### Data Controller Features
 - **Earnings Dashboard**: Revenue tracking and visualization
 - **Earnings Predictor**: Calculate potential earnings based on data quality
 - **Valence Enhanced Shapley**: Fair value attribution
@@ -54,7 +54,7 @@ Key differentiators:
 
 #### Marketing Site
 - Homepage with value propositions
-- Data Owners page
+- Data Controllers page
 - Advertisers page
 - Get Started with role-specific onboarding flows
 - Company/Team page with real team photos
@@ -71,7 +71,7 @@ Key differentiators:
    - No actual DSP connections
 
 2. **Missing Core Features**:
-   - No actual data upload/management for data owners
+   - No actual data upload/management for data controllers
    - No real payment processing
    - No actual ad serving integration
    - No real attribution tracking
@@ -94,7 +94,7 @@ Key differentiators:
 5. **Collaborative Workspaces** - Team campaign management
 6. **Automated Reporting** - Scheduled stakeholder updates
 
-#### Data Owner Features (Not Yet Implemented)
+#### Data Controller Features (Not Yet Implemented)
 1. **Usage Analytics Deep Dive** - Granular usage insights
 2. **Smart Pricing Recommendations** - ML-based price optimization
 3. **Automated Data Validation** - Quality checks and alerts
@@ -170,7 +170,7 @@ npx convex dev
 
 ### Attribution Models
 - **Media Buyers**: Marketing Mix Model (MMM) for campaign attribution
-- **Data Owners**: Valence Enhanced Shapley for fair value distribution
+- **Data Controllers**: Valence Enhanced Shapley for fair value distribution
 - Values are abstracted to prevent exact negotiation leverage
 
 ### Design Philosophy

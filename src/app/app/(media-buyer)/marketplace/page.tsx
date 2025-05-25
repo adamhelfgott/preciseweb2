@@ -185,8 +185,8 @@ export default function MarketplacePage() {
         <div className="px-8 py-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-2xl font-semibold text-gray-900">Solution Marketplace</h1>
-              <p className="text-gray-600 mt-1">Discover and activate proven advertising solutions</p>
+              <h1 className="text-2xl font-semibold text-gray-900">Federated Intelligence Hub</h1>
+              <p className="text-gray-600 mt-1">Configure queries and access privacy-preserving insights from data controllers</p>
             </div>
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -194,7 +194,7 @@ export default function MarketplacePage() {
               className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
             >
               <Plus className="w-4 h-4" />
-              Create Solution
+              Configure Query
             </motion.button>
           </div>
 
@@ -204,7 +204,7 @@ export default function MarketplacePage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search solutions..."
+                placeholder="Search query templates..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
@@ -215,9 +215,9 @@ export default function MarketplacePage() {
               onChange={(e) => setSortBy(e.target.value as any)}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
             >
-              <option value="popular">Most Popular</option>
-              <option value="performance">Best Performance</option>
-              <option value="newest">Newest</option>
+              <option value="popular">Most Used Queries</option>
+              <option value="performance">Highest Quality Score</option>
+              <option value="newest">Recently Added</option>
             </select>
           </div>
 

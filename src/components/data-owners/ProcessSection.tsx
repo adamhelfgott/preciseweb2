@@ -13,10 +13,10 @@ export default function ProcessSection() {
           className="text-center mb-16"
         >
           <h2 className="text-display-medium font-bold text-dark-gray mb-4">
-            Start optimizing in three steps
+            Enable federated intelligence in three steps
           </h2>
           <p className="text-body-large text-medium-gray">
-            From integration to intelligence in under an hour
+            Set up privacy-preserving collaboration without moving data
           </p>
         </motion.div>
 

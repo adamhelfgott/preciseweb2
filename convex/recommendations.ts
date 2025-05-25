@@ -28,7 +28,7 @@ export const getRecommendations = query({
   },
 });
 
-// Generate recommendations for data owner
+// Generate recommendations for data controller
 export const generateDataOwnerRecommendations = mutation({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {

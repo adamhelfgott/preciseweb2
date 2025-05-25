@@ -3,11 +3,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Precise - Infrastructure for the AI Data Economy",
-  description: "The first platform that enables privacy-preserving data collaboration between advertisers and data owners, powered by verifiable credentials and fair attribution.",
+  description: "The first platform that enables privacy-preserving data collaboration between advertisers and data controllers, powered by verifiable credentials and fair attribution.",
   keywords: "data collaboration, privacy-preserving, advertising infrastructure, verifiable credentials, Shapley value, data economy",
   openGraph: {
     title: "Precise - Infrastructure for the AI Data Economy",
-    description: "The first platform that enables privacy-preserving data collaboration between advertisers and data owners, powered by verifiable credentials and fair attribution.",
+    description: "The first platform that enables privacy-preserving data collaboration between advertisers and data controllers, powered by verifiable credentials and fair attribution.",
     type: "website",
     url: "https://precise.ai",
     images: [

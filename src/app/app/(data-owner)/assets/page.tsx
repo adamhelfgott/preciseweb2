@@ -120,9 +120,9 @@ export default function DataAssetsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-dark-gray mb-2">Data Assets</h1>
+          <h1 className="text-3xl font-bold text-dark-gray mb-2">Intelligence Assets</h1>
           <p className="text-medium-gray">
-            Manage your data sources and optimize their value
+            Configure query permissions and monitor intelligence usage
           </p>
         </div>
         <button 
@@ -130,7 +130,7 @@ export default function DataAssetsPage() {
           className="btn-primary"
         >
           <Plus size={20} />
-          Add New Asset
+          Configure New Asset
         </button>
       </div>
 

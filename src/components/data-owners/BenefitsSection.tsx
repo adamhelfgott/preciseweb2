@@ -7,23 +7,23 @@ export default function BenefitsSection() {
   const benefits = [
     {
       icon: BarChart3,
-      title: "Health Score Analytics",
-      description: "AI analyzes your data across 5 quality dimensions. Get specific recommendations to improve value and unlock premium pricing.",
+      title: "Maintain Controller Status",
+      description: "Never become a data broker. Our architecture ensures you maintain full GDPR/CCPA controller status while enabling collaboration.",
     },
     {
       icon: TrendingUp,
-      title: "Market Rate Intelligence",
-      description: "See how your pricing compares to competitors. Dynamic benchmarking ensures you're never undervaluing your assets.",
+      title: "Query Governance",
+      description: "Approve specific query types and set fine-grained permissions. Control exactly what insights can be derived without exposing raw data.",
     },
     {
       icon: Target,
-      title: "Demand Matching",
-      description: "Match your data to active buyer requests. Our AI shows compatibility scores and revenue potential for each opportunity.",
+      title: "Federated Learning",
+      description: "Enable model training in your environment. Algorithms come to your data, ensuring zero data movement and complete security.",
     },
     {
       icon: Zap,
-      title: "Enhancement Insights",
-      description: "Get AI-powered suggestions to increase data value. See projected revenue impact before making changes.",
+      title: "Verified Credentials",
+      description: "Every query includes cryptographic proof of consent and usage rights. Full audit trail for compliance and transparency.",
     },
   ];
 
@@ -37,7 +37,7 @@ export default function BenefitsSection() {
           className="text-center mb-16"
         >
           <h2 className="text-display-medium font-bold text-dark-gray">
-            Intelligence tools that maximize your data value
+            Stay compliant while enabling collaboration
           </h2>
         </motion.div>
 

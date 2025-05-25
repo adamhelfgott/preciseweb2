@@ -14,28 +14,28 @@ export default function PageHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <p className="text-brand-green font-medium mb-4">For Media Buyers</p>
+            <p className="text-brand-green font-medium mb-4">For Intelligence Users</p>
             
             <h1 className="text-display-hero font-bold text-dark-gray mb-6">
-              AI-powered optimization.
+              Query intelligence.
               <br />
-              <span className="text-gradient">Predictable results.</span>
+              <span className="text-gradient">Not raw data.</span>
             </h1>
             
             <p className="text-body-large text-medium-gray mb-8 leading-relaxed">
-              Go beyond basic targeting with predictive analytics, custom attribution
-              windows, and incrementality testing. Our AI forecasts performance 
-              4 weeks ahead while automated alerts prevent creative fatigue.
-              Stop guessing. Start knowing.
+              Submit approved queries to derive insights without accessing raw data.
+              Use federated learning for model training, closed-loop attribution for
+              measurement, and secure enclaves for computation. Privacy-preserving
+              collaboration at scale.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/get-started" className="btn-primary">
-                See AI optimization in action
+                Configure query permissions
                 <ArrowRight size={20} />
               </Link>
               <Link href="/developers" className="btn-secondary">
-                View integration guide
+                View query architecture
               </Link>
             </div>
           </motion.div>

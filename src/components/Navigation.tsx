@@ -20,9 +20,9 @@ export default function Navigation() {
 
   const navLinks = [
     { href: "/how-it-works", label: "How it works" },
-    { href: "/data-owners", label: "For data owners" },
-    { href: "/advertisers", label: "For advertisers" },
-    { href: "/case-studies", label: "Case studies" },
+    { href: "/data-owners", label: "For data controllers" },
+    { href: "/advertisers", label: "For intelligence users" },
+    { href: "/compliance", label: "Compliance" },
     { href: "/developers", label: "Developers" },
     { href: "/company", label: "Company" },
   ];
