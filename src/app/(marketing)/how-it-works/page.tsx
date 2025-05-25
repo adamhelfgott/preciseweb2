@@ -1,6 +1,5 @@
 "use client";
 
-import { Metadata } from "next";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
@@ -18,11 +17,6 @@ import {
   Layers,
   Brain
 } from "lucide-react";
-
-// export const metadata: Metadata = {
-//   title: "How It Works - Precise.ai",
-//   description: "Learn how Precise enables verified data flows without moving raw data.",
-// };
 
 export default function HowItWorksPage() {
   const [activeTab, setActiveTab] = useState<"data-owner" | "media-buyer">("data-owner");
