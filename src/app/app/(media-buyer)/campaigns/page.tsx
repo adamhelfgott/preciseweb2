@@ -17,7 +17,6 @@ import {
 import CreativeCarousel from "@/components/app/campaigns/CreativeCarousel";
 import DSPArbitrage from "@/components/app/campaigns/DSPArbitrage";
 import MultiTouchAttribution from "@/components/app/campaigns/MultiTouchAttribution";
-import AIAssistant from "@/components/app/campaigns/AIAssistant";
 import CampaignHealthMonitor from "@/components/app/campaigns/CampaignHealthMonitor";
 import BudgetPacing from "@/components/app/campaigns/BudgetPacing";
 import AudienceInsights from "@/components/app/campaigns/AudienceInsights";
@@ -103,8 +102,6 @@ export default function CampaignsPage() {
 
   return (
     <div className="relative">
-      {/* AI Assistant - Always Visible */}
-      <AIAssistant />
       
       {/* Creative Fatigue Alerts */}
       <CreativeFatigueAlert />
