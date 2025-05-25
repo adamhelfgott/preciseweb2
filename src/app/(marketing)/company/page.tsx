@@ -113,14 +113,11 @@ export default function CompanyPage() {
             >
               {/* Image container with LinkedIn overlay */}
               <div className="relative w-40 h-40 mx-auto mb-4">
-                {/* Placeholder for actual image - using gradient background */}
-                <div className="w-full h-full bg-gradient-to-br from-primary-orange to-vibrant-orange rounded-lg flex items-center justify-center overflow-hidden">
-                  {/* When you have images, replace this with: */}
-                  {/* <img src={member.image} alt={member.name} className="w-full h-full object-cover" /> */}
-                  <span className="text-white text-4xl font-bold">
-                    {member.name.split(' ').map(n => n[0]).join('')}
-                  </span>
-                </div>
+                <img 
+                  src={`https://precise.ai/static/img/photo/${member.image.split('/').pop()}`}
+                  alt={member.name} 
+                  className="w-full h-full object-cover rounded-lg"
+                />
                 
                 {/* LinkedIn overlay */}
                 {member.linkedin && (
