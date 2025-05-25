@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { DollarSign, Calendar, Download, TrendingUp, Clock, Filter } from "lucide-react";
+import { DollarSign, Calendar, Download, TrendingUp, Clock, Filter, CheckCircle, Info } from "lucide-react";
 import EarningsPredictor from "@/components/app/data-owner/EarningsPredictor";
 import { 
   LineChart, 
@@ -24,11 +24,11 @@ import {
 
 // Mock earnings data
 const mockEarnings = [
-  { id: "1", date: "2025-05-23", amount: 1234.56, campaign: "Nike Summer Fitness", impressions: 45230, asset: "Fitness Activity Events", status: "distributed" },
-  { id: "2", date: "2025-05-23", amount: 823.12, campaign: "Adidas Morning Warriors", impressions: 32100, asset: "User Demographics", status: "distributed" },
-  { id: "3", date: "2025-05-23", amount: 567.89, campaign: "Under Armour Premium", impressions: 21500, asset: "Fitness Activity Events", status: "pending" },
-  { id: "4", date: "2025-05-22", amount: 1456.78, campaign: "Peloton Acquisition", impressions: 53400, asset: "User Demographics", status: "distributed" },
-  { id: "5", date: "2025-05-22", amount: 901.23, campaign: "Apple Fitness+", impressions: 38900, asset: "Fitness Activity Events", status: "distributed" },
+  { id: "1", date: "2025-05-23", amount: 1234.56, campaign: "Nike Summer Fitness", impressions: 45230, asset: "Fitness Activity Events", status: "distributed", permissionsVerified: true, vpHash: "0x7a9b..." },
+  { id: "2", date: "2025-05-23", amount: 823.12, campaign: "Adidas Morning Warriors", impressions: 32100, asset: "User Demographics", status: "distributed", permissionsVerified: true, vpHash: "0x8c2d..." },
+  { id: "3", date: "2025-05-23", amount: 567.89, campaign: "Under Armour Premium", impressions: 21500, asset: "Fitness Activity Events", status: "pending", permissionsVerified: true, vpHash: "0x9e3f..." },
+  { id: "4", date: "2025-05-22", amount: 1456.78, campaign: "Peloton Acquisition", impressions: 53400, asset: "User Demographics", status: "distributed", permissionsVerified: true, vpHash: "0x1a5b..." },
+  { id: "5", date: "2025-05-22", amount: 901.23, campaign: "Apple Fitness+", impressions: 38900, asset: "Fitness Activity Events", status: "distributed", permissionsVerified: true, vpHash: "0x2c7d..." },
 ];
 
 // Generate daily earnings data
@@ -189,6 +189,25 @@ export default function EarningsPage() {
               </p>
               <p className="text-xs text-medium-gray mt-1">Last 30 days</p>
             </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-white rounded-xl shadow-sm border border-silk-gray p-6"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <CheckCircle className="text-brand-green" size={24} />
+                <span className="text-xs bg-brand-green/10 text-brand-green px-2 py-1 rounded-full">
+                  100% Compliant
+                </span>
+              </div>
+              <p className="text-sm text-medium-gray mb-1">Permissions Verified</p>
+              <p className="text-2xl font-bold text-dark-gray">
+                {mockEarnings.length}/{mockEarnings.length}
+              </p>
+              <p className="text-xs text-medium-gray mt-1">All activations verified</p>
+            </motion.div>
           </div>
 
           {/* Earnings Chart */}
@@ -303,7 +322,10 @@ export default function EarningsPage() {
                 ].map((campaign) => (
                   <div key={campaign.name} className="flex items-center justify-between">
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-dark-gray">{campaign.name}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium text-dark-gray">{campaign.name}</p>
+                        <CheckCircle className="w-4 h-4 text-brand-green" />
+                      </div>
                       <div className="w-full bg-light-gray rounded-full h-2 mt-2">
                         <div 
                           className="bg-brand-green h-2 rounded-full"
@@ -361,6 +383,9 @@ export default function EarningsPage() {
                     Amount
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-medium-gray uppercase tracking-wider">
+                    Permissions
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-medium-gray uppercase tracking-wider">
                     Status
                   </th>
                 </tr>
@@ -382,6 +407,25 @@ export default function EarningsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-dark-gray">
                       ${earning.amount.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 text-brand-green" />
+                        <span className="text-xs text-medium-gray">Verified</span>
+                        <div className="group relative">
+                          <Info className="w-4 h-4 text-medium-gray cursor-help" />
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-10">
+                            <div className="bg-dark-gray text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap">
+                              <p className="font-semibold mb-1">Verifiable Presentation</p>
+                              <p>VP Hash: {earning.vpHash}</p>
+                              <p>All permissions met ✓</p>
+                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
+                                <div className="border-4 border-transparent border-t-dark-gray"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${
