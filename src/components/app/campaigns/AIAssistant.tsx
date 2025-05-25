@@ -2,13 +2,14 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, Send, X, Sparkles, TrendingUp, AlertTriangle, DollarSign, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { Bot, Send, X, Sparkles, TrendingUp, AlertTriangle, DollarSign, Loader2, ChevronDown, ChevronUp, ChevronRight } from "lucide-react";
 import { useChat } from "ai/react";
 import { useAuth } from "@/contexts/AuthContext";
 import ReactMarkdown from "react-markdown";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { usePathname } from "next/navigation";
 
 interface ProactiveInsight {
   id: string;
@@ -54,27 +55,64 @@ const PROACTIVE_INSIGHTS: ProactiveInsight[] = [
   }
 ];
 
-const SUGGESTED_QUESTIONS = [
-  "What's my best performing campaign today?",
-  "Why is the Nike campaign CTR so high?",
-  "Show me creative performance across all campaigns",
-  "What's my current budget utilization?",
-  "Which audiences are converting best?",
-  "How can I improve the Tesla campaign?"
-];
 
 export default function AIAssistant() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true); // Start minimized
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
   const [chatLoaded, setChatLoaded] = useState(false);
+  const [dismissedInsights, setDismissedInsights] = useState<Set<string>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
+  const pathname = usePathname();
   
   const saveMessage = useMutation(api.chat.saveMessage);
   const chatHistory = useQuery(api.chat.getChatHistory, 
     user?.id ? { userId: user.id as Id<"users"> } : "skip"
   );
+
+  // Context for the AI based on current page
+  const getPageContext = () => {
+    const page = pathname.split('/').pop();
+    switch(page) {
+      case 'campaigns':
+        return {
+          page: 'campaigns',
+          description: 'Campaign management dashboard',
+          availableData: 'campaign performance, creative fatigue, DSP arbitrage, budget pacing, attribution models'
+        };
+      case 'attribution-analysis':
+        return {
+          page: 'attribution-analysis',
+          description: 'Query Management and Attribution Analysis',
+          availableData: 'multi-touch attribution, channel performance, conversion paths'
+        };
+      case 'data-impact':
+        return {
+          page: 'data-impact',
+          description: 'Intelligence Impact dashboard',
+          availableData: 'data contribution value, lift analysis, shared cohorts, media credits'
+        };
+      case 'marketplace':
+        return {
+          page: 'marketplace',
+          description: 'Federated Insights marketplace',
+          availableData: 'available data assets, pricing, quality scores'
+        };
+      case 'optimization':
+        return {
+          page: 'optimization',
+          description: 'Campaign optimization tools',
+          availableData: 'budget allocation, audience targeting, creative optimization'
+        };
+      default:
+        return {
+          page: page || 'dashboard',
+          description: 'Media buyer dashboard',
+          availableData: 'overall campaign metrics and insights'
+        };
+    }
+  };
 
   // Context for the AI based on current dashboard data
   const context = {
@@ -84,6 +122,7 @@ export default function AIAssistant() {
     topCampaign: "Nike - Just Do It 2025",
     activeCampaigns: user?.role === "DATA_OWNER" ? 248 : 5,
     monthlyEarnings: user?.role === "DATA_OWNER" ? "$42K" : undefined,
+    currentPage: getPageContext(),
   };
 
   const initialMessages = chatHistory && chatHistory.length > 0 && chatLoaded
@@ -149,6 +188,20 @@ export default function AIAssistant() {
     scrollToBottom();
   }, [messages]);
 
+  // Keyboard shortcut handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check for Cmd+J (Mac) or Ctrl+J (Windows/Linux)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'j') {
+        e.preventDefault();
+        setIsMinimized(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const handleQuestionClick = (question: string) => {
     handleInputChange({ target: { value: question } } as any);
     setTimeout(() => {
@@ -159,6 +212,24 @@ export default function AIAssistant() {
     }, 100);
   };
 
+  const handleInsightClick = (insight: ProactiveInsight) => {
+    const detailPrompt = `Tell me more about: ${insight.title}. ${insight.description}`;
+    handleInputChange({ target: { value: detailPrompt } } as any);
+    setTimeout(() => {
+      const form = document.querySelector('form') as HTMLFormElement;
+      if (form) {
+        form.requestSubmit();
+      }
+    }, 100);
+  };
+
+  const dismissInsight = (insightId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDismissedInsights(prev => new Set(prev).add(insightId));
+  };
+
+  const visibleInsights = PROACTIVE_INSIGHTS.filter(insight => !dismissedInsights.has(insight.id));
+
   const getInsightIcon = (type: string) => {
     switch (type) {
       case "performance": return <TrendingUp className="w-4 h-4" />;
@@ -167,6 +238,53 @@ export default function AIAssistant() {
       case "audience": return <AlertTriangle className="w-4 h-4" />;
       default: return <Sparkles className="w-4 h-4" />;
     }
+  };
+
+  const getSuggestedQuestions = (page: string) => {
+    const baseQuestions: Record<string, string[]> = {
+      campaigns: [
+        "What's my best performing campaign today?",
+        "Why is the Nike campaign CTR so high?",
+        "Show me creative performance across all campaigns",
+        "What's my current budget utilization?",
+        "Which creatives need refreshing?",
+        "How can I optimize DSP allocation?"
+      ],
+      'attribution-analysis': [
+        "What's the attribution for Nike campaign?",
+        "Which channels drive the most conversions?",
+        "Show me the conversion paths analysis",
+        "What's the impact of different attribution windows?",
+        "How does first-touch vs last-touch compare?",
+        "Which touchpoints are most valuable?"
+      ],
+      'data-impact': [
+        "What data is driving the most lift?",
+        "Show me the value of each data contribution",
+        "Which shared cohorts are performing best?",
+        "How are my media credits being used?",
+        "What's the incremental impact of data?",
+        "Which data assets should I prioritize?"
+      ],
+      marketplace: [
+        "What new data assets are available?",
+        "Which data would help my campaigns?",
+        "Show me high-quality location data",
+        "What's the pricing for behavioral data?",
+        "Which assets have the best quality scores?",
+        "How can I access premium segments?"
+      ],
+      optimization: [
+        "How should I reallocate my budget?",
+        "Which audiences should I target?",
+        "What creative optimizations do you suggest?",
+        "Show me underperforming segments",
+        "How can I improve ROAS?",
+        "What's my optimal bid strategy?"
+      ]
+    };
+    
+    return baseQuestions[page] || baseQuestions.campaigns;
   };
 
   return (
@@ -182,8 +300,8 @@ export default function AIAssistant() {
       </motion.button>
 
       {/* Desktop Panel - Always Visible on Large Screens */}
-      <div className={`hidden lg:block fixed right-0 top-0 ${isMinimized ? 'h-auto' : 'h-full'} w-[400px] bg-white shadow-2xl z-40 transition-all duration-300`}>
-        <div className={`flex flex-col ${isMinimized ? '' : 'h-full'}`}>
+      <div className={`hidden lg:block fixed right-0 top-0 h-full ${isMinimized ? 'w-[50px]' : 'w-[400px]'} bg-white shadow-2xl z-40 transition-all duration-300`}>
+        <div className="flex flex-col h-full">
           {/* Header */}
           <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-4 text-white">
             <div className="flex items-center justify-between">
@@ -191,29 +309,35 @@ export default function AIAssistant() {
                 <div className="bg-white/20 p-2 rounded-lg">
                   <Bot className="w-5 h-5" />
                 </div>
-                <div>
-                  <h3 className="font-semibold">AI Assistant</h3>
-                  {!isMinimized && <p className="text-xs opacity-90">Ask questions in natural language</p>}
-                </div>
+                {!isMinimized && (
+                  <div>
+                    <h3 className="font-semibold">AI Assistant</h3>
+                    <p className="text-xs opacity-90">Ask questions in natural language</p>
+                  </div>
+                )}
               </div>
               <button
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="text-white/80 hover:text-white p-1"
+                className="text-white hover:text-white/90 p-2 rounded-lg hover:bg-white/20 transition-all duration-200"
+                aria-label={isMinimized ? "Expand chat" : "Minimize chat"}
               >
-                {isMinimized ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                {isMinimized ? <ChevronRight className="w-5 h-5" /> : <X className="w-5 h-5" />}
               </button>
             </div>
           </div>
 
-          <AnimatePresence>
-            {!isMinimized && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="flex-1 flex flex-col overflow-hidden"
-              >
+          {!isMinimized && (
+            <div className="flex-1 flex flex-col overflow-hidden">
+              {/* Current Page Context */}
+              <div className="px-4 py-2 bg-gradient-to-r from-primary-orange/10 to-vibrant-orange/10 border-b">
+                <p className="text-xs text-medium-gray">
+                  <span className="font-medium">Current Page:</span> {context.currentPage.description}
+                </p>
+                <p className="text-xs text-medium-gray/70 mt-0.5">
+                  Press <kbd className="px-1.5 py-0.5 bg-white rounded text-xs font-mono">⌘J</kbd> to toggle
+                </p>
+              </div>
+
               {/* API Key Error */}
               {apiKeyError && (
                 <div className="p-4 bg-yellow-50 border-b border-yellow-200">
@@ -228,15 +352,18 @@ export default function AIAssistant() {
               <div className="p-4 border-b bg-light-gray/50">
                 <h4 className="text-sm font-semibold text-medium-gray mb-3">Proactive Insights</h4>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {PROACTIVE_INSIGHTS.map((insight) => (
+                  <AnimatePresence>
+                  {visibleInsights.map((insight) => (
                     <motion.div
                       key={insight.id}
                       initial={{ scale: 0.95, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      className="bg-white p-3 rounded-lg border border-light-gray hover:border-primary-orange transition-colors cursor-pointer"
+                      exit={{ scale: 0.95, opacity: 0 }}
+                      className="bg-white p-3 rounded-lg border border-light-gray hover:border-primary-orange transition-colors cursor-pointer group"
+                      onClick={() => handleInsightClick(insight)}
                     >
-                      <div className="flex items-start gap-2">
-                        <div className={`p-1 rounded ${
+                      <div className="flex items-start gap-2 relative">
+                        <div className={`p-1 rounded flex-shrink-0 ${
                           insight.type === 'performance' ? 'bg-green-100 text-green-600' :
                           insight.type === 'creative' ? 'bg-purple-100 text-purple-600' :
                           insight.type === 'budget' ? 'bg-blue-100 text-blue-600' :
@@ -244,16 +371,30 @@ export default function AIAssistant() {
                         }`}>
                           {getInsightIcon(insight.type)}
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 pr-8">
                           <h5 className="font-medium text-sm text-dark-gray">{insight.title}</h5>
                           <p className="text-xs text-medium-gray mt-1">{insight.description}</p>
                           {insight.impact && (
                             <p className="text-xs font-medium text-primary-orange mt-2">{insight.impact}</p>
                           )}
+                          {insight.action && (
+                            <button className="text-xs font-medium text-primary-orange hover:text-vibrant-orange mt-2 flex items-center gap-1">
+                              {insight.action}
+                              <ChevronRight className="w-3 h-3" />
+                            </button>
+                          )}
                         </div>
+                        <button
+                          onClick={(e) => dismissInsight(insight.id, e)}
+                          className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
+                          aria-label="Dismiss insight"
+                        >
+                          <X className="w-4 h-4 text-medium-gray hover:text-dark-gray" />
+                        </button>
                       </div>
                     </motion.div>
                   ))}
+                  </AnimatePresence>
                 </div>
               </div>
 
@@ -317,7 +458,7 @@ export default function AIAssistant() {
               {/* Suggested Questions */}
               <div className="p-3 border-t bg-light-gray/30">
                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                  {SUGGESTED_QUESTIONS.map((question, index) => (
+                  {getSuggestedQuestions(context.currentPage.page).map((question, index) => (
                     <button
                       key={index}
                       onClick={() => handleQuestionClick(question)}
@@ -349,9 +490,8 @@ export default function AIAssistant() {
               </button>
             </div>
           </form>
-              </motion.div>
-            )}
-          </AnimatePresence>
+            </div>
+          )}
         </div>
       </div>
 
@@ -409,15 +549,18 @@ export default function AIAssistant() {
                 <div className="p-4 border-b bg-light-gray/50">
               <h4 className="text-sm font-semibold text-medium-gray mb-3">Proactive Insights</h4>
               <div className="space-y-2 max-h-48 overflow-y-auto">
-                {PROACTIVE_INSIGHTS.map((insight) => (
+                <AnimatePresence>
+                {visibleInsights.map((insight) => (
                   <motion.div
                     key={insight.id}
                     initial={{ scale: 0.95, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="bg-white p-3 rounded-lg border border-light-gray hover:border-primary-orange transition-colors cursor-pointer"
+                    exit={{ scale: 0.95, opacity: 0 }}
+                    className="bg-white p-3 rounded-lg border border-light-gray hover:border-primary-orange transition-colors cursor-pointer group"
+                    onClick={() => handleInsightClick(insight)}
                   >
-                    <div className="flex items-start gap-2">
-                      <div className={`p-1 rounded ${
+                    <div className="flex items-start gap-2 relative">
+                      <div className={`p-1 rounded flex-shrink-0 ${
                         insight.type === 'performance' ? 'bg-green-100 text-green-600' :
                         insight.type === 'creative' ? 'bg-purple-100 text-purple-600' :
                         insight.type === 'budget' ? 'bg-blue-100 text-blue-600' :
@@ -425,16 +568,30 @@ export default function AIAssistant() {
                       }`}>
                         {getInsightIcon(insight.type)}
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 pr-8">
                         <h5 className="font-medium text-sm text-dark-gray">{insight.title}</h5>
                         <p className="text-xs text-medium-gray mt-1">{insight.description}</p>
                         {insight.impact && (
                           <p className="text-xs font-medium text-primary-orange mt-2">{insight.impact}</p>
                         )}
+                        {insight.action && (
+                          <button className="text-xs font-medium text-primary-orange hover:text-vibrant-orange mt-2 flex items-center gap-1">
+                            {insight.action}
+                            <ChevronRight className="w-3 h-3" />
+                          </button>
+                        )}
                       </div>
+                      <button
+                        onClick={(e) => dismissInsight(insight.id, e)}
+                        className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
+                        aria-label="Dismiss insight"
+                      >
+                        <X className="w-4 h-4 text-medium-gray hover:text-dark-gray" />
+                      </button>
                     </div>
                   </motion.div>
                 ))}
+                </AnimatePresence>
               </div>
             </div>
 
@@ -477,7 +634,7 @@ export default function AIAssistant() {
             {/* Suggested Questions */}
             <div className="p-3 border-t bg-light-gray/30">
               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                {SUGGESTED_QUESTIONS.map((question, index) => (
+                {getSuggestedQuestions(context.currentPage.page).map((question, index) => (
                   <button
                     key={index}
                     onClick={() => handleQuestionClick(question)}
