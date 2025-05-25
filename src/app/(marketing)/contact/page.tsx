@@ -203,11 +203,11 @@ export default function ContactPage() {
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-brand-green">< 2 hrs</div>
+                    <div className="text-2xl font-bold text-brand-green">&lt; 2 hrs</div>
                     <div className="text-sm text-medium-gray">Demo requests</div>
                   </div>
                   <div className="bg-white rounded-lg p-4 text-center">
-                    <div className="text-2xl font-bold text-electric-blue">< 24 hrs</div>
+                    <div className="text-2xl font-bold text-electric-blue">&lt; 24 hrs</div>
                     <div className="text-sm text-medium-gray">General inquiries</div>
                   </div>
                 </div>
