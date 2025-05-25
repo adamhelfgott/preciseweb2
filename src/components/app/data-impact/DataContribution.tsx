@@ -18,12 +18,12 @@ import {
 import { Database, Shield, TrendingUp, Award } from "lucide-react";
 
 const CATEGORY_IMPACT = [
-  { category: "Fitness & Wellness", campaigns: 45, lift: 3.2, revenue: 125000 },
-  { category: "Technology", campaigns: 38, lift: 2.8, revenue: 98000 },
-  { category: "Entertainment", campaigns: 32, lift: 2.5, revenue: 87000 },
-  { category: "Automotive", campaigns: 28, lift: 3.8, revenue: 156000 },
-  { category: "Retail", campaigns: 52, lift: 2.2, revenue: 143000 },
-  { category: "Travel", campaigns: 19, lift: 4.1, revenue: 78000 }
+  { category: "Fitness & Wellness", campaigns: "High", impact: "Very Strong", color: "#22C55E" },
+  { category: "Technology", campaigns: "High", impact: "Strong", color: "#3B82F6" },
+  { category: "Entertainment", campaigns: "Medium", impact: "Strong", color: "#8B5CF6" },
+  { category: "Automotive", campaigns: "Medium", impact: "Very Strong", color: "#F59E0B" },
+  { category: "Retail", campaigns: "Very High", impact: "Moderate", color: "#EC4899" },
+  { category: "Travel", campaigns: "Low", impact: "Exceptional", color: "#10B981" }
 ];
 
 const DATA_TYPES = [
@@ -34,12 +34,12 @@ const DATA_TYPES = [
 ];
 
 const CONTRIBUTION_TIMELINE = [
-  { month: "Jan", dataPoints: 1200000, campaigns: 145, credits: 28000 },
-  { month: "Feb", dataPoints: 1450000, campaigns: 167, credits: 32000 },
-  { month: "Mar", dataPoints: 1680000, campaigns: 189, credits: 35000 },
-  { month: "Apr", dataPoints: 1920000, campaigns: 203, credits: 38000 },
-  { month: "May", dataPoints: 2100000, campaigns: 224, credits: 40000 },
-  { month: "Jun", dataPoints: 2400000, campaigns: 248, credits: 42000 }
+  { month: "Jan", activity: 65, growth: 0 },
+  { month: "Feb", activity: 72, growth: 10.8 },
+  { month: "Mar", activity: 78, growth: 8.3 },
+  { month: "Apr", activity: 84, growth: 7.7 },
+  { month: "May", activity: 91, growth: 8.3 },
+  { month: "Jun", activity: 100, growth: 9.9 }
 ];
 
 export default function DataContribution() {
@@ -71,38 +71,62 @@ export default function DataContribution() {
         </h4>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Bar Chart */}
-          <div>
-            <p className="text-sm text-medium-gray mb-4">Active campaigns using your data</p>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={CATEGORY_IMPACT} layout="horizontal">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                  <XAxis dataKey="campaigns" />
-                  <YAxis dataKey="category" type="category" fontSize={12} width={100} />
-                  <Tooltip />
-                  <Bar dataKey="campaigns" fill="#F97316" radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          {/* Impact Cards */}
-          <div className="grid grid-cols-2 gap-4">
-            {CATEGORY_IMPACT.slice(0, 4).map((category) => (
+          {/* Category Grid */}
+          <div className="grid grid-cols-2 gap-3">
+            {CATEGORY_IMPACT.map((category, index) => (
               <motion.div
                 key={category.category}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-gradient-to-br from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="bg-white border border-light-gray rounded-lg p-4 hover:shadow-md transition-shadow"
               >
-                <p className="text-sm font-medium text-dark-gray mb-2">{category.category}</p>
-                <p className="text-2xl font-bold text-dark-gray mb-1">{category.lift}x</p>
-                <p className="text-xs text-medium-gray">Average lift</p>
-                <p className="text-sm font-medium text-green-600 mt-2">
-                  +${(category.revenue / 1000).toFixed(0)}K revenue impact
-                </p>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: category.color }} />
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    category.campaigns === "Very High" ? "bg-red-100 text-red-700" :
+                    category.campaigns === "High" ? "bg-orange-100 text-orange-700" :
+                    category.campaigns === "Medium" ? "bg-yellow-100 text-yellow-700" :
+                    "bg-green-100 text-green-700"
+                  }`}>
+                    {category.campaigns}
+                  </span>
+                </div>
+                <p className="text-sm font-medium text-dark-gray mb-1">{category.category}</p>
+                <p className="text-xs text-medium-gray">Campaign Activity</p>
               </motion.div>
+            ))}
+          </div>
+
+          {/* Impact Meters */}
+          <div className="space-y-4">
+            <h5 className="text-sm font-medium text-dark-gray mb-2">Performance Impact</h5>
+            {CATEGORY_IMPACT.map((category) => (
+              <div key={category.category} className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-medium-gray">{category.category}</span>
+                  <span className={`text-xs font-medium ${
+                    category.impact === "Exceptional" ? "text-green-600" :
+                    category.impact === "Very Strong" ? "text-blue-600" :
+                    category.impact === "Strong" ? "text-indigo-600" :
+                    "text-gray-600"
+                  }`}>
+                    {category.impact}
+                  </span>
+                </div>
+                <div className="w-full bg-light-gray rounded-full h-2">
+                  <div 
+                    className="h-2 rounded-full transition-all duration-500"
+                    style={{ 
+                      backgroundColor: category.color,
+                      width: category.impact === "Exceptional" ? "95%" :
+                             category.impact === "Very Strong" ? "85%" :
+                             category.impact === "Strong" ? "70%" :
+                             "55%"
+                    }}
+                  />
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -147,33 +171,34 @@ export default function DataContribution() {
 
         {/* Contribution Growth */}
         <div className="bg-white rounded-xl border border-light-gray p-6">
-          <h4 className="font-semibold text-dark-gray mb-4">Contribution Growth</h4>
+          <h4 className="font-semibold text-dark-gray mb-4">Activity Trend</h4>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={CONTRIBUTION_TIMELINE}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                 <XAxis dataKey="month" fontSize={12} />
-                <YAxis yAxisId="left" fontSize={12} />
-                <YAxis yAxisId="right" orientation="right" fontSize={12} />
-                <Tooltip content={<CustomTooltip />} />
-                <Line 
-                  yAxisId="left"
-                  type="monotone" 
-                  dataKey="campaigns" 
-                  stroke="#F97316" 
-                  strokeWidth={2}
-                  name="Campaigns"
+                <YAxis fontSize={12} domain={[0, 100]} />
+                <Tooltip 
+                  formatter={(value: any, name: string) => {
+                    if (name === "Activity Index") return [`${value}%`, name];
+                    if (name === "Growth Rate") return [`+${value}%`, name];
+                    return [value, name];
+                  }}
                 />
                 <Line 
-                  yAxisId="right"
                   type="monotone" 
-                  dataKey="credits" 
-                  stroke="#10B981" 
-                  strokeWidth={2}
-                  name="Credits earned"
+                  dataKey="activity" 
+                  stroke="#F97316" 
+                  strokeWidth={3}
+                  name="Activity Index"
+                  dot={{ fill: '#F97316', r: 4 }}
                 />
               </LineChart>
             </ResponsiveContainer>
+          </div>
+          <div className="mt-4 flex items-center justify-between text-sm">
+            <span className="text-medium-gray">6-month trend</span>
+            <span className="text-green-600 font-medium">+53.8% overall growth</span>
           </div>
         </div>
       </div>
@@ -190,19 +215,23 @@ export default function DataContribution() {
             <h4 className="text-xl font-semibold mb-2">Your Data Creates Real Value</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
               <div>
-                <p className="text-white/80 text-sm mb-1">Total Revenue Impact</p>
-                <p className="text-3xl font-bold">$687K</p>
-                <p className="text-white/60 text-xs">Across all campaigns</p>
+                <p className="text-white/80 text-sm mb-1">Performance Tier</p>
+                <p className="text-3xl font-bold">Premium</p>
+                <p className="text-white/60 text-xs">Top 15% of partners</p>
               </div>
               <div>
-                <p className="text-white/80 text-sm mb-1">Average Campaign Lift</p>
-                <p className="text-3xl font-bold">3.1x</p>
-                <p className="text-white/60 text-xs">With your data</p>
+                <p className="text-white/80 text-sm mb-1">Impact Rating</p>
+                <div className="flex items-center gap-1 mt-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <div key={star} className="w-6 h-6 bg-white rounded" />
+                  ))}
+                </div>
+                <p className="text-white/60 text-xs mt-1">Exceptional performance</p>
               </div>
               <div>
-                <p className="text-white/80 text-sm mb-1">Partner Brands</p>
-                <p className="text-3xl font-bold">124</p>
-                <p className="text-white/60 text-xs">Using your insights</p>
+                <p className="text-white/80 text-sm mb-1">Partner Status</p>
+                <p className="text-3xl font-bold">Gold</p>
+                <p className="text-white/60 text-xs">Verified contributor</p>
               </div>
             </div>
           </div>
@@ -218,8 +247,8 @@ export default function DataContribution() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-medium-gray">Privacy Budget Used</span>
-                  <span className="text-sm font-medium text-dark-gray">42%</span>
+                  <span className="text-sm text-medium-gray">Privacy Budget</span>
+                  <span className="text-sm font-medium text-green-600">Healthy</span>
                 </div>
                 <div className="w-full bg-green-100 rounded-full h-2">
                   <div className="bg-green-500 h-2 rounded-full" style={{ width: "42%" }} />
@@ -227,8 +256,8 @@ export default function DataContribution() {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-medium-gray">Query Limit</span>
-                  <span className="text-sm font-medium text-dark-gray">156K/500K</span>
+                  <span className="text-sm text-medium-gray">Query Capacity</span>
+                  <span className="text-sm font-medium text-green-600">Optimal</span>
                 </div>
                 <div className="w-full bg-green-100 rounded-full h-2">
                   <div className="bg-green-500 h-2 rounded-full" style={{ width: "31%" }} />

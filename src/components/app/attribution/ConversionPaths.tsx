@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Clock, Users, TrendingUp, Smartphone, Monitor, Tv } from "lucide-react";
+import { ArrowRight, Clock, Users, TrendingUp, Smartphone, Monitor, Tv, MapPin, Phone, ShoppingBag } from "lucide-react";
 
 interface PathNode {
   channel: string;
@@ -59,6 +59,32 @@ const CONVERSION_PATHS: ConversionPath[] = [
     avgValue: 156.30,
     avgDays: 8,
     frequency: 18
+  },
+  {
+    id: "4",
+    paths: [
+      { channel: "Local Radio", device: "Audio", timestamp: "Day 1", contribution: 15, icon: <Phone className="w-4 h-4" /> },
+      { channel: "Google Maps", device: "Mobile", timestamp: "Day 2", contribution: 25, icon: <MapPin className="w-4 h-4" /> },
+      { channel: "Geo-fence Display", device: "Mobile", timestamp: "Day 3", contribution: 20, icon: <MapPin className="w-4 h-4" /> },
+      { channel: "Store Visit", device: "In-Store", timestamp: "Day 3", contribution: 40, icon: <ShoppingBag className="w-4 h-4" /> }
+    ],
+    conversions: 850,
+    avgValue: 68.40,
+    avgDays: 3,
+    frequency: 12
+  },
+  {
+    id: "5",
+    paths: [
+      { channel: "OOH Billboard", device: "Physical", timestamp: "Day 1", contribution: 10, icon: <MapPin className="w-4 h-4" /> },
+      { channel: "Mobile Geo-Push", device: "Mobile", timestamp: "Day 1", contribution: 15, icon: <Smartphone className="w-4 h-4" /> },
+      { channel: "Google My Business", device: "Mobile", timestamp: "Day 2", contribution: 35, icon: <MapPin className="w-4 h-4" /> },
+      { channel: "Footfall Conversion", device: "In-Store", timestamp: "Day 2", contribution: 40, icon: <ShoppingBag className="w-4 h-4" /> }
+    ],
+    conversions: 620,
+    avgValue: 45.20,
+    avgDays: 2,
+    frequency: 8
   }
 ];
 
@@ -76,6 +102,9 @@ export default function ConversionPaths({ campaign, model }: ConversionPathsProp
     if (channel.includes("Email")) return "bg-green-500";
     if (channel.includes("Display") || channel.includes("MadHive")) return "bg-orange-500";
     if (channel.includes("Amazon")) return "bg-yellow-600";
+    if (channel.includes("Store") || channel.includes("Footfall")) return "bg-emerald-600";
+    if (channel.includes("Radio") || channel.includes("Audio")) return "bg-indigo-600";
+    if (channel.includes("Maps") || channel.includes("Geo") || channel.includes("OOH") || channel.includes("Billboard")) return "bg-teal-600";
     return "bg-gray-500";
   };
 
@@ -84,6 +113,9 @@ export default function ConversionPaths({ campaign, model }: ConversionPathsProp
       case "Mobile": return <Smartphone className="w-3 h-3" />;
       case "Desktop": return <Monitor className="w-3 h-3" />;
       case "CTV": return <Tv className="w-3 h-3" />;
+      case "Audio": return <Phone className="w-3 h-3" />;
+      case "Physical": return <MapPin className="w-3 h-3" />;
+      case "In-Store": return <ShoppingBag className="w-3 h-3" />;
       default: return null;
     }
   };
@@ -184,7 +216,7 @@ export default function ConversionPaths({ campaign, model }: ConversionPathsProp
               {/* Attribution Model Note */}
               <div className="mt-4 pt-4 border-t border-light-gray">
                 <p className="text-xs text-medium-gray">
-                  {model === "shapley" && "Shapley value attribution accounts for channel interactions and order-independent contributions"}
+                  {model === "mixed" && "Marketing Mix Model analyzes the impact of marketing investments on business outcomes across all channels"}
                   {model === "data-driven" && "Data-driven attribution uses machine learning to distribute credit based on actual impact"}
                   {model === "last-click" && "Last-click attribution gives 100% credit to the final touchpoint"}
                 </p>
@@ -208,6 +240,8 @@ export default function ConversionPaths({ campaign, model }: ConversionPathsProp
               <p>• YouTube pre-roll consistently appears as an effective awareness driver (18-25% contribution)</p>
               <p>• Mobile-first paths show 23% higher conversion rates than desktop-only</p>
               <p>• Cross-device journeys have 45% higher average order values</p>
+              <p>• Local attribution shows 40% of conversions happen as footfall within 48 hours of mobile exposure</p>
+              <p>• Geo-targeted campaigns drive 3.2x higher in-store visit rates</p>
               <p>• Adding Precise-verified audience data increases path efficiency by 31%</p>
             </div>
           </div>

@@ -22,49 +22,49 @@ const COMPARISON_DATA = [
     channel: "YouTube",
     "Last-Click": 8,
     "Data-Driven": 18,
-    "Shapley Value": 20,
-    difference: 150
+    "Marketing Mix Model": 22,
+    difference: 175
   },
   {
     channel: "Display",
     "Last-Click": 3,
     "Data-Driven": 8,
-    "Shapley Value": 12,
-    difference: 300
+    "Marketing Mix Model": 14,
+    difference: 366
   },
   {
     channel: "TikTok",
     "Last-Click": 5,
     "Data-Driven": 12,
-    "Shapley Value": 15,
-    difference: 200
+    "Marketing Mix Model": 16,
+    difference: 220
   },
   {
     channel: "Google Search",
     "Last-Click": 35,
     "Data-Driven": 28,
-    "Shapley Value": 22,
-    difference: -37
+    "Marketing Mix Model": 20,
+    difference: -43
   },
   {
     channel: "Meta",
     "Last-Click": 25,
     "Data-Driven": 22,
-    "Shapley Value": 18,
-    difference: -28
+    "Marketing Mix Model": 16,
+    difference: -36
   },
   {
     channel: "Email",
     "Last-Click": 15,
     "Data-Driven": 10,
-    "Shapley Value": 8,
-    difference: -47
+    "Marketing Mix Model": 7,
+    difference: -53
   },
   {
     channel: "Direct",
     "Last-Click": 9,
     "Data-Driven": 2,
-    "Shapley Value": 5,
+    "Marketing Mix Model": 5,
     difference: -44
   }
 ];
@@ -87,11 +87,11 @@ const MODEL_DESCRIPTIONS = [
     color: "bg-indigo-500"
   },
   {
-    model: "Shapley Value",
+    model: "Marketing Mix Model",
     icon: <Calculator className="w-5 h-5" />,
-    description: "Game theory approach for fair contribution distribution",
-    pros: ["Mathematically fair", "Order-independent", "Accounts for synergies"],
-    cons: ["Complex calculation", "Requires all permutations", "Computationally intensive"],
+    description: "Statistical analysis of marketing effectiveness and ROI",
+    pros: ["Accounts for external factors", "Measures incrementality", "Cross-channel optimization"],
+    cons: ["Requires historical data", "Time-lagged insights", "Less real-time"],
     color: "bg-orange-500"
   }
 ];
@@ -137,7 +137,7 @@ export default function AttributionModelComparison({ campaign }: AttributionMode
               <Legend />
               <Bar dataKey="Last-Click" fill="#6B7280" />
               <Bar dataKey="Data-Driven" fill="#6366F1" />
-              <Bar dataKey="Shapley Value" fill="#F97316" />
+              <Bar dataKey="Marketing Mix Model" fill="#F97316" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -202,7 +202,7 @@ export default function AttributionModelComparison({ campaign }: AttributionMode
           <div className="bg-white rounded-lg p-4">
             <p className="text-sm text-medium-gray mb-1">Upper-Funnel Shift</p>
             <p className="text-2xl font-bold text-dark-gray">+$42K</p>
-            <p className="text-xs text-green-600">with Shapley vs Last-Click</p>
+            <p className="text-xs text-green-600">with MMM vs Last-Click</p>
           </div>
           <div className="bg-white rounded-lg p-4">
             <p className="text-sm text-medium-gray mb-1">Efficiency Gain</p>

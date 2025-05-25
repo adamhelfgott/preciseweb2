@@ -112,7 +112,7 @@ const caseStudies: CaseStudy[] = [
 
 export default function CaseStudiesPage() {
   return (
-    <div className="pt-16 md:pt-20">
+    <div>
       {/* Hero */}
       <section className="py-16 md:py-24 bg-soft-white">
         <div className="container">
