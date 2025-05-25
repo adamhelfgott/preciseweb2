@@ -138,7 +138,7 @@ export default function PricingPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-medium-gray">Time to Value</span>
-                    <span className="text-sm font-semibold text-brand-green">< 30 days</span>
+                    <span className="text-sm font-semibold text-brand-green">&lt; 30 days</span>
                   </div>
                 </div>
               </div>
