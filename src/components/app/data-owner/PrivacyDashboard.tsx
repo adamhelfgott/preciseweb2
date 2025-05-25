@@ -14,7 +14,6 @@ import {
   Info,
   TrendingUp,
 } from "lucide-react";
-import { Tooltip } from "@/components/ui/Tooltip";
 
 interface PrivacyMetric {
   metric: string;

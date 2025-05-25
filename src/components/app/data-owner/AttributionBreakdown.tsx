@@ -12,7 +12,6 @@ import {
   Sparkles,
   Target,
 } from "lucide-react";
-import { Tooltip } from "@/components/ui/Tooltip";
 
 interface ShapleyAttribution {
   id: string;
