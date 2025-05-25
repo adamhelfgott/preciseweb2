@@ -451,7 +451,7 @@ precise.createCredentials({
                           </div>
                           <div>
                             <span className="text-medium-gray">LTV:</span>
-                            <span className="ml-2 font-medium text-dark-gray">> $500</span>
+                            <span className="ml-2 font-medium text-dark-gray">&gt; $500</span>
                           </div>
                         </div>
                       </div>
