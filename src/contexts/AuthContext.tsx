@@ -55,11 +55,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const savedUser = localStorage.getItem("precise_user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
-    } else {
-      // AUTO-LOGIN: Automatically sign in as media buyer for demo
-      const defaultUser = MOCK_USERS["mediabuyer@demo.com"];
-      setUser(defaultUser);
-      localStorage.setItem("precise_user", JSON.stringify(defaultUser));
     }
     setIsLoading(false);
   }, []);

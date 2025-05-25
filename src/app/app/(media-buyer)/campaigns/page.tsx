@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, DollarSign, Target, Activity, Plus, ChevronRight, Brain, Layers } from "lucide-react";
+import { TrendingUp, DollarSign, Target, Activity, Plus, ChevronRight, Brain, Layers, LayoutGrid, BarChart3 } from "lucide-react";
 import { 
   LineChart, 
   Line, 
@@ -16,6 +16,10 @@ import {
 import CreativeCarousel from "@/components/app/campaigns/CreativeCarousel";
 import DSPArbitrage from "@/components/app/campaigns/DSPArbitrage";
 import MultiTouchAttribution from "@/components/app/campaigns/MultiTouchAttribution";
+import AIAssistant from "@/components/app/campaigns/AIAssistant";
+import CampaignHealthMonitor from "@/components/app/campaigns/CampaignHealthMonitor";
+import BudgetPacing from "@/components/app/campaigns/BudgetPacing";
+import AudienceInsights from "@/components/app/campaigns/AudienceInsights";
 
 // Mock campaign data
 const mockCampaigns = [
@@ -65,17 +69,22 @@ const mockCampaigns = [
 export default function CampaignsPage() {
   const [selectedCampaign, setSelectedCampaign] = useState(mockCampaigns[0]);
   const [showDetails, setShowDetails] = useState(false);
+  const [activeView, setActiveView] = useState<"overview" | "health" | "budget" | "audience" | "creatives">("overview");
 
   const totalSpend = mockCampaigns.reduce((sum, c) => sum + c.spend, 0);
   const avgROAS = mockCampaigns.reduce((sum, c) => sum + c.roas, 0) / mockCampaigns.length;
   const avgCAC = mockCampaigns.reduce((sum, c) => sum + c.currentCAC, 0) / mockCampaigns.length;
 
   return (
-    <div className="space-y-6">
+    <div className="relative">
+      {/* AI Assistant - Always Visible */}
+      <AIAssistant />
+      
+      <div className="space-y-6 lg:pr-[420px]">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-dark-gray mb-2">Campaign Command Center</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-dark-gray mb-2">Ad Ops Command Center</h1>
           <p className="text-sm sm:text-base text-medium-gray">
             AI-powered campaign optimization with Precise data infrastructure
           </p>
@@ -86,37 +95,99 @@ export default function CampaignsPage() {
         </button>
       </div>
 
-      {/* Value Proposition Banner */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-black to-gray-800 text-white rounded-xl p-6"
-      >
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-white/10 rounded-lg">
-              <Brain className="w-6 h-6" />
+      {/* View Tabs */}
+      <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide">
+        <button
+          onClick={() => setActiveView("overview")}
+          className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
+            activeView === "overview"
+              ? "bg-primary-orange text-white"
+              : "bg-white border border-light-gray text-medium-gray hover:border-primary-orange"
+          }`}
+        >
+          <LayoutGrid className="w-4 h-4 inline mr-2" />
+          Overview
+        </button>
+        <button
+          onClick={() => setActiveView("health")}
+          className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
+            activeView === "health"
+              ? "bg-primary-orange text-white"
+              : "bg-white border border-light-gray text-medium-gray hover:border-primary-orange"
+          }`}
+        >
+          <Activity className="w-4 h-4 inline mr-2" />
+          Health Monitor
+        </button>
+        <button
+          onClick={() => setActiveView("budget")}
+          className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
+            activeView === "budget"
+              ? "bg-primary-orange text-white"
+              : "bg-white border border-light-gray text-medium-gray hover:border-primary-orange"
+          }`}
+        >
+          <DollarSign className="w-4 h-4 inline mr-2" />
+          Budget Pacing
+        </button>
+        <button
+          onClick={() => setActiveView("audience")}
+          className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
+            activeView === "audience"
+              ? "bg-primary-orange text-white"
+              : "bg-white border border-light-gray text-medium-gray hover:border-primary-orange"
+          }`}
+        >
+          <Target className="w-4 h-4 inline mr-2" />
+          Audiences
+        </button>
+        <button
+          onClick={() => setActiveView("creatives")}
+          className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
+            activeView === "creatives"
+              ? "bg-primary-orange text-white"
+              : "bg-white border border-light-gray text-medium-gray hover:border-primary-orange"
+          }`}
+        >
+          <BarChart3 className="w-4 h-4 inline mr-2" />
+          Creatives
+        </button>
+      </div>
+
+      {/* View Content */}
+      {activeView === "overview" && (
+        <>
+          {/* Value Proposition Banner */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-r from-black to-gray-800 text-white rounded-xl p-6"
+          >
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-white/10 rounded-lg">
+                  <Brain className="w-6 h-6" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold mb-1">Precise AdOps Intelligence</h2>
+                  <p className="text-sm text-gray-300">
+                    Real-time attribution • DSP arbitrage • Creative fatigue detection • 
+                    Privacy-preserving data collaboration
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-6">
+                <div className="text-center">
+                  <p className="text-2xl font-bold">45%</p>
+                  <p className="text-xs text-gray-300">Avg CAC reduction</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold">3.2x</p>
+                  <p className="text-xs text-gray-300">Better ROAS</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <h2 className="text-lg font-semibold mb-1">Precise AdOps Intelligence</h2>
-              <p className="text-sm text-gray-300">
-                Real-time attribution • DSP arbitrage • Creative fatigue detection • 
-                Privacy-preserving data collaboration
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-6">
-            <div className="text-center">
-              <p className="text-2xl font-bold">45%</p>
-              <p className="text-xs text-gray-300">Avg CAC reduction</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold">3.2x</p>
-              <p className="text-xs text-gray-300">Better ROAS</p>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+          </motion.div>
 
       {/* Portfolio Metrics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -317,6 +388,29 @@ export default function CampaignsPage() {
             )}
           </motion.div>
         ))}
+      </div>
+        </>
+      )}
+
+      {/* Health Monitor View */}
+      {activeView === "health" && <CampaignHealthMonitor />}
+
+      {/* Budget Pacing View */}
+      {activeView === "budget" && <BudgetPacing />}
+
+      {/* Audience Insights View */}
+      {activeView === "audience" && <AudienceInsights />}
+
+      {/* Creatives View */}
+      {activeView === "creatives" && (
+        <div className="space-y-6">
+          <CreativeCarousel />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <DSPArbitrage />
+            <MultiTouchAttribution />
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );
