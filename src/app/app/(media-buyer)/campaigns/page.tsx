@@ -24,6 +24,7 @@ import CreativeFatigueAlert from "@/components/app/campaigns/CreativeFatigueAler
 import PredictiveCACForecasting from "@/components/app/campaigns/PredictiveCACForecasting";
 import CustomAttributionWindows from "@/components/app/campaigns/CustomAttributionWindows";
 import IncrementalityTesting from "@/components/app/campaigns/IncrementalityTesting";
+import CompetitiveIntelligence from "@/components/app/campaigns/CompetitiveIntelligence";
 
 // Mock campaign data
 const mockCampaigns = [
@@ -279,6 +280,9 @@ export default function CampaignsPage() {
         <CustomAttributionWindows />
         <IncrementalityTesting />
       </div>
+
+      {/* Competitive Intelligence */}
+      <CompetitiveIntelligence />
 
       {/* Campaigns Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
