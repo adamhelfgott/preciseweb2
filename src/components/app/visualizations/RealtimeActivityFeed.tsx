@@ -93,8 +93,8 @@ export default function RealtimeActivityFeed({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="bg-white rounded-xl border border-gray-200 p-6 h-[600px] flex flex-col">
+      <div className="flex items-center justify-between mb-6 flex-shrink-0">
         <div>
           <h3 className="text-lg font-semibold text-gray-900">Live Activity</h3>
           <p className="text-sm text-gray-600 mt-1">Real-time campaign events</p>
@@ -114,27 +114,27 @@ export default function RealtimeActivityFeed({
       </div>
 
       {showStats && (
-        <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-4 gap-4 mb-6 flex-shrink-0">
           <div className="text-center">
-            <div className="text-2xl font-semibold text-gray-900">
+            <div className="text-2xl font-semibold text-gray-900 min-h-[2rem] flex items-center justify-center">
               {stats.totalImpressions.toLocaleString()}
             </div>
             <div className="text-xs text-gray-500">Impressions</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-semibold text-gray-900">
+            <div className="text-2xl font-semibold text-gray-900 min-h-[2rem] flex items-center justify-center">
               {stats.totalClicks.toLocaleString()}
             </div>
             <div className="text-xs text-gray-500">Clicks</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-semibold text-gray-900">
+            <div className="text-2xl font-semibold text-gray-900 min-h-[2rem] flex items-center justify-center">
               {stats.totalConversions.toLocaleString()}
             </div>
             <div className="text-xs text-gray-500">Conversions</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-semibold text-gray-900">
+            <div className="text-2xl font-semibold text-gray-900 min-h-[2rem] flex items-center justify-center">
               ${stats.totalRevenue.toFixed(2)}
             </div>
             <div className="text-xs text-gray-500">Revenue</div>
@@ -142,7 +142,8 @@ export default function RealtimeActivityFeed({
         </div>
       )}
 
-      <div className="space-y-2 max-h-96 overflow-y-auto">
+      <div className="flex-1 overflow-hidden">
+        <div className="space-y-2 h-full overflow-y-auto">
         <AnimatePresence mode="popLayout">
           {events.slice(0, maxEvents).map((event) => (
             <motion.div
@@ -189,14 +190,17 @@ export default function RealtimeActivityFeed({
             </motion.div>
           ))}
         </AnimatePresence>
-      </div>
 
-      {events.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          <Activity className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-          <p className="text-sm">Waiting for activity...</p>
+        {events.length === 0 && (
+          <div className="flex items-center justify-center h-full text-gray-500">
+            <div className="text-center">
+              <Activity className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+              <p className="text-sm">Waiting for activity...</p>
+            </div>
+          </div>
+        )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
