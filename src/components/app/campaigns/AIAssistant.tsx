@@ -183,7 +183,7 @@ export default function AIAssistant() {
 
       {/* Desktop Panel - Always Visible on Large Screens */}
       <div className={`hidden lg:block fixed right-0 top-0 ${isMinimized ? 'h-auto' : 'h-full'} w-[400px] bg-white shadow-2xl z-40 transition-all duration-300`}>
-        <div className={`${isMinimized ? '' : 'h-full'} flex flex-col`}>
+        <div className={`flex flex-col ${isMinimized ? '' : 'h-full'}`}>
           {/* Header */}
           <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-4 text-white">
             <div className="flex items-center justify-between">
@@ -205,8 +205,15 @@ export default function AIAssistant() {
             </div>
           </div>
 
-          {!isMinimized && (
-            <>
+          <AnimatePresence>
+            {!isMinimized && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex-1 flex flex-col overflow-hidden"
+              >
               {/* API Key Error */}
               {apiKeyError && (
                 <div className="p-4 bg-yellow-50 border-b border-yellow-200">
@@ -259,18 +266,39 @@ export default function AIAssistant() {
                     animate={{ y: 0, opacity: 1 }}
                     className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div className={`max-w-[80%] p-3 rounded-lg ${
+                    <div className={`max-w-[80%] ${
                       message.role === 'user' 
-                        ? 'bg-primary-orange text-white' 
-                        : 'bg-light-gray text-dark-gray'
+                        ? 'bg-primary-orange text-white p-3 rounded-lg' 
+                        : ''
                     }`}>
                       {message.role === 'user' ? (
                         <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                       ) : (
-                        <div className="text-sm prose prose-sm max-w-none prose-gray">
-                          <ReactMarkdown>
-                            {message.content}
-                          </ReactMarkdown>
+                        <div>
+                          <div className="bg-light-gray text-dark-gray p-3 rounded-lg">
+                            <div className="text-sm prose prose-sm max-w-none prose-gray">
+                              <ReactMarkdown>
+                                {message.content}
+                              </ReactMarkdown>
+                            </div>
+                          </div>
+                          {/* More Detail Button */}
+                          {!message.content.includes("For more details") && message.content.length < 500 && (
+                            <button
+                              onClick={() => {
+                                const detailPrompt = `Please provide more detailed information about: "${message.content.substring(0, 100)}..."`;
+                                handleInputChange({ target: { value: detailPrompt } } as any);
+                                setTimeout(() => {
+                                  const form = document.querySelector('form');
+                                  form?.requestSubmit();
+                                }, 100);
+                              }}
+                              className="mt-2 text-xs text-primary-orange hover:text-vibrant-orange flex items-center gap-1"
+                            >
+                              <Sparkles className="w-3 h-3" />
+                              More details
+                            </button>
+                          )}
                         </div>
                       )}
                     </div>
@@ -300,11 +328,9 @@ export default function AIAssistant() {
                   ))}
                 </div>
               </div>
-            </>
-          )}
 
-          {/* Input */}
-          <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
+              {/* Input */}
+              <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -323,6 +349,9 @@ export default function AIAssistant() {
               </button>
             </div>
           </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
