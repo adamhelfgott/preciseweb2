@@ -7,7 +7,7 @@ import ValenceShapleyVisualization from "@/components/app/data-owner/ValenceShap
 import DataContributionTimeline from "@/components/app/data-owner/DataContributionTimeline";
 
 export default function DataOwnerAttributionPage() {
-  const { data } = useRealtimeSimulation("data-owner");
+  const simulation = useRealtimeSimulation("data-owner");
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
