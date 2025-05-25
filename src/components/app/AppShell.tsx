@@ -34,7 +34,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     { name: "Attribution", href: "/app/attribution", icon: TrendingUp },
   ] : [
     { name: "Campaigns", href: "/app/campaigns", icon: TrendingUp },
-    { name: "Attribution", href: "/app/attribution", icon: GitBranch },
+    { name: "Attribution", href: "/app/attribution-analysis", icon: GitBranch },
     { name: "Data Impact", href: "/app/data-impact", icon: Layers },
     { name: "Marketplace", href: "/app/marketplace", icon: Store },
     { name: "Optimization", href: "/app/optimization", icon: ShoppingBag },

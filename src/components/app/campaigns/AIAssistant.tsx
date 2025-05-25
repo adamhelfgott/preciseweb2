@@ -6,10 +6,9 @@ import { Bot, Send, X, Sparkles, TrendingUp, AlertTriangle, DollarSign, Loader2,
 import { useChat } from "ai/react";
 import { useAuth } from "@/contexts/AuthContext";
 import ReactMarkdown from "react-markdown";
-// TODO: Add Convex persistence when ready
-// import { useMutation, useQuery } from "convex/react";
-// import { api } from "@/convex/_generated/api";
-// import { Id } from "@/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface ProactiveInsight {
   id: string;
@@ -68,14 +67,14 @@ export default function AIAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
+  const [chatLoaded, setChatLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   
-  // TODO: Convex hooks for chat persistence
-  // const saveMessage = useMutation(api.chat.saveMessage);
-  // const chatHistory = useQuery(api.chat.getChatHistory, 
-  //   user?.id ? { userId: user.id as Id<"users"> } : "skip"
-  // );
+  const saveMessage = useMutation(api.chat.saveMessage);
+  const chatHistory = useQuery(api.chat.getChatHistory, 
+    user?.id ? { userId: user.id as Id<"users"> } : "skip"
+  );
 
   // Context for the AI based on current dashboard data
   const context = {
@@ -87,29 +86,64 @@ export default function AIAssistant() {
     monthlyEarnings: user?.role === "DATA_OWNER" ? "$42K" : undefined,
   };
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
+  const initialMessages = chatHistory && chatHistory.length > 0 && chatLoaded
+    ? chatHistory.map((msg, index) => ({
+        id: msg._id || `${index}`,
+        role: msg.role as "user" | "assistant" | "system",
+        content: msg.content,
+      }))
+    : [
+        {
+          id: "1",
+          role: "assistant" as const,
+          content: user?.role === "DATA_OWNER" 
+            ? "How can I help with your data assets?"
+            : "How can I help optimize your campaigns?"
+        }
+      ];
+
+  const { messages, input, handleInputChange, handleSubmit: originalHandleSubmit, isLoading, error } = useChat({
     api: "/api/ai",
     body: { context },
-    initialMessages: [
-      {
-        id: "1",
-        role: "assistant",
-        content: user?.role === "DATA_OWNER" 
-          ? "How can I help with your data assets?"
-          : "How can I help optimize your campaigns?"
-      }
-    ],
+    initialMessages: chatLoaded ? initialMessages : undefined,
     onError: (error) => {
       console.error("Chat error:", error);
       if (error.message.includes("API key")) {
         setApiKeyError("OpenAI API key not configured. Add OPENAI_API_KEY to your environment variables.");
       }
+    },
+    onFinish: async (message) => {
+      if (user?.id) {
+        await saveMessage({
+          userId: user.id as Id<"users">,
+          role: "assistant",
+          content: message.content,
+        });
+      }
     }
   });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim() && user?.id) {
+      await saveMessage({
+        userId: user.id as Id<"users">,
+        role: "user",
+        content: input,
+      });
+    }
+    originalHandleSubmit(e);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    if (chatHistory !== undefined && !chatLoaded) {
+      setChatLoaded(true);
+    }
+  }, [chatHistory, chatLoaded]);
 
   useEffect(() => {
     scrollToBottom();
