@@ -57,6 +57,7 @@ const PROACTIVE_INSIGHTS: ProactiveInsight[] = [
 
 export default function AIAssistant() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showInsights, setShowInsights] = useState(false);
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
   const [chatLoaded, setChatLoaded] = useState(false);
   const [dismissedInsights, setDismissedInsights] = useState<Set<string>>(new Set());
@@ -323,12 +324,12 @@ export default function AIAssistant() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed bottom-6 right-6 w-full max-w-[400px] h-[600px] bg-white rounded-lg shadow-2xl z-50 flex flex-col overflow-hidden
+              className="fixed bottom-6 right-6 w-full max-w-[380px] h-[500px] bg-white rounded-lg shadow-2xl z-50 flex flex-col overflow-hidden
                          lg:bottom-6 lg:right-6
                          bottom-0 right-0 left-0 max-lg:h-full max-lg:max-w-none max-lg:rounded-none"
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-4 text-white flex-shrink-0">
+              <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-3 text-white flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="bg-white/20 p-2 rounded-lg">
@@ -369,60 +370,71 @@ export default function AIAssistant() {
                 </div>
               )}
 
-              {/* Proactive Insights */}
+              {/* Proactive Insights Notification */}
               {visibleInsights.length > 0 && (
-                <div className="p-4 border-b bg-light-gray/50 flex-shrink-0">
-                  <h4 className="text-sm font-semibold text-medium-gray mb-3">Proactive Insights</h4>
-                  <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2">
-                    <AnimatePresence>
-                      {visibleInsights.map((insight) => (
-                        <motion.div
-                          key={insight.id}
-                          initial={{ scale: 0.95, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          exit={{ scale: 0.95, opacity: 0 }}
-                          className="bg-white p-3 rounded-lg border border-light-gray hover:border-primary-orange transition-colors cursor-pointer group"
-                          onClick={() => handleInsightClick(insight)}
-                        >
-                          <div className="flex items-start gap-2 relative">
-                            <div className={`p-1 rounded flex-shrink-0 ${
-                              insight.type === 'performance' ? 'bg-green-100 text-green-600' :
-                              insight.type === 'creative' ? 'bg-purple-100 text-purple-600' :
-                              insight.type === 'budget' ? 'bg-blue-100 text-blue-600' :
-                              'bg-orange-100 text-orange-600'
-                            }`}>
-                              {getInsightIcon(insight.type)}
+                <div className="px-4 py-2 bg-primary-orange/10 border-b flex-shrink-0">
+                  <button
+                    onClick={() => setShowInsights(!showInsights)}
+                    className="w-full flex items-center justify-between text-left"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-primary-orange" />
+                      <span className="text-xs font-medium text-dark-gray">
+                        {visibleInsights.length} proactive insights available
+                      </span>
+                    </div>
+                    <ChevronRight className={`w-4 h-4 text-medium-gray transition-transform ${
+                      showInsights ? 'rotate-90' : ''
+                    }`} />
+                  </button>
+                  
+                  <AnimatePresence>
+                    {showInsights && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="mt-2 space-y-1 overflow-hidden"
+                      >
+                        {visibleInsights.map((insight) => (
+                          <button
+                            key={insight.id}
+                            onClick={() => {
+                              handleInsightClick(insight);
+                              setShowInsights(false);
+                            }}
+                            className="w-full text-left p-2 bg-white rounded border border-light-gray hover:border-primary-orange transition-colors group"
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className={`p-1 rounded ${
+                                insight.type === 'performance' ? 'bg-green-100 text-green-600' :
+                                insight.type === 'creative' ? 'bg-purple-100 text-purple-600' :
+                                insight.type === 'budget' ? 'bg-blue-100 text-blue-600' :
+                                'bg-orange-100 text-orange-600'
+                              }`}>
+                                {getInsightIcon(insight.type)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h5 className="text-xs font-medium text-dark-gray truncate">{insight.title}</h5>
+                                {insight.impact && (
+                                  <p className="text-xs text-primary-orange">{insight.impact}</p>
+                                )}
+                              </div>
+                              <X 
+                                onClick={(e) => dismissInsight(insight.id, e)}
+                                className="w-3 h-3 text-medium-gray opacity-0 group-hover:opacity-100 flex-shrink-0" 
+                              />
                             </div>
-                            <div className="flex-1 pr-8">
-                              <h5 className="font-medium text-sm text-dark-gray">{insight.title}</h5>
-                              <p className="text-xs text-medium-gray mt-1">{insight.description}</p>
-                              {insight.impact && (
-                                <p className="text-xs font-medium text-primary-orange mt-2">{insight.impact}</p>
-                              )}
-                              {insight.action && (
-                                <button className="text-xs font-medium text-primary-orange hover:text-vibrant-orange mt-2 flex items-center gap-1">
-                                  {insight.action}
-                                  <ChevronRight className="w-3 h-3" />
-                                </button>
-                              )}
-                            </div>
-                            <button
-                              onClick={(e) => dismissInsight(insight.id, e)}
-                              className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
-                              aria-label="Dismiss insight"
-                            >
-                              <X className="w-4 h-4 text-medium-gray hover:text-dark-gray" />
-                            </button>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               )}
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div className="flex-1 overflow-y-auto p-3 space-y-3">
                 {messages.map((message) => (
                   <motion.div
                     key={message.id}
@@ -478,14 +490,14 @@ export default function AIAssistant() {
                 <div ref={messagesEndRef} />
               </div>
 
-              {/* Suggested Questions */}
-              <div className="p-3 border-t bg-light-gray/30 flex-shrink-0">
-                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                  {getSuggestedQuestions(context.currentPage.page).map((question, index) => (
+              {/* Suggested Questions - More Compact */}
+              <div className="p-2 border-t bg-light-gray/30 flex-shrink-0">
+                <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+                  {getSuggestedQuestions(context.currentPage.page).slice(0, 3).map((question, index) => (
                     <button
                       key={index}
                       onClick={() => handleQuestionClick(question)}
-                      className="text-xs bg-white border border-light-gray rounded-full px-3 py-1.5 whitespace-nowrap hover:border-primary-orange hover:text-primary-orange transition-colors"
+                      className="text-xs bg-white border border-light-gray rounded-full px-2 py-1 whitespace-nowrap hover:border-primary-orange hover:text-primary-orange transition-colors"
                     >
                       {question}
                     </button>
@@ -494,7 +506,7 @@ export default function AIAssistant() {
               </div>
 
               {/* Input */}
-              <form onSubmit={handleSubmit} className="p-4 border-t bg-white flex-shrink-0">
+              <form onSubmit={handleSubmit} className="p-3 border-t bg-white flex-shrink-0">
                 <div className="flex gap-2">
                   <input
                     type="text"
