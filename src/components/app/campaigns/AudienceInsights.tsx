@@ -239,8 +239,6 @@ export default function AudienceInsights() {
               <Treemap
                 data={TREEMAP_DATA}
                 dataKey="size"
-                stroke="#fff"
-                strokeWidth={2}
                 content={<CustomTooltip />}
               />
             </ResponsiveContainer>
