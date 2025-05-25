@@ -2,14 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, Send, X, Sparkles, TrendingUp, AlertTriangle, DollarSign } from "lucide-react";
-
-interface Message {
-  id: string;
-  type: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-}
+import { Bot, Send, X, Sparkles, TrendingUp, AlertTriangle, DollarSign, Loader2 } from "lucide-react";
+import { useChat } from "ai/react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ProactiveInsight {
   id: string;
@@ -64,29 +59,41 @@ const SUGGESTED_QUESTIONS = [
   "How can I improve the Tesla campaign?"
 ];
 
-const MOCK_RESPONSES: Record<string, string> = {
-  "default": "I'm analyzing your campaigns across all platforms. Based on current performance, I've identified several optimization opportunities that could improve your overall ROAS by 23%.",
-  "best performing": "Your Nike 'Just Do It 2025' campaign is currently your top performer with a 3.8% CTR and $2.40 CPA. It's leveraging Precise's verified athlete data, which is driving 47% higher engagement than your baseline.",
-  "nike ctr": "The Nike campaign's high CTR (3.8%) is driven by three factors: 1) Precise's verified athlete interest data ensures we're reaching genuine sports enthusiasts, 2) Creative messaging aligns perfectly with this audience, and 3) Our multi-touch attribution shows strong upper-funnel impact from YouTube pre-roll.",
-  "creative performance": "Across your 5 active campaigns, I'm tracking 23 creatives. Top performers: Nike video (3.8% CTR), Disney+ carousel (2.9% CTR). Underperformers: Tesla static image (0.9% CTR) - showing fatigue after 2.1M impressions. I recommend refreshing the Tesla creative with dynamic elements.",
-  "budget utilization": "Current budget utilization: 72% ($143K of $198K). Nike is pacing 15% ahead (good problem!), while Tesla is 23% behind. I recommend reallocating $5K from Tesla to Nike to maximize performance. This would increase projected ROAS from 3.2x to 3.6x.",
-  "converting audiences": "Top converting audiences: 1) Verified Tech Professionals (5.2% CVR), 2) Fitness Enthusiasts 25-34 (4.8% CVR), 3) Premium Streaming Subscribers (4.1% CVR). All these segments are powered by Precise's verified credential system, ensuring data quality.",
-  "improve tesla": "To improve the Tesla campaign: 1) Refresh creative - current static image has fatigue, 2) Expand to 'Verified EV Intenders' audience segment (+40K reach), 3) Implement sequential messaging strategy, 4) Increase bids on high-performing placements. Expected improvement: +35% CTR, -20% CPA."
-};
-
 export default function AIAssistant() {
   const [isOpen, setIsOpen] = useState(true);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      type: "assistant",
-      content: "Hi! I'm your AI Campaign Assistant. I'm monitoring all your campaigns in real-time. I've already identified 4 optimization opportunities that could improve your ROAS by 23%. What would you like to know?",
-      timestamp: new Date()
-    }
-  ]);
-  const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+  const [apiKeyError, setApiKeyError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
+
+  // Context for the AI based on current dashboard data
+  const context = {
+    userRole: user?.role || "MEDIA_BUYER",
+    totalCampaigns: 5,
+    avgROAS: 4.2,
+    topCampaign: "Nike - Just Do It 2025",
+    activeCampaigns: user?.role === "DATA_OWNER" ? 248 : 5,
+    monthlyEarnings: user?.role === "DATA_OWNER" ? "$42K" : undefined,
+  };
+
+  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
+    api: "/api/ai",
+    body: { context },
+    initialMessages: [
+      {
+        id: "1",
+        role: "assistant",
+        content: user?.role === "DATA_OWNER" 
+          ? "Hi! I'm your AI assistant monitoring your data assets. I see your data is currently powering 248 campaigns and earning $42K this month. How can I help you optimize your data monetization?"
+          : "Hi! I'm your AI Campaign Assistant. I'm monitoring all your campaigns in real-time. I've already identified 4 optimization opportunities that could improve your ROAS by 23%. What would you like to know?"
+      }
+    ],
+    onError: (error) => {
+      console.error("Chat error:", error);
+      if (error.message.includes("API key")) {
+        setApiKeyError("OpenAI API key not configured. Add OPENAI_API_KEY to your environment variables.");
+      }
+    }
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -96,55 +103,11 @@ export default function AIAssistant() {
     scrollToBottom();
   }, [messages]);
 
-  const getResponse = (userInput: string): string => {
-    const lowercaseInput = userInput.toLowerCase();
-    
-    if (lowercaseInput.includes("best performing") || lowercaseInput.includes("top campaign")) {
-      return MOCK_RESPONSES["best performing"];
-    } else if (lowercaseInput.includes("nike") && lowercaseInput.includes("ctr")) {
-      return MOCK_RESPONSES["nike ctr"];
-    } else if (lowercaseInput.includes("creative")) {
-      return MOCK_RESPONSES["creative performance"];
-    } else if (lowercaseInput.includes("budget")) {
-      return MOCK_RESPONSES["budget utilization"];
-    } else if (lowercaseInput.includes("audience") || lowercaseInput.includes("converting")) {
-      return MOCK_RESPONSES["converting audiences"];
-    } else if (lowercaseInput.includes("tesla") || lowercaseInput.includes("improve")) {
-      return MOCK_RESPONSES["improve tesla"];
-    }
-    
-    return MOCK_RESPONSES["default"];
-  };
-
-  const handleSend = () => {
-    if (!input.trim()) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      type: "user",
-      content: input,
-      timestamp: new Date()
-    };
-
-    setMessages([...messages, userMessage]);
-    setInput("");
-    setIsTyping(true);
-
-    setTimeout(() => {
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        type: "assistant",
-        content: getResponse(input),
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, assistantMessage]);
-      setIsTyping(false);
-    }, 1500);
-  };
-
   const handleQuestionClick = (question: string) => {
-    setInput(question);
-    handleSend();
+    handleInputChange({ target: { value: question } } as any);
+    setTimeout(() => {
+      handleSubmit(new Event('submit') as any);
+    }, 100);
   };
 
   const getInsightIcon = (type: string) => {
@@ -199,6 +162,16 @@ export default function AIAssistant() {
               </div>
             </div>
 
+            {/* API Key Error */}
+            {apiKeyError && (
+              <div className="p-4 bg-yellow-50 border-b border-yellow-200">
+                <p className="text-sm text-yellow-800">{apiKeyError}</p>
+                <p className="text-xs text-yellow-600 mt-1">
+                  For demo purposes, the assistant will use contextual mock responses.
+                </p>
+              </div>
+            )}
+
             {/* Proactive Insights */}
             <div className="p-4 border-b bg-light-gray/50">
               <h4 className="text-sm font-semibold text-medium-gray mb-3">Proactive Insights</h4>
@@ -239,10 +212,10 @@ export default function AIAssistant() {
                   key={message.id}
                   initial={{ y: 10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className={`max-w-[80%] p-3 rounded-lg ${
-                    message.type === 'user' 
+                    message.role === 'user' 
                       ? 'bg-primary-orange text-white' 
                       : 'bg-light-gray text-dark-gray'
                   }`}>
@@ -250,26 +223,10 @@ export default function AIAssistant() {
                   </div>
                 </motion.div>
               ))}
-              {isTyping && (
+              {isLoading && (
                 <div className="flex justify-start">
                   <div className="bg-light-gray p-3 rounded-lg">
-                    <div className="flex gap-1">
-                      <motion.div
-                        animate={{ y: [0, -5, 0] }}
-                        transition={{ repeat: Infinity, duration: 0.6, delay: 0 }}
-                        className="w-2 h-2 bg-medium-gray rounded-full"
-                      />
-                      <motion.div
-                        animate={{ y: [0, -5, 0] }}
-                        transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }}
-                        className="w-2 h-2 bg-medium-gray rounded-full"
-                      />
-                      <motion.div
-                        animate={{ y: [0, -5, 0] }}
-                        transition={{ repeat: Infinity, duration: 0.6, delay: 0.4 }}
-                        className="w-2 h-2 bg-medium-gray rounded-full"
-                      />
-                    </div>
+                    <Loader2 className="w-4 h-4 animate-spin text-medium-gray" />
                   </div>
                 </div>
               )}
@@ -292,25 +249,25 @@ export default function AIAssistant() {
             </div>
 
             {/* Input */}
-            <div className="p-4 border-t bg-white">
+            <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                  onChange={handleInputChange}
                   placeholder="Ask about your campaigns..."
                   className="flex-1 px-4 py-2 border border-light-gray rounded-lg focus:outline-none focus:border-primary-orange text-sm"
+                  disabled={isLoading}
                 />
                 <button
-                  onClick={handleSend}
-                  disabled={!input.trim()}
+                  type="submit"
+                  disabled={!input.trim() || isLoading}
                   className="bg-primary-orange text-white p-2 rounded-lg hover:bg-vibrant-orange transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <Send className="w-5 h-5" />
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                 </button>
               </div>
-            </div>
+            </form>
           </motion.div>
         )}
       </AnimatePresence>
