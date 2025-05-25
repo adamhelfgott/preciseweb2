@@ -255,17 +255,13 @@ export default function LiftAnalysis() {
             <p className="text-sm text-medium-gray">Baseline</p>
             <p className="text-lg font-bold text-dark-gray">Standard</p>
           </div>
-          <div className="text-center
-            <p className="text-sm text-medium-gray">+Fitness</p>
-            <p className="text-lg font-bold text-green-600">3.9x</p>
+          <div className="text-center p-3 bg-green-50 rounded-lg">
+            <p className="text-sm text-medium-gray">Single Cohort</p>
+            <p className="text-lg font-bold text-green-600">+77% avg</p>
           </div>
-          <div className="text-center">
-            <p className="text-sm text-medium-gray">+Auto</p>
-            <p className="text-lg font-bold text-indigo-600">4.5x</p>
-          </div>
-          <div className="text-center">
-            <p className="text-sm text-medium-gray">+Both</p>
-            <p className="text-lg font-bold text-primary-orange">5.6x</p>
+          <div className="text-center p-3 bg-orange-50 rounded-lg">
+            <p className="text-sm text-medium-gray">Multi-Cohort</p>
+            <p className="text-lg font-bold text-primary-orange">+155% avg</p>
           </div>
         </div>
       </div>
