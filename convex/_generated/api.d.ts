@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as auth from "../auth.js";
 import type * as campaigns from "../campaigns.js";
+import type * as chat from "../chat.js";
 import type * as dataAssets from "../dataAssets.js";
 import type * as earnings from "../earnings.js";
 import type * as marketplace from "../marketplace.js";
@@ -32,6 +33,7 @@ import type * as simulations from "../simulations.js";
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   campaigns: typeof campaigns;
+  chat: typeof chat;
   dataAssets: typeof dataAssets;
   earnings: typeof earnings;
   marketplace: typeof marketplace;
