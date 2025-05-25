@@ -54,7 +54,7 @@ const caseStudies: CaseStudy[] = [
       author: "Colin Faulkner",
       title: "VP of Sales & Marketing, Chicago Cubs"
     },
-    image: "/case-studies/chicago-cubs.jpg"
+    // image: "/case-studies/chicago-cubs.jpg"
   },
   {
     id: "global-retailer",
@@ -80,7 +80,7 @@ const caseStudies: CaseStudy[] = [
         description: "Data breaches or privacy incidents"
       }
     ],
-    image: "/case-studies/retail.jpg"
+    // image: "/case-studies/retail.jpg"
   },
   {
     id: "streaming-platform",
@@ -106,7 +106,7 @@ const caseStudies: CaseStudy[] = [
         description: "User satisfaction with privacy practices"
       }
     ],
-    image: "/case-studies/streaming.jpg"
+    // image: "/case-studies/streaming.jpg"
   }
 ];
 

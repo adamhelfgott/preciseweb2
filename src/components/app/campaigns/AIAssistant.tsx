@@ -171,7 +171,7 @@ export default function AIAssistant() {
 
   return (
     <>
-      {/* Floating Assistant Button */}
+      {/* Floating Assistant Button - Mobile Only */}
       <motion.button
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
@@ -181,14 +181,159 @@ export default function AIAssistant() {
         {isOpen ? <X className="w-6 h-6" /> : <Bot className="w-6 h-6" />}
       </motion.button>
 
-      {/* Assistant Panel */}
+      {/* Desktop Panel - Always Visible on Large Screens */}
+      <div className="hidden lg:block fixed right-0 top-0 h-full w-[400px] bg-white shadow-2xl z-40">
+        <div className="h-full flex flex-col">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-4 text-white">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-white/20 p-2 rounded-lg">
+                  <Bot className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">AI Assistant</h3>
+                  {!isMinimized && <p className="text-xs opacity-90">Ask questions in natural language</p>}
+                </div>
+              </div>
+              <button
+                onClick={() => setIsMinimized(!isMinimized)}
+                className="text-white/80 hover:text-white p-1"
+              >
+                {isMinimized ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+
+          {!isMinimized && (
+            <>
+              {/* API Key Error */}
+              {apiKeyError && (
+                <div className="p-4 bg-yellow-50 border-b border-yellow-200">
+                  <p className="text-sm text-yellow-800">{apiKeyError}</p>
+                  <p className="text-xs text-yellow-600 mt-1">
+                    For demo purposes, the assistant will use contextual mock responses.
+                  </p>
+                </div>
+              )}
+
+              {/* Proactive Insights */}
+              <div className="p-4 border-b bg-light-gray/50">
+                <h4 className="text-sm font-semibold text-medium-gray mb-3">Proactive Insights</h4>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {PROACTIVE_INSIGHTS.map((insight) => (
+                    <motion.div
+                      key={insight.id}
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="bg-white p-3 rounded-lg border border-light-gray hover:border-primary-orange transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-start gap-2">
+                        <div className={`p-1 rounded ${
+                          insight.type === 'performance' ? 'bg-green-100 text-green-600' :
+                          insight.type === 'creative' ? 'bg-purple-100 text-purple-600' :
+                          insight.type === 'budget' ? 'bg-blue-100 text-blue-600' :
+                          'bg-orange-100 text-orange-600'
+                        }`}>
+                          {getInsightIcon(insight.type)}
+                        </div>
+                        <div className="flex-1">
+                          <h5 className="font-medium text-sm text-dark-gray">{insight.title}</h5>
+                          <p className="text-xs text-medium-gray mt-1">{insight.description}</p>
+                          {insight.impact && (
+                            <p className="text-xs font-medium text-primary-orange mt-2">{insight.impact}</p>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {messages.map((message) => (
+                  <motion.div
+                    key={message.id}
+                    initial={{ y: 10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`max-w-[80%] p-3 rounded-lg ${
+                      message.role === 'user' 
+                        ? 'bg-primary-orange text-white' 
+                        : 'bg-light-gray text-dark-gray'
+                    }`}>
+                      {message.role === 'user' ? (
+                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                      ) : (
+                        <div className="text-sm prose prose-sm max-w-none prose-gray">
+                          <ReactMarkdown>
+                            {message.content}
+                          </ReactMarkdown>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-light-gray p-3 rounded-lg">
+                      <Loader2 className="w-4 h-4 animate-spin text-medium-gray" />
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Suggested Questions */}
+              <div className="p-3 border-t bg-light-gray/30">
+                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                  {SUGGESTED_QUESTIONS.map((question, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleQuestionClick(question)}
+                      className="text-xs bg-white border border-light-gray rounded-full px-3 py-1.5 whitespace-nowrap hover:border-primary-orange hover:text-primary-orange transition-colors"
+                    >
+                      {question}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Input */}
+          <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={handleInputChange}
+                placeholder="Ask about your campaigns..."
+                className="flex-1 px-4 py-2 border border-light-gray rounded-lg focus:outline-none focus:border-primary-orange text-sm"
+                disabled={isLoading}
+              />
+              <button
+                type="submit"
+                disabled={!input.trim() || isLoading}
+                className="bg-primary-orange text-white p-2 rounded-lg hover:bg-vibrant-orange transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* Mobile Panel - Only when Open */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ x: 400, opacity: 0 }}
+            initial={{ x: "100%", opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 400, opacity: 0 }}
-            className="fixed right-0 top-0 h-full w-full lg:w-[400px] bg-white shadow-2xl z-40 flex flex-col"
+            exit={{ x: "100%", opacity: 0 }}
+            className="fixed inset-0 bg-white z-50 flex flex-col lg:hidden"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-4 text-white">

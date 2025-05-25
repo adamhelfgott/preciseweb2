@@ -19,6 +19,7 @@ import {
   Layers
 } from "lucide-react";
 import { useState } from "react";
+import GlobalSearch from "./GlobalSearch";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { user, signOut } = useAuth();
@@ -63,6 +64,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </div>
 
             <div className="flex items-center gap-4">
+              <GlobalSearch />
+              
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-medium text-dark-gray">{user.name}</p>
                 <p className="text-xs text-medium-gray">{user.company}</p>

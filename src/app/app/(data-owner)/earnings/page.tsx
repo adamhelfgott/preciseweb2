@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { DollarSign, Calendar, Download, TrendingUp, Clock, Filter } from "lucide-react";
+import EarningsPredictor from "@/components/app/data-owner/EarningsPredictor";
 import { 
   LineChart, 
   Line, 
@@ -243,6 +244,9 @@ export default function EarningsPage() {
               </ResponsiveContainer>
             </div>
           </div>
+
+          {/* Earnings Predictor */}
+          <EarningsPredictor />
 
           {/* Asset Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
