@@ -16,19 +16,19 @@ export default function HeroSection() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-display-hero font-bold text-dark-gray mb-6">
-              AI-Powered AdOps{" "}
-              <span className="text-gradient">That Actually Works</span>
+              Federated intelligence{" "}
+              <span className="text-gradient">without data sharing</span>
             </h1>
             
             <p className="text-body-large text-medium-gray mb-8 leading-relaxed">
-              Predict CAC 4 weeks out. Detect creative fatigue before it hits. 
-              Optimize across DSPs in real-time. All while enabling compliant 
-              data collaboration through federated intelligence infrastructure.
+              The privacy-preserving infrastructure that powers AI-driven campaign 
+              optimization. Predict CAC, detect creative fatigue, optimize across DSPs - 
+              all while data controllers maintain complete control.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
               <Link href="/get-started" className="btn-primary">
-                See Live Demo
+                Enable federated intelligence
                 <ArrowRight size={20} />
               </Link>
               <Link href="/how-it-works" className="btn-secondary">
