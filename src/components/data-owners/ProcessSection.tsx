@@ -13,10 +13,10 @@ export default function ProcessSection() {
           className="text-center mb-16"
         >
           <h2 className="text-display-medium font-bold text-dark-gray mb-4">
-            How the free-to-proof model works
+            Start optimizing in three steps
           </h2>
           <p className="text-body-large text-medium-gray">
-            Like Stripe for data—simple, transparent, profitable
+            From integration to intelligence in under an hour
           </p>
         </motion.div>
 

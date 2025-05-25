@@ -14,24 +14,24 @@ export default function PageHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <p className="text-brand-green font-medium mb-4">For Advertisers</p>
+            <p className="text-brand-green font-medium mb-4">For Media Buyers</p>
             
             <h1 className="text-display-hero font-bold text-dark-gray mb-6">
-              Better data.
+              AI-powered optimization.
               <br />
-              <span className="text-gradient">Better outcomes.</span>
+              <span className="text-gradient">Predictable results.</span>
             </h1>
             
             <p className="text-body-large text-medium-gray mb-8 leading-relaxed">
-              Access verified audiences through your existing DSP. As platforms
-              commoditize, data quality becomes the key differentiator. See
-              exactly which data drives performance with cryptographic proof
-              of attribution.
+              Go beyond basic targeting with predictive analytics, custom attribution
+              windows, and incrementality testing. Our AI forecasts performance 
+              4 weeks ahead while automated alerts prevent creative fatigue.
+              Stop guessing. Start knowing.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/get-started" className="btn-primary">
-                Explore verified audiences
+                See AI optimization in action
                 <ArrowRight size={20} />
               </Link>
               <Link href="/developers" className="btn-secondary">

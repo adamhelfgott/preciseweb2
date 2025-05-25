@@ -17,15 +17,15 @@ export default function PageHero() {
             <p className="text-brand-green font-medium mb-4">For Data Owners</p>
             
             <h1 className="text-display-hero font-bold text-dark-gray mb-6">
-              Turn your data into{" "}
-              <span className="text-gradient">passive income</span>. For free.
+              Market intelligence for{" "}
+              <span className="text-gradient">maximum revenue</span>.
             </h1>
             
             <p className="text-body-large text-medium-gray mb-8 leading-relaxed">
-              Start minting verified credentials in 5 minutes. No contracts,
-              no negotiations, no upfront costs. When your data drives value
-              in campaigns, you earn automatically through Shapley value
-              attribution. It's like Stripe, but for data monetization.
+              Go beyond basic monetization with AI-powered pricing optimization,
+              competitive benchmarking, and quality scoring. See what buyers want,
+              match your assets to demand, and get recommendations to increase
+              value. Stop leaving money on the table.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">

@@ -6,18 +6,18 @@ export default function HowItWorksSection() {
   const steps = [
     {
       number: 1,
-      title: "Discover verified audiences",
-      description: "Browse audiences with complete transparency. See quality scores, size estimates, and historical performance before activation.",
+      title: "Connect your campaigns",
+      description: "Integrate with your existing DSP and ad platforms. Our AI begins analyzing your historical performance immediately.",
     },
     {
       number: 2,
-      title: "Activate through your DSP",
-      description: "One-click activation through your existing platforms. No new contracts or negotiations required.",
+      title: "Get predictive insights",
+      description: "See CAC forecasts 4 weeks ahead, configure custom attribution windows, and receive creative fatigue alerts before performance drops.",
     },
     {
       number: 3,
-      title: "Track transparent attribution",
-      description: "See exactly which data sources drive performance. Optimize campaigns based on verifiable insights.",
+      title: "Optimize with confidence",
+      description: "Run incrementality tests to prove true impact. Our AI recommendations help you reallocate budget to winning strategies.",
     },
   ];
 
