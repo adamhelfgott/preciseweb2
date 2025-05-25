@@ -20,6 +20,7 @@ import AIAssistant from "@/components/app/campaigns/AIAssistant";
 import CampaignHealthMonitor from "@/components/app/campaigns/CampaignHealthMonitor";
 import BudgetPacing from "@/components/app/campaigns/BudgetPacing";
 import AudienceInsights from "@/components/app/campaigns/AudienceInsights";
+import CreativeFatigueAlert from "@/components/app/campaigns/CreativeFatigueAlert";
 
 // Mock campaign data
 const mockCampaigns = [
@@ -79,6 +80,9 @@ export default function CampaignsPage() {
     <div className="relative">
       {/* AI Assistant - Always Visible */}
       <AIAssistant />
+      
+      {/* Creative Fatigue Alerts */}
+      <CreativeFatigueAlert />
       
       <div className="space-y-6 lg:pr-[420px]">
       {/* Header */}

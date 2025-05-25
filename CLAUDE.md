@@ -4,67 +4,182 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the Precise.ai marketing website implementation project. The website follows a sophisticated design philosophy blending Spotify's vibrant data visualization, Apple's minimal layouts, and Hermès' luxury craftsmanship details.
+Precise.ai is a privacy-preserving data collaboration platform for advertising campaigns. The platform enables:
+- **Data Owners**: Monetize data through verified credentials while maintaining privacy
+- **Media Buyers**: Access high-quality audience data with transparent attribution
+
+Key differentiators:
+- Privacy-first approach - data never leaves owner's control
+- Valence Enhanced Shapley for fair value distribution
+- Marketing Mix Model (MMM) for media buyer attribution
+- Real-time campaign optimization with AI assistance
+
+## Current Project State (as of May 25, 2025)
+
+### ✅ Completed Features
+
+#### Platform Infrastructure
+- Next.js 15 with App Router and TypeScript
+- Vercel deployment configured
+- Convex backend for real-time features and chat persistence
+- Role-based authentication (DATA_OWNER, MEDIA_BUYER)
+- Responsive design with Tailwind CSS
+
+#### Media Buyer Features
+- **Campaigns Page**: Full AdOps command center with AI assistant
+- **Creative Carousel**: Performance tracking with fatigue detection
+- **DSP Arbitrage**: Multi-DSP optimization dashboard
+- **Multi-Touch Attribution**: Marketing Mix Model implementation
+- **Campaign Health Monitor**: Real-time performance alerts
+- **Budget Pacing**: Spend tracking and forecasting
+- **Audience Insights**: Segment performance analysis
+- **AI Assistant**: Collapsible chat with markdown support and Convex persistence
+
+#### Data Owner Features
+- **Earnings Dashboard**: Revenue tracking and visualization
+- **Valence Enhanced Shapley**: Fair value attribution
+- **Asset Performance**: Breakdown by data type
+- **Transaction History**: Detailed payment records
+- **Real-time Activity Feed**: Live usage monitoring
+
+#### Marketing Site
+- Homepage with value propositions
+- Data Owners page
+- Advertisers page
+- Get Started with role-specific onboarding flows
+- Company/Team page with real team photos
+- Developer documentation structure
+
+### 🚨 Critical Issues for Go-Live
+
+1. **Missing Content Pages**:
+   - `/pricing` - Currently shows "under construction"
+   - `/how-it-works` - Currently shows "under construction"
+   - Legal pages (Privacy Policy, Terms of Service) - Not created
+   - Contact/Support page - Not created
+
+2. **Case Studies Page Issues**:
+   - References 3 images that don't exist:
+     - `/case-studies/chicago-cubs.jpg`
+     - `/case-studies/retail.jpg`
+     - `/case-studies/streaming.jpg`
+   - Need to either add images or remove image references
+
+3. **Mock Data Dependencies**:
+   - All campaign data is mocked
+   - All earnings data is mocked
+   - No real API integrations
+   - No actual DSP connections
+
+4. **Missing Core Features**:
+   - No actual data upload/management for data owners
+   - No real payment processing
+   - No actual ad serving integration
+   - No real attribution tracking
+
+### 🎯 High-Priority Improvements
+
+#### For Media Buyers
+1. **Predictive CAC Forecasting** - AI-powered cost predictions
+2. **Creative A/B Testing Interface** - Built-in experimentation
+3. **Competitive Intelligence** - Industry benchmarking
+4. **Real-time Bidding Insights** - Live auction data
+5. **Automated Reporting** - Scheduled stakeholder updates
+
+#### For Data Owners
+1. **Data Quality Scoring** - Automated validation and scoring
+2. **Earnings Predictor** - ML-based revenue forecasting
+3. **Market Rate Benchmarking** - Competitive pricing insights
+4. **Enhanced Usage Analytics** - Deeper insights into data usage
+5. **Smart Pricing Recommendations** - AI-optimized pricing
+
+#### Platform-Wide
+1. **Mobile Responsiveness** - Many components need mobile optimization
+2. **Loading States** - Add skeleton screens for better UX
+3. **Error Handling** - Graceful degradation for API failures
+4. **Empty States** - Better messaging when no data exists
+5. **Onboarding Tours** - Guided walkthroughs for new users
+6. **Global Search** - Search across all campaigns/assets
+7. **Notifications System** - Real-time alerts
+8. **Performance Optimization** - Code splitting, lazy loading
+
+### 📋 Go-Live Checklist
+
+**Must Have**:
+- [ ] Complete pricing page content
+- [ ] Complete how-it-works page content  
+- [ ] Add or remove case study images
+- [ ] Create privacy policy page
+- [ ] Create terms of service page
+- [ ] Create contact/support page
+- [ ] Replace mock data with real APIs (or clearly mark as demo)
+- [ ] Add loading states for all async operations
+- [ ] Add error handling for all API calls
+- [ ] Mobile responsive testing and fixes
+- [ ] Accessibility audit (ARIA labels, keyboard nav)
+- [ ] Performance testing (Lighthouse audit)
+
+**Nice to Have**:
+- [ ] FAQ/Help center
+- [ ] Blog/Resources section
+- [ ] More detailed API documentation
+- [ ] Video demos/tutorials
+- [ ] Live chat support integration
+- [ ] Multi-language support
 
 ## Development Commands
 
-Since this appears to be a new project without existing package.json or build configuration, the following commands will need to be set up:
-
-### Initial Setup
 ```bash
-# Initialize Next.js project (if not already done)
-npx create-next-app@latest . --typescript --tailwind --app
-
-# Install dependencies
-npm install
-
-# Run development server
+# Development
 npm run dev
 
-# Build for production
+# Build
 npm run build
 
-# Run production build
+# Start production
 npm run start
 
-# Run linting
+# Type checking
+npm run type-check
+
+# Linting
 npm run lint
 
-# Run type checking
-npm run type-check
+# Run Convex
+npx convex dev
 ```
 
-## Architecture Overview
+## Architecture Decisions
 
-The website is structured as a Next.js application with the following key pages:
+1. **Frontend**: Next.js 15 App Router for SSG/SSR capabilities
+2. **Styling**: Tailwind CSS for rapid development
+3. **Backend**: Convex for real-time features (chat, activity feeds)
+4. **AI**: Vercel AI SDK with OpenAI for chat assistant
+5. **Charts**: Recharts for data visualization
+6. **Animation**: Framer Motion for smooth transitions
 
-1. **Homepage** - Hero section with free proof service messaging, trust indicators, and value propositions
-2. **For Data Owners** - Detailed information about monetizing data through verified credentials
-3. **For Advertisers** - Benefits of using verified data and platform integrations
-4. **Developer Documentation** - API references, SDKs, and integration guides
-5. **Onboarding Flows** - Multi-step forms for both data owners and advertisers
+## Key Implementation Notes
 
-## Design System
+### AI Assistant
+- Uses Vercel AI SDK v3 with streaming responses
+- Persists chat history in Convex
+- Markdown rendering with react-markdown
+- Collapsible UI to not obstruct main content
 
-The project uses a custom design system with:
-- Premium neutral color palette with vibrant accents
-- Typography using SF Display, Inter, and JetBrains Mono
-- Component library including buttons, cards, and navigation elements
-- Responsive design with mobile-first approach
+### Attribution Models
+- **Media Buyers**: Marketing Mix Model (MMM) for campaign attribution
+- **Data Owners**: Valence Enhanced Shapley for fair value distribution
+- Values are abstracted to prevent exact negotiation leverage
 
-## Key Implementation Details
+### Design Philosophy
+- Blends Spotify's data visualization, Apple's minimalism, and Hermès' craftsmanship
+- Premium neutral palette with vibrant accents
+- Mobile-first responsive design
+- Accessibility as a core principle
 
-- Static generation for marketing pages using Next.js
-- Intersection observers for scroll animations
-- Lazy loading for images and heavy components
-- Proper ARIA labels and keyboard navigation for accessibility
-- SEO optimization with meta tags and structured data
+## Important Rules
 
-## File Structure
-
-The website.md file contains the complete implementation guide including:
-- Visual design system specifications
-- Complete page layouts and copy
-- Component library definitions
-- Onboarding flow implementations
-- Performance and accessibility guidelines
+1. **No Fake Data in Production**: Never show inflated metrics or fake company logos
+2. **Privacy First**: Always abstract exact data values to prevent leverage
+3. **Bug Fixes**: Never remove features when fixing bugs - find the root cause
+4. **Quality**: Prefer fixing existing features over adding new ones
