@@ -16,30 +16,30 @@ export default function HeroSection() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-display-hero font-bold text-dark-gray mb-6">
-              Federated intelligence{" "}
-              <span className="text-gradient">without data sharing</span>
+              AI-Powered AdOps{" "}
+              <span className="text-gradient">That Actually Works</span>
             </h1>
             
             <p className="text-body-large text-medium-gray mb-8 leading-relaxed">
-              The privacy-preserving infrastructure that enables intelligent collaboration 
-              between brands and intelligence users. Algorithms move to data, not the 
-              other way around. Stay compliant, maintain control, unlock value.
+              Predict CAC 4 weeks out. Detect creative fatigue before it hits. 
+              Optimize across DSPs in real-time. All while enabling compliant 
+              data collaboration through federated intelligence infrastructure.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
               <Link href="/get-started" className="btn-primary">
-                Enable federated intelligence
+                See Live Demo
                 <ArrowRight size={20} />
               </Link>
-              <Link href="/developers" className="btn-secondary">
-                View architecture
+              <Link href="/how-it-works" className="btn-secondary">
+                How It Works
               </Link>
             </div>
 
             <div className="grid grid-cols-3 gap-6">
-              <TrustItem icon="🔐" label="Zero data movement" />
-              <TrustItem icon="🛡️" label="Maintain controller status" />
-              <TrustItem icon="⚡" label="Query-based intelligence" />
+              <TrustItem icon="🧠" label="92% CAC prediction accuracy" />
+              <TrustItem icon="📈" label="3.2x average ROAS lift" />
+              <TrustItem icon="🔐" label="Privacy-preserving by design" />
             </div>
           </motion.div>
 
