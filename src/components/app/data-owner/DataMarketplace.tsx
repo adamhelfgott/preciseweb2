@@ -14,7 +14,6 @@ import {
   Sparkles,
   Info,
 } from "lucide-react";
-import { Tooltip } from "@/components/ui/Tooltip";
 
 interface MarketDemand {
   category: string;
