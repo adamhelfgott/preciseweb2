@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, Send, X, Sparkles, TrendingUp, AlertTriangle, DollarSign, Loader2, ChevronDown, ChevronUp, ChevronRight } from "lucide-react";
+import { Bot, Send, X, Sparkles, TrendingUp, AlertTriangle, DollarSign, Loader2, ChevronRight } from "lucide-react";
 import { useChat } from "ai/react";
 import { useAuth } from "@/contexts/AuthContext";
 import ReactMarkdown from "react-markdown";
@@ -55,10 +55,8 @@ const PROACTIVE_INSIGHTS: ProactiveInsight[] = [
   }
 ];
 
-
 export default function AIAssistant() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(true); // Start minimized
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
   const [chatLoaded, setChatLoaded] = useState(false);
   const [dismissedInsights, setDismissedInsights] = useState<Set<string>>(new Set());
@@ -194,7 +192,7 @@ export default function AIAssistant() {
       // Check for Cmd+J (Mac) or Ctrl+J (Windows/Linux)
       if ((e.metaKey || e.ctrlKey) && e.key === 'j') {
         e.preventDefault();
-        setIsMinimized(prev => !prev);
+        setIsOpen(prev => !prev);
       }
     };
 
@@ -289,47 +287,70 @@ export default function AIAssistant() {
 
   return (
     <>
-      {/* Floating Assistant Button - Mobile Only */}
-      <motion.button
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-primary-orange to-vibrant-orange text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 lg:hidden"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        {isOpen ? <X className="w-6 h-6" /> : <Bot className="w-6 h-6" />}
-      </motion.button>
+      {/* Floating Assistant Button */}
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.button
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-primary-orange to-vibrant-orange text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 group"
+            onClick={() => setIsOpen(true)}
+          >
+            <Bot className="w-6 h-6" />
+            <span className="absolute -top-12 right-0 bg-dark-gray text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Press ⌘J
+            </span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
-      {/* Desktop Panel - Always Visible on Large Screens */}
-      <div className={`hidden lg:block fixed right-0 top-16 h-[calc(100vh-4rem)] ${isMinimized ? 'w-[50px]' : 'w-[400px]'} bg-white shadow-2xl z-40 transition-all duration-300 rounded-l-lg overflow-hidden`}>
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-4 text-white">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="bg-white/20 p-2 rounded-lg">
-                  <Bot className="w-5 h-5" />
-                </div>
-                {!isMinimized && (
-                  <div>
-                    <h3 className="font-semibold">AI Assistant</h3>
-                    <p className="text-xs opacity-90">Ask questions in natural language</p>
+      {/* Chat Panel Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop for mobile */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black lg:hidden z-40"
+              onClick={() => setIsOpen(false)}
+            />
+            
+            {/* Chat Panel */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed bottom-6 right-6 w-full max-w-[400px] h-[600px] bg-white rounded-lg shadow-2xl z-50 flex flex-col overflow-hidden
+                         lg:bottom-6 lg:right-6
+                         bottom-0 right-0 left-0 max-lg:h-full max-lg:max-w-none max-lg:rounded-none"
+            >
+              {/* Header */}
+              <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-4 text-white flex-shrink-0">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-white/20 p-2 rounded-lg">
+                      <Bot className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">AI Assistant</h3>
+                      <p className="text-xs opacity-90">Ask questions in natural language</p>
+                    </div>
                   </div>
-                )}
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="text-white hover:text-white/90 p-2 rounded-lg hover:bg-white/20 transition-all duration-200"
+                    aria-label="Close assistant"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={() => setIsMinimized(!isMinimized)}
-                className="text-white hover:text-white/90 p-2 rounded-lg hover:bg-white/20 transition-all duration-200"
-                aria-label={isMinimized ? "Expand chat" : "Minimize chat"}
-              >
-                {isMinimized ? <ChevronRight className="w-5 h-5" /> : <X className="w-5 h-5" />}
-              </button>
-            </div>
-          </div>
 
-          {!isMinimized && (
-            <div className="flex-1 flex flex-col overflow-hidden">
               {/* Current Page Context */}
-              <div className="px-4 py-2 bg-gradient-to-r from-primary-orange/10 to-vibrant-orange/10 border-b">
+              <div className="px-4 py-2 bg-gradient-to-r from-primary-orange/10 to-vibrant-orange/10 border-b flex-shrink-0">
                 <p className="text-xs text-medium-gray">
                   <span className="font-medium">Current Page:</span> {context.currentPage.description}
                 </p>
@@ -340,7 +361,7 @@ export default function AIAssistant() {
 
               {/* API Key Error */}
               {apiKeyError && (
-                <div className="p-4 bg-yellow-50 border-b border-yellow-200">
+                <div className="p-4 bg-yellow-50 border-b border-yellow-200 flex-shrink-0">
                   <p className="text-sm text-yellow-800">{apiKeyError}</p>
                   <p className="text-xs text-yellow-600 mt-1">
                     For demo purposes, the assistant will use contextual mock responses.
@@ -349,54 +370,56 @@ export default function AIAssistant() {
               )}
 
               {/* Proactive Insights */}
-              <div className="p-4 border-b bg-light-gray/50 max-h-[250px] flex flex-col">
-                <h4 className="text-sm font-semibold text-medium-gray mb-3 flex-shrink-0">Proactive Insights</h4>
-                <div className="space-y-2 overflow-y-auto flex-1 pr-2">
-                  <AnimatePresence>
-                  {visibleInsights.map((insight) => (
-                    <motion.div
-                      key={insight.id}
-                      initial={{ scale: 0.95, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ scale: 0.95, opacity: 0 }}
-                      className="bg-white p-3 rounded-lg border border-light-gray hover:border-primary-orange transition-colors cursor-pointer group"
-                      onClick={() => handleInsightClick(insight)}
-                    >
-                      <div className="flex items-start gap-2 relative">
-                        <div className={`p-1 rounded flex-shrink-0 ${
-                          insight.type === 'performance' ? 'bg-green-100 text-green-600' :
-                          insight.type === 'creative' ? 'bg-purple-100 text-purple-600' :
-                          insight.type === 'budget' ? 'bg-blue-100 text-blue-600' :
-                          'bg-orange-100 text-orange-600'
-                        }`}>
-                          {getInsightIcon(insight.type)}
-                        </div>
-                        <div className="flex-1 pr-8">
-                          <h5 className="font-medium text-sm text-dark-gray">{insight.title}</h5>
-                          <p className="text-xs text-medium-gray mt-1">{insight.description}</p>
-                          {insight.impact && (
-                            <p className="text-xs font-medium text-primary-orange mt-2">{insight.impact}</p>
-                          )}
-                          {insight.action && (
-                            <button className="text-xs font-medium text-primary-orange hover:text-vibrant-orange mt-2 flex items-center gap-1">
-                              {insight.action}
-                              <ChevronRight className="w-3 h-3" />
-                            </button>
-                          )}
-                        </div>
-                        <button
-                          onClick={(e) => dismissInsight(insight.id, e)}
-                          className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
-                          aria-label="Dismiss insight"
+              {visibleInsights.length > 0 && (
+                <div className="p-4 border-b bg-light-gray/50 flex-shrink-0">
+                  <h4 className="text-sm font-semibold text-medium-gray mb-3">Proactive Insights</h4>
+                  <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2">
+                    <AnimatePresence>
+                      {visibleInsights.map((insight) => (
+                        <motion.div
+                          key={insight.id}
+                          initial={{ scale: 0.95, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.95, opacity: 0 }}
+                          className="bg-white p-3 rounded-lg border border-light-gray hover:border-primary-orange transition-colors cursor-pointer group"
+                          onClick={() => handleInsightClick(insight)}
                         >
-                          <X className="w-4 h-4 text-medium-gray hover:text-dark-gray" />
-                        </button>
-                      </div>
-                    </motion.div>
-                  ))}
-                  </AnimatePresence>
+                          <div className="flex items-start gap-2 relative">
+                            <div className={`p-1 rounded flex-shrink-0 ${
+                              insight.type === 'performance' ? 'bg-green-100 text-green-600' :
+                              insight.type === 'creative' ? 'bg-purple-100 text-purple-600' :
+                              insight.type === 'budget' ? 'bg-blue-100 text-blue-600' :
+                              'bg-orange-100 text-orange-600'
+                            }`}>
+                              {getInsightIcon(insight.type)}
+                            </div>
+                            <div className="flex-1 pr-8">
+                              <h5 className="font-medium text-sm text-dark-gray">{insight.title}</h5>
+                              <p className="text-xs text-medium-gray mt-1">{insight.description}</p>
+                              {insight.impact && (
+                                <p className="text-xs font-medium text-primary-orange mt-2">{insight.impact}</p>
+                              )}
+                              {insight.action && (
+                                <button className="text-xs font-medium text-primary-orange hover:text-vibrant-orange mt-2 flex items-center gap-1">
+                                  {insight.action}
+                                  <ChevronRight className="w-3 h-3" />
+                                </button>
+                              )}
+                            </div>
+                            <button
+                              onClick={(e) => dismissInsight(insight.id, e)}
+                              className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
+                              aria-label="Dismiss insight"
+                            >
+                              <X className="w-4 h-4 text-medium-gray hover:text-dark-gray" />
+                            </button>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -456,7 +479,7 @@ export default function AIAssistant() {
               </div>
 
               {/* Suggested Questions */}
-              <div className="p-3 border-t bg-light-gray/30">
+              <div className="p-3 border-t bg-light-gray/30 flex-shrink-0">
                 <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                   {getSuggestedQuestions(context.currentPage.page).map((question, index) => (
                     <button
@@ -471,204 +494,27 @@ export default function AIAssistant() {
               </div>
 
               {/* Input */}
-              <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={handleInputChange}
-                placeholder="Ask about your campaigns..."
-                className="flex-1 px-4 py-2 border border-light-gray rounded-lg focus:outline-none focus:border-primary-orange text-sm"
-                disabled={isLoading}
-              />
-              <button
-                type="submit"
-                disabled={!input.trim() || isLoading}
-                className="bg-primary-orange text-white p-2 rounded-lg hover:bg-vibrant-orange transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-              </button>
-            </div>
-          </form>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Mobile Panel - Only when Open */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ x: "100%", opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            className="fixed inset-0 bg-white z-50 flex flex-col lg:hidden"
-          >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-4 text-white">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="bg-white/20 p-2 rounded-lg">
-                    <Bot className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">AI Assistant</h3>
-                    {!isMinimized && <p className="text-xs opacity-90">Ask questions in natural language</p>}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
+              <form onSubmit={handleSubmit} className="p-4 border-t bg-white flex-shrink-0">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={handleInputChange}
+                    placeholder="Ask about your campaigns..."
+                    className="flex-1 px-4 py-2 border border-light-gray rounded-lg focus:outline-none focus:border-primary-orange text-sm"
+                    disabled={isLoading}
+                  />
                   <button
-                    onClick={() => setIsMinimized(!isMinimized)}
-                    className="text-white/80 hover:text-white p-1"
+                    type="submit"
+                    disabled={!input.trim() || isLoading}
+                    className="bg-primary-orange text-white p-2 rounded-lg hover:bg-vibrant-orange transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isMinimized ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                  </button>
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="text-white/80 hover:text-white p-1"
-                  >
-                    <X className="w-5 h-5" />
+                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                   </button>
                 </div>
-              </div>
-            </div>
-
-            {!isMinimized && (
-              <>
-                {/* API Key Error */}
-                {apiKeyError && (
-                  <div className="p-4 bg-yellow-50 border-b border-yellow-200">
-                    <p className="text-sm text-yellow-800">{apiKeyError}</p>
-                    <p className="text-xs text-yellow-600 mt-1">
-                      For demo purposes, the assistant will use contextual mock responses.
-                    </p>
-                  </div>
-                )}
-
-                {/* Proactive Insights */}
-                <div className="p-4 border-b bg-light-gray/50">
-              <h4 className="text-sm font-semibold text-medium-gray mb-3">Proactive Insights</h4>
-              <div className="space-y-2 max-h-48 overflow-y-auto">
-                <AnimatePresence>
-                {visibleInsights.map((insight) => (
-                  <motion.div
-                    key={insight.id}
-                    initial={{ scale: 0.95, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.95, opacity: 0 }}
-                    className="bg-white p-3 rounded-lg border border-light-gray hover:border-primary-orange transition-colors cursor-pointer group"
-                    onClick={() => handleInsightClick(insight)}
-                  >
-                    <div className="flex items-start gap-2 relative">
-                      <div className={`p-1 rounded flex-shrink-0 ${
-                        insight.type === 'performance' ? 'bg-green-100 text-green-600' :
-                        insight.type === 'creative' ? 'bg-purple-100 text-purple-600' :
-                        insight.type === 'budget' ? 'bg-blue-100 text-blue-600' :
-                        'bg-orange-100 text-orange-600'
-                      }`}>
-                        {getInsightIcon(insight.type)}
-                      </div>
-                      <div className="flex-1 pr-8">
-                        <h5 className="font-medium text-sm text-dark-gray">{insight.title}</h5>
-                        <p className="text-xs text-medium-gray mt-1">{insight.description}</p>
-                        {insight.impact && (
-                          <p className="text-xs font-medium text-primary-orange mt-2">{insight.impact}</p>
-                        )}
-                        {insight.action && (
-                          <button className="text-xs font-medium text-primary-orange hover:text-vibrant-orange mt-2 flex items-center gap-1">
-                            {insight.action}
-                            <ChevronRight className="w-3 h-3" />
-                          </button>
-                        )}
-                      </div>
-                      <button
-                        onClick={(e) => dismissInsight(insight.id, e)}
-                        className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-100 rounded"
-                        aria-label="Dismiss insight"
-                      >
-                        <X className="w-4 h-4 text-medium-gray hover:text-dark-gray" />
-                      </button>
-                    </div>
-                  </motion.div>
-                ))}
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {messages.map((message) => (
-                <motion.div
-                  key={message.id}
-                  initial={{ y: 10, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`max-w-[80%] p-3 rounded-lg ${
-                    message.role === 'user' 
-                      ? 'bg-primary-orange text-white' 
-                      : 'bg-light-gray text-dark-gray'
-                  }`}>
-                    {message.role === 'user' ? (
-                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                    ) : (
-                      <div className="text-sm prose prose-sm max-w-none prose-gray">
-                        <ReactMarkdown>
-                          {message.content}
-                        </ReactMarkdown>
-                      </div>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-light-gray p-3 rounded-lg">
-                    <Loader2 className="w-4 h-4 animate-spin text-medium-gray" />
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Suggested Questions */}
-            <div className="p-3 border-t bg-light-gray/30">
-              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                {getSuggestedQuestions(context.currentPage.page).map((question, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleQuestionClick(question)}
-                    className="text-xs bg-white border border-light-gray rounded-full px-3 py-1.5 whitespace-nowrap hover:border-primary-orange hover:text-primary-orange transition-colors"
-                  >
-                    {question}
-                  </button>
-                ))}
-              </div>
-            </div>
-              </>
-            )}
-
-            {/* Input */}
-            <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={handleInputChange}
-                  placeholder="Ask about your campaigns..."
-                  className="flex-1 px-4 py-2 border border-light-gray rounded-lg focus:outline-none focus:border-primary-orange text-sm"
-                  disabled={isLoading}
-                />
-                <button
-                  type="submit"
-                  disabled={!input.trim() || isLoading}
-                  className="bg-primary-orange text-white p-2 rounded-lg hover:bg-vibrant-orange transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-                </button>
-              </div>
-            </form>
-          </motion.div>
+              </form>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </>
