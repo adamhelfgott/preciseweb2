@@ -101,12 +101,12 @@ export default function CampaignsPage() {
   const avgCAC = mockCampaigns.reduce((sum, c) => sum + c.currentCAC, 0) / mockCampaigns.length;
 
   return (
-    <div className="relative">
+    <div>
       
       {/* Creative Fatigue Alerts */}
       <CreativeFatigueAlert />
       
-      <div className="space-y-6 lg:pr-[420px]">
+      <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
