@@ -148,4 +148,14 @@ export default defineSchema({
   })
     .index("by_campaign", ["campaignId"])
     .index("by_timestamp", ["timestamp"]),
+
+  // AI Chat messages for persistence
+  chatMessages: defineTable({
+    userId: v.id("users"),
+    role: v.union(v.literal("user"), v.literal("assistant"), v.literal("system")),
+    content: v.string(),
+    timestamp: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_timestamp", ["timestamp"]),
 });

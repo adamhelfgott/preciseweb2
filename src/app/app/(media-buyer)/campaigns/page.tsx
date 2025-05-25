@@ -101,8 +101,8 @@ export default function CampaignsPage() {
           onClick={() => setActiveView("overview")}
           className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
             activeView === "overview"
-              ? "bg-primary-orange text-white"
-              : "bg-white border border-light-gray text-medium-gray hover:border-primary-orange"
+              ? "bg-dark-gray text-white"
+              : "bg-white border border-light-gray text-medium-gray hover:border-dark-gray"
           }`}
         >
           <LayoutGrid className="w-4 h-4 inline mr-2" />
@@ -112,8 +112,8 @@ export default function CampaignsPage() {
           onClick={() => setActiveView("health")}
           className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
             activeView === "health"
-              ? "bg-primary-orange text-white"
-              : "bg-white border border-light-gray text-medium-gray hover:border-primary-orange"
+              ? "bg-dark-gray text-white"
+              : "bg-white border border-light-gray text-medium-gray hover:border-dark-gray"
           }`}
         >
           <Activity className="w-4 h-4 inline mr-2" />
@@ -123,8 +123,8 @@ export default function CampaignsPage() {
           onClick={() => setActiveView("budget")}
           className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
             activeView === "budget"
-              ? "bg-primary-orange text-white"
-              : "bg-white border border-light-gray text-medium-gray hover:border-primary-orange"
+              ? "bg-dark-gray text-white"
+              : "bg-white border border-light-gray text-medium-gray hover:border-dark-gray"
           }`}
         >
           <DollarSign className="w-4 h-4 inline mr-2" />
@@ -134,8 +134,8 @@ export default function CampaignsPage() {
           onClick={() => setActiveView("audience")}
           className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
             activeView === "audience"
-              ? "bg-primary-orange text-white"
-              : "bg-white border border-light-gray text-medium-gray hover:border-primary-orange"
+              ? "bg-dark-gray text-white"
+              : "bg-white border border-light-gray text-medium-gray hover:border-dark-gray"
           }`}
         >
           <Target className="w-4 h-4 inline mr-2" />
@@ -145,8 +145,8 @@ export default function CampaignsPage() {
           onClick={() => setActiveView("creatives")}
           className={`px-4 py-2 rounded-lg font-medium text-sm whitespace-nowrap transition-all ${
             activeView === "creatives"
-              ? "bg-primary-orange text-white"
-              : "bg-white border border-light-gray text-medium-gray hover:border-primary-orange"
+              ? "bg-dark-gray text-white"
+              : "bg-white border border-light-gray text-medium-gray hover:border-dark-gray"
           }`}
         >
           <BarChart3 className="w-4 h-4 inline mr-2" />

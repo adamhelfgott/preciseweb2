@@ -25,79 +25,71 @@ import {
 } from "lucide-react";
 
 const LIFT_COMPARISON = [
-  { metric: "CTR", withData: 5.2, withoutData: 2.1, lift: 147 },
-  { metric: "CVR", withData: 8.4, withoutData: 3.2, lift: 162 },
-  { metric: "ROAS", withData: 4.2, withoutData: 1.8, lift: 133 },
-  { metric: "LTV", withData: 156, withoutData: 89, lift: 75 },
-  { metric: "CAC", withData: 31, withoutData: 58, lift: -47 }
+  { metric: "CTR", improvement: "High", direction: "up", intensity: 85 },
+  { metric: "CVR", improvement: "Very High", direction: "up", intensity: 92 },
+  { metric: "ROAS", improvement: "High", direction: "up", intensity: 78 },
+  { metric: "LTV", improvement: "Moderate", direction: "up", intensity: 65 },
+  { metric: "CAC", improvement: "Significant", direction: "down", intensity: 73 }
 ];
 
 const COHORT_IMPACT = [
   { 
     month: "Jan", 
-    soloPerformance: 2.1, 
-    withFitnessCohort: 3.2, 
-    withAutoCohort: 3.8,
-    withBothCohorts: 4.5
+    baseline: 100, 
+    singleCohort: 152, 
+    multiCohort: 214
   },
   { 
     month: "Feb", 
-    soloPerformance: 2.2, 
-    withFitnessCohort: 3.4, 
-    withAutoCohort: 3.9,
-    withBothCohorts: 4.7
+    baseline: 100, 
+    singleCohort: 155, 
+    multiCohort: 214
   },
   { 
     month: "Mar", 
-    soloPerformance: 2.0, 
-    withFitnessCohort: 3.5, 
-    withAutoCohort: 4.1,
-    withBothCohorts: 4.9
+    baseline: 100, 
+    singleCohort: 175, 
+    multiCohort: 245
   },
   { 
     month: "Apr", 
-    soloPerformance: 2.3, 
-    withFitnessCohort: 3.6, 
-    withAutoCohort: 4.2,
-    withBothCohorts: 5.1
+    baseline: 100, 
+    singleCohort: 157, 
+    multiCohort: 222
   },
   { 
     month: "May", 
-    soloPerformance: 2.1, 
-    withFitnessCohort: 3.8, 
-    withAutoCohort: 4.3,
-    withBothCohorts: 5.3
+    baseline: 100, 
+    singleCohort: 181, 
+    multiCohort: 252
   },
   { 
     month: "Jun", 
-    soloPerformance: 2.2, 
-    withFitnessCohort: 3.9, 
-    withAutoCohort: 4.5,
-    withBothCohorts: 5.6
+    baseline: 100, 
+    singleCohort: 177, 
+    multiCohort: 255
   }
 ];
 
 const CATEGORY_LIFT = [
-  { category: "Fitness", yourData: 3.2, marketAvg: 1.8, premium: 78 },
-  { category: "Automotive", yourData: 3.8, marketAvg: 2.1, premium: 81 },
-  { category: "Tech", yourData: 2.8, marketAvg: 1.9, premium: 47 },
-  { category: "Entertainment", yourData: 2.5, marketAvg: 1.7, premium: 47 },
-  { category: "Retail", yourData: 2.2, marketAvg: 1.5, premium: 47 }
+  { category: "Fitness", performance: "Premium", rank: 1, trend: "up" },
+  { category: "Automotive", performance: "Premium", rank: 2, trend: "up" },
+  { category: "Tech", performance: "Strong", rank: 3, trend: "stable" },
+  { category: "Entertainment", performance: "Strong", rank: 4, trend: "up" },
+  { category: "Retail", performance: "Good", rank: 5, trend: "stable" }
 ];
 
 const MISSED_OPPORTUNITIES = [
   {
     cohort: "Streaming Media Consortium",
-    missedRevenue: 120000,
-    missedLift: 2.8,
-    campaigns: 45,
+    potential: "Very High",
+    matchScore: 82,
     requirement: "Add viewing history data"
   },
   {
     cohort: "Sustainable Lifestyle Collective",
-    missedRevenue: 85000,
-    missedLift: 3.2,
-    campaigns: 32,
+    potential: "High",
+    matchScore: 75,
     requirement: "Complete values survey"
   }
 ];
@@ -156,92 +148,114 @@ export default function LiftAnalysis() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* With vs Without Data */}
         <div className="bg-white rounded-xl border border-light-gray p-6">
-          <h4 className="font-semibold text-dark-gray mb-4">With vs Without Your Data</h4>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={LIFT_COMPARISON}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis dataKey="metric" fontSize={12} />
-                <YAxis fontSize={12} />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="withoutData" fill="#9CA3AF" name="Without Your Data" />
-                <Bar dataKey="withData" fill="#10B981" name="With Your Data" />
-              </BarChart>
-            </ResponsiveContainer>
+          <h4 className="font-semibold text-dark-gray mb-4">Campaign Performance Impact</h4>
+          <div className="space-y-4">
+            {LIFT_COMPARISON.map((metric) => (
+              <div key={metric.metric} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-dark-gray">{metric.metric}</span>
+                  <span className={`text-sm font-medium ${
+                    metric.improvement === "Very High" ? "text-green-600" :
+                    metric.improvement === "High" ? "text-blue-600" :
+                    metric.improvement === "Significant" ? "text-purple-600" :
+                    "text-indigo-600"
+                  }`}>
+                    {metric.improvement} {metric.direction === "up" ? "↑" : "↓"}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-3">
+                  <div 
+                    className={`h-3 rounded-full transition-all duration-500 ${
+                      metric.direction === "up" ? "bg-gradient-to-r from-green-400 to-green-600" :
+                      "bg-gradient-to-r from-purple-400 to-purple-600"
+                    }`}
+                    style={{ width: `${metric.intensity}%` }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Category Performance */}
         <div className="bg-white rounded-xl border border-light-gray p-6">
-          <h4 className="font-semibold text-dark-gray mb-4">Your Data Premium by Category</h4>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={CATEGORY_LIFT} layout="horizontal">
-                <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                <XAxis type="number" />
-                <YAxis dataKey="category" type="category" fontSize={12} width={80} />
-                <Tooltip />
-                <Bar dataKey="marketAvg" fill="#E5E7EB" name="Market Avg" />
-                <Bar dataKey="yourData" fill="#F97316" name="Your Data" />
-              </BarChart>
-            </ResponsiveContainer>
+          <h4 className="font-semibold text-dark-gray mb-4">Performance by Category</h4>
+          <div className="space-y-3">
+            {CATEGORY_LIFT.map((category) => (
+              <div key={category.category} className="flex items-center justify-between p-3 bg-light-gray rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
+                    category.rank <= 2 ? "bg-gradient-to-br from-yellow-400 to-orange-500" :
+                    category.rank <= 4 ? "bg-gradient-to-br from-blue-400 to-indigo-500" :
+                    "bg-gradient-to-br from-gray-400 to-gray-500"
+                  }`}>
+                    {category.rank}
+                  </div>
+                  <div>
+                    <p className="font-medium text-dark-gray">{category.category}</p>
+                    <p className="text-xs text-medium-gray">{category.performance} tier</p>
+                  </div>
+                </div>
+                <div className={`flex items-center gap-1 ${
+                  category.trend === "up" ? "text-green-600" : "text-gray-600"
+                }`}>
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="text-xs font-medium">
+                    {category.trend === "up" ? "Rising" : "Stable"}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Cohort Performance Impact */}
       <div className="bg-white rounded-xl border border-light-gray p-6">
-        <h4 className="font-semibold text-dark-gray mb-4">Cohort Participation Impact on ROAS</h4>
+        <h4 className="font-semibold text-dark-gray mb-4">Performance Index with Data Collaboration</h4>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={COHORT_IMPACT}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
               <XAxis dataKey="month" fontSize={12} />
-              <YAxis fontSize={12} />
-              <Tooltip content={<CustomTooltip />} />
+              <YAxis fontSize={12} domain={[0, 300]} />
+              <Tooltip 
+                formatter={(value: any) => [`${value}%`, "Performance Index"]}
+              />
               <Legend />
               <Area 
                 type="monotone" 
-                dataKey="soloPerformance" 
+                dataKey="baseline" 
                 stroke="#9CA3AF" 
                 fill="#9CA3AF" 
                 fillOpacity={0.3}
-                name="Solo Performance"
+                name="Baseline"
               />
               <Area 
                 type="monotone" 
-                dataKey="withFitnessCohort" 
+                dataKey="singleCohort" 
                 stroke="#10B981" 
                 fill="#10B981" 
                 fillOpacity={0.3}
-                name="With Fitness Cohort"
+                name="Single Cohort"
               />
               <Area 
                 type="monotone" 
-                dataKey="withAutoCohort" 
-                stroke="#6366F1" 
-                fill="#6366F1" 
-                fillOpacity={0.3}
-                name="With Auto Cohort"
-              />
-              <Area 
-                type="monotone" 
-                dataKey="withBothCohorts" 
+                dataKey="multiCohort" 
                 stroke="#F97316" 
                 fill="#F97316" 
                 fillOpacity={0.3}
-                name="With Both Cohorts"
+                name="Multi-Cohort"
               />
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center">
-            <p className="text-sm text-medium-gray">Solo</p>
-            <p className="text-lg font-bold text-dark-gray">2.2x</p>
+        <div className="mt-4 grid grid-cols-3 gap-4">
+          <div className="text-center p-3 bg-gray-50 rounded-lg">
+            <p className="text-sm text-medium-gray">Baseline</p>
+            <p className="text-lg font-bold text-dark-gray">Standard</p>
           </div>
-          <div className="text-center">
+          <div className="text-center
             <p className="text-sm text-medium-gray">+Fitness</p>
             <p className="text-lg font-bold text-green-600">3.9x</p>
           </div>
@@ -274,20 +288,26 @@ export default function LiftAnalysis() {
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="flex-1">
                 <h5 className="font-semibold text-dark-gray mb-2">{opp.cohort}</h5>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="flex items-center gap-6">
                   <div>
-                    <p className="text-sm text-medium-gray">Missed Revenue</p>
-                    <p className="text-xl font-bold text-red-600">
-                      -${(opp.missedRevenue / 1000).toFixed(0)}K/mo
+                    <p className="text-sm text-medium-gray">Opportunity</p>
+                    <p className={`text-xl font-bold ${
+                      opp.potential === "Very High" ? "text-orange-600" : "text-yellow-600"
+                    }`}>
+                      {opp.potential}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-medium-gray">Potential Lift</p>
-                    <p className="text-xl font-bold text-orange-600">{opp.missedLift}x</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-medium-gray">Campaigns</p>
-                    <p className="text-xl font-bold text-dark-gray">{opp.campaigns}</p>
+                    <p className="text-sm text-medium-gray">Match Score</p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-24 bg-gray-200 rounded-full h-3">
+                        <div 
+                          className="bg-gradient-to-r from-orange-400 to-orange-600 h-3 rounded-full"
+                          style={{ width: `${opp.matchScore}%` }}
+                        />
+                      </div>
+                      <span className="text-sm font-medium text-dark-gray">{opp.matchScore}%</span>
+                    </div>
                   </div>
                 </div>
               </div>

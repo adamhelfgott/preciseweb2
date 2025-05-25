@@ -2,9 +2,13 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, Send, X, Sparkles, TrendingUp, AlertTriangle, DollarSign, Loader2 } from "lucide-react";
+import { Bot, Send, X, Sparkles, TrendingUp, AlertTriangle, DollarSign, Loader2, ChevronDown, ChevronUp } from "lucide-react";
 import { useChat } from "ai/react";
 import { useAuth } from "@/contexts/AuthContext";
+import ReactMarkdown from "react-markdown";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface ProactiveInsight {
   id: string;
@@ -60,10 +64,18 @@ const SUGGESTED_QUESTIONS = [
 ];
 
 export default function AIAssistant() {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
+  const [chatLoaded, setChatLoaded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
+  
+  // Convex hooks for chat persistence
+  const saveMessage = useMutation(api.chat.saveMessage);
+  const chatHistory = useQuery(api.chat.getChatHistory, 
+    user?.id ? { userId: user.id as Id<"users"> } : "skip"
+  );
 
   // Context for the AI based on current dashboard data
   const context = {
@@ -75,29 +87,69 @@ export default function AIAssistant() {
     monthlyEarnings: user?.role === "DATA_OWNER" ? "$42K" : undefined,
   };
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
+  // Load chat history when available
+  const initialMessages = chatHistory && chatHistory.length > 0 
+    ? chatHistory.map((msg, index) => ({
+        id: msg._id || `${index}`,
+        role: msg.role as "user" | "assistant" | "system",
+        content: msg.content,
+      }))
+    : [
+        {
+          id: "1",
+          role: "assistant" as const,
+          content: user?.role === "DATA_OWNER" 
+            ? "How can I help with your data assets?"
+            : "How can I help optimize your campaigns?"
+        }
+      ];
+
+  const { messages, input, handleInputChange, handleSubmit: originalHandleSubmit, isLoading, error } = useChat({
     api: "/api/ai",
     body: { context },
-    initialMessages: [
-      {
-        id: "1",
-        role: "assistant",
-        content: user?.role === "DATA_OWNER" 
-          ? "Hi! I'm your AI assistant monitoring your data assets. I see your data is currently powering 248 campaigns and earning $42K this month. How can I help you optimize your data monetization?"
-          : "Hi! I'm your AI Campaign Assistant. I'm monitoring all your campaigns in real-time. I've already identified 4 optimization opportunities that could improve your ROAS by 23%. What would you like to know?"
-      }
-    ],
+    initialMessages: chatLoaded ? initialMessages : undefined,
     onError: (error) => {
       console.error("Chat error:", error);
       if (error.message.includes("API key")) {
         setApiKeyError("OpenAI API key not configured. Add OPENAI_API_KEY to your environment variables.");
       }
+    },
+    onFinish: async (message) => {
+      // Save assistant message to Convex
+      if (user?.id) {
+        await saveMessage({
+          userId: user.id as Id<"users">,
+          role: "assistant",
+          content: message.content,
+        });
+      }
     }
   });
+
+  // Custom submit handler to save user messages
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim() && user?.id) {
+      // Save user message to Convex
+      await saveMessage({
+        userId: user.id as Id<"users">,
+        role: "user",
+        content: input,
+      });
+    }
+    originalHandleSubmit(e);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  // Load chat history on mount
+  useEffect(() => {
+    if (chatHistory !== undefined && !chatLoaded) {
+      setChatLoaded(true);
+    }
+  }, [chatHistory, chatLoaded]);
 
   useEffect(() => {
     scrollToBottom();
@@ -106,7 +158,10 @@ export default function AIAssistant() {
   const handleQuestionClick = (question: string) => {
     handleInputChange({ target: { value: question } } as any);
     setTimeout(() => {
-      handleSubmit(new Event('submit') as any);
+      const form = document.querySelector('form') as HTMLFormElement;
+      if (form) {
+        form.requestSubmit();
+      }
     }, 100);
   };
 
@@ -142,38 +197,48 @@ export default function AIAssistant() {
             className="fixed right-0 top-0 h-full w-full lg:w-[400px] bg-white shadow-2xl z-40 flex flex-col"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-6 text-white">
-              <div className="flex items-center justify-between mb-2">
+            <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-4 text-white">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="bg-white/20 p-2 rounded-lg">
-                    <Bot className="w-6 h-6" />
+                    <Bot className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg">AI Assistant</h3>
-                    <p className="text-sm opacity-90">Powered by Precise Intelligence</p>
+                    <h3 className="font-semibold">AI Assistant</h3>
+                    {!isMinimized && <p className="text-xs opacity-90">Ask questions in natural language</p>}
                   </div>
                 </div>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="lg:hidden text-white/80 hover:text-white"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsMinimized(!isMinimized)}
+                    className="text-white/80 hover:text-white p-1"
+                  >
+                    {isMinimized ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                  </button>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="text-white/80 hover:text-white p-1"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* API Key Error */}
-            {apiKeyError && (
-              <div className="p-4 bg-yellow-50 border-b border-yellow-200">
-                <p className="text-sm text-yellow-800">{apiKeyError}</p>
-                <p className="text-xs text-yellow-600 mt-1">
-                  For demo purposes, the assistant will use contextual mock responses.
-                </p>
-              </div>
-            )}
+            {!isMinimized && (
+              <>
+                {/* API Key Error */}
+                {apiKeyError && (
+                  <div className="p-4 bg-yellow-50 border-b border-yellow-200">
+                    <p className="text-sm text-yellow-800">{apiKeyError}</p>
+                    <p className="text-xs text-yellow-600 mt-1">
+                      For demo purposes, the assistant will use contextual mock responses.
+                    </p>
+                  </div>
+                )}
 
-            {/* Proactive Insights */}
-            <div className="p-4 border-b bg-light-gray/50">
+                {/* Proactive Insights */}
+                <div className="p-4 border-b bg-light-gray/50">
               <h4 className="text-sm font-semibold text-medium-gray mb-3">Proactive Insights</h4>
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {PROACTIVE_INSIGHTS.map((insight) => (
@@ -219,7 +284,13 @@ export default function AIAssistant() {
                       ? 'bg-primary-orange text-white' 
                       : 'bg-light-gray text-dark-gray'
                   }`}>
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    {message.role === 'user' ? (
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    ) : (
+                      <ReactMarkdown className="text-sm prose prose-sm max-w-none prose-gray">
+                        {message.content}
+                      </ReactMarkdown>
+                    )}
                   </div>
                 </motion.div>
               ))}
@@ -247,6 +318,8 @@ export default function AIAssistant() {
                 ))}
               </div>
             </div>
+              </>
+            )}
 
             {/* Input */}
             <form onSubmit={handleSubmit} className="p-4 border-t bg-white">
