@@ -300,7 +300,7 @@ export default function AIAssistant() {
       </motion.button>
 
       {/* Desktop Panel - Always Visible on Large Screens */}
-      <div className={`hidden lg:block fixed right-0 top-0 h-full ${isMinimized ? 'w-[50px]' : 'w-[400px]'} bg-white shadow-2xl z-40 transition-all duration-300`}>
+      <div className={`hidden lg:block fixed right-0 top-16 h-[calc(100vh-4rem)] ${isMinimized ? 'w-[50px]' : 'w-[400px]'} bg-white shadow-2xl z-40 transition-all duration-300 rounded-l-lg overflow-hidden`}>
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-4 text-white">
@@ -349,9 +349,9 @@ export default function AIAssistant() {
               )}
 
               {/* Proactive Insights */}
-              <div className="p-4 border-b bg-light-gray/50">
-                <h4 className="text-sm font-semibold text-medium-gray mb-3">Proactive Insights</h4>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
+              <div className="p-4 border-b bg-light-gray/50 max-h-[250px] flex flex-col">
+                <h4 className="text-sm font-semibold text-medium-gray mb-3 flex-shrink-0">Proactive Insights</h4>
+                <div className="space-y-2 overflow-y-auto flex-1 pr-2">
                   <AnimatePresence>
                   {visibleInsights.map((insight) => (
                     <motion.div
