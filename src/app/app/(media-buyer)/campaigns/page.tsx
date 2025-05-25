@@ -38,6 +38,7 @@ const mockCampaigns = [
     targetCAC: 28.00,
     ltv: 131.04,
     preciseLaunchDate: Date.now() - (30 * 24 * 60 * 60 * 1000),
+    budget: 150000,
     spend: 100000,
     revenue: 500000,
     roas: 5.0,
@@ -65,6 +66,7 @@ const mockCampaigns = [
     previousCAC: 52.30,
     targetCAC: 35.00,
     ltv: 145.20,
+    budget: 120000,
     spend: 75000,
     revenue: 340000,
     roas: 4.5,
@@ -333,12 +335,13 @@ export default function CampaignsPage() {
                 <p className="text-2xl font-bold">{selectedCampaign.roas}x</p>
               </div>
               <div>
-                <p className="text-white/70 text-sm">LTV:CAC</p>
-                <p className="text-2xl font-bold">{(selectedCampaign.ltv / selectedCampaign.currentCAC).toFixed(1)}:1</p>
+                <p className="text-white/70 text-sm">Budget</p>
+                <p className="text-2xl font-bold">${(selectedCampaign.budget / 1000).toFixed(0)}K</p>
               </div>
               <div>
                 <p className="text-white/70 text-sm">Spend</p>
                 <p className="text-2xl font-bold">${(selectedCampaign.spend / 1000).toFixed(0)}K</p>
+                <p className="text-xs text-white/60">{((selectedCampaign.spend / selectedCampaign.budget) * 100).toFixed(0)}% utilized</p>
               </div>
             </div>
           </motion.div>
