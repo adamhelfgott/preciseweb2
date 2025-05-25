@@ -1,11 +1,6 @@
-import { OpenAIStream, StreamingTextResponse } from "ai";
-import OpenAI from "openai";
+import { streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
 import { NextResponse } from "next/server";
-
-// Create an OpenAI API client (edge-compatible)
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || "",
-});
 
 export const runtime = "edge";
 
@@ -46,26 +41,17 @@ export async function POST(req: Request) {
          Current portfolio: ${context.totalCampaigns || 0} campaigns with average ROAS of ${context.avgROAS || 0}.
          Provide actionable insights about campaign optimization, budget allocation, and data collaboration benefits.`;
 
-    // Request the OpenAI API for the response based on the prompt
-    const response = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
-      stream: true,
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt,
-        },
-        ...messages,
-      ],
+    // Use the new streamText API
+    const result = await streamText({
+      model: openai("gpt-4-turbo-preview"),
+      system: systemPrompt,
+      messages,
       temperature: 0.7,
-      max_tokens: 500,
+      maxTokens: 500,
     });
 
-    // Convert the response into a friendly text-stream
-    const stream = OpenAIStream(response);
-
-    // Respond with the stream
-    return new StreamingTextResponse(stream);
+    // Return the stream
+    return result.toAIStreamResponse();
   } catch (error) {
     console.error("AI API Error:", error);
     
