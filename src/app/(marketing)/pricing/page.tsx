@@ -1,14 +1,8 @@
 "use client";
 
-import { Metadata } from "next";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Check, Zap, Shield, BarChart3, Users } from "lucide-react";
-
-// export const metadata: Metadata = {
-//   title: "Pricing - Precise.ai",
-//   description: "Simple, transparent pricing. Start free with 1M events per month.",
-// };
 
 export default function PricingPage() {
   const [formData, setFormData] = useState({
