@@ -281,9 +281,11 @@ export default function AIAssistant() {
                     {message.role === 'user' ? (
                       <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                     ) : (
-                      <ReactMarkdown className="text-sm prose prose-sm max-w-none prose-gray">
-                        {message.content}
-                      </ReactMarkdown>
+                      <div className="text-sm prose prose-sm max-w-none prose-gray">
+                        <ReactMarkdown>
+                          {message.content}
+                        </ReactMarkdown>
+                      </div>
                     )}
                   </div>
                 </motion.div>
