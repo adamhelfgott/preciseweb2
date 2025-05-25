@@ -6,6 +6,10 @@ import { Database, Plus, Settings, TrendingUp, AlertCircle, Play, Pause, Shield 
 import { cn } from "@/lib/utils";
 import ProofBadge from "@/components/app/ProofBadge";
 import VerificationModal from "@/components/app/VerificationModal";
+import DataAssetHealthScore from "@/components/app/data-owner/DataAssetHealthScore";
+import MarketRateBenchmarking from "@/components/app/data-owner/MarketRateBenchmarking";
+import DataEnhancementSuggestions from "@/components/app/data-owner/DataEnhancementSuggestions";
+import BuyerRequestDashboard from "@/components/app/data-owner/BuyerRequestDashboard";
 
 interface DataAsset {
   id: string;
@@ -382,6 +386,23 @@ export default function DataAssetsPage() {
             )}
           </motion.div>
         ))}
+      </div>
+
+      {/* Advanced Features Section */}
+      <div className="space-y-6 mt-12">
+        <h2 className="text-2xl font-bold text-dark-gray">Asset Intelligence</h2>
+        
+        {/* Data Asset Health Score */}
+        <DataAssetHealthScore />
+        
+        {/* Market Rate Benchmarking */}
+        <MarketRateBenchmarking />
+        
+        {/* Data Enhancement Suggestions */}
+        <DataEnhancementSuggestions />
+        
+        {/* Buyer Request Dashboard */}
+        <BuyerRequestDashboard />
       </div>
 
       {/* Verification Modal */}

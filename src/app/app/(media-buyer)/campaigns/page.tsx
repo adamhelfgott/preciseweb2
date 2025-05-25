@@ -21,6 +21,9 @@ import CampaignHealthMonitor from "@/components/app/campaigns/CampaignHealthMoni
 import BudgetPacing from "@/components/app/campaigns/BudgetPacing";
 import AudienceInsights from "@/components/app/campaigns/AudienceInsights";
 import CreativeFatigueAlert from "@/components/app/campaigns/CreativeFatigueAlert";
+import PredictiveCACForecasting from "@/components/app/campaigns/PredictiveCACForecasting";
+import CustomAttributionWindows from "@/components/app/campaigns/CustomAttributionWindows";
+import IncrementalityTesting from "@/components/app/campaigns/IncrementalityTesting";
 
 // Mock campaign data
 const mockCampaigns = [
@@ -262,10 +265,19 @@ export default function CampaignsPage() {
       {/* Creative Performance */}
       <CreativeCarousel />
 
+      {/* Predictive Analytics */}
+      <PredictiveCACForecasting />
+
       {/* Advanced Analytics Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <DSPArbitrage />
         <MultiTouchAttribution />
+      </div>
+
+      {/* Testing & Attribution */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <CustomAttributionWindows />
+        <IncrementalityTesting />
       </div>
 
       {/* Campaigns Grid */}
