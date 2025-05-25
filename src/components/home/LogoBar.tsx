@@ -3,27 +3,16 @@
 import { motion } from "framer-motion";
 
 export default function LogoBar() {
-  const logos = [
-    "MadHive",
-    "The Trade Desk",
-    "LiveRamp",
-    "Snowflake",
-    "Databricks",
+  // Only include actual partners/clients
+  const logos: string[] = [
+    // Add real partners here when confirmed
+    // "Partner Name",
   ];
 
-  // Future logos to add when available:
-  // const additionalLogos = [
-  //   "Chicago Cubs",
-  //   "AWS", 
-  //   "Google Cloud",
-  //   "Microsoft Azure",
-  //   "Salesforce",
-  //   "Adobe",
-  //   "Oracle",
-  //   "SAP",
-  //   "IBM",
-  //   "Accenture"
-  // ];
+  // Don't show this section if we don't have any real logos to display
+  if (logos.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-16 bg-light-gray">
@@ -34,7 +23,7 @@ export default function LogoBar() {
           viewport={{ once: true }}
           className="text-center text-medium-gray mb-8"
         >
-          Trusted by industry leaders
+          Our Partners
         </motion.p>
         
         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">

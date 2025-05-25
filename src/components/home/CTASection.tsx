@@ -19,7 +19,7 @@ export default function CTASection() {
           </h2>
           
           <p className="text-body-large text-medium-gray mb-8">
-            Join 12,000+ companies already minting proofs and earning royalties
+            Be among the first to unlock the value of privacy-preserving data collaboration
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
