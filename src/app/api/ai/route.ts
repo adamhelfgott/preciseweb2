@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     });
 
     // Return the stream
-    return result.toAIStreamResponse();
+    return result.toDataStreamResponse();
   } catch (error) {
     console.error("AI API Error:", error);
     
