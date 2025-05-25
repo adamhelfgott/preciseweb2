@@ -333,8 +333,8 @@ export default function CampaignsPage() {
                 <p className="text-2xl font-bold">{selectedCampaign.roas}x</p>
               </div>
               <div>
-                <p className="text-white/70 text-sm">Budget</p>
-                <p className="text-2xl font-bold">${(selectedCampaign.budget / 1000).toFixed(0)}K</p>
+                <p className="text-white/70 text-sm">LTV:CAC</p>
+                <p className="text-2xl font-bold">{(selectedCampaign.ltv / selectedCampaign.currentCAC).toFixed(1)}:1</p>
               </div>
               <div>
                 <p className="text-white/70 text-sm">Spend</p>
