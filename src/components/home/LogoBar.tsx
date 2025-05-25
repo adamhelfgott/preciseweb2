@@ -11,6 +11,20 @@ export default function LogoBar() {
     "Databricks",
   ];
 
+  // Future logos to add when available:
+  // const additionalLogos = [
+  //   "Chicago Cubs",
+  //   "AWS", 
+  //   "Google Cloud",
+  //   "Microsoft Azure",
+  //   "Salesforce",
+  //   "Adobe",
+  //   "Oracle",
+  //   "SAP",
+  //   "IBM",
+  //   "Accenture"
+  // ];
+
   return (
     <section className="py-16 bg-light-gray">
       <div className="container">

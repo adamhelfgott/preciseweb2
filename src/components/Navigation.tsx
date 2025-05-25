@@ -22,6 +22,7 @@ export default function Navigation() {
     { href: "/how-it-works", label: "How it works" },
     { href: "/data-owners", label: "For data owners" },
     { href: "/advertisers", label: "For advertisers" },
+    { href: "/case-studies", label: "Case studies" },
     { href: "/developers", label: "Developers" },
     { href: "/company", label: "Company" },
   ];
