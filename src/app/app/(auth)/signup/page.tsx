@@ -201,7 +201,7 @@ export default function SignUpPage() {
           className="text-center"
         >
           <h2 className="text-display-medium font-bold text-dark-gray mb-8">
-            Join 12,000+ companies already earning
+            Start earning from your data
           </h2>
 
           <div className="space-y-6 max-w-md mx-auto">
