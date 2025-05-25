@@ -232,7 +232,7 @@ precise.createCredentials({
                         <span className="text-xs bg-brand-green/10 text-brand-green px-2 py-1 rounded-full">Verified</span>
                       </div>
                       <div className="text-2xl font-bold text-dark-gray mb-1">890K users</div>
-                      <div className="text-sm text-medium-gray">LTV > $500 • Active last 30 days</div>
+                      <div className="text-sm text-medium-gray">LTV &gt; $500 • Active last 30 days</div>
                     </div>
                   </div>
                 </motion.div>

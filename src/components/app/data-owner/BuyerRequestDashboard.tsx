@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, Search, TrendingUp, Users, DollarSign, Clock, CheckCircle, X, ChevronRight, Filter, Sparkles } from "lucide-react";
+import { Bell, Search, TrendingUp, Users, DollarSign, Clock, CheckCircle, X, ChevronRight, Filter, Sparkles, Check } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface BuyerRequest {
