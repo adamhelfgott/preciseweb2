@@ -78,7 +78,7 @@ export default function HowItWorksPage() {
           <section className="py-12 bg-white">
             <div className="container max-w-6xl">
               <h2 className="text-3xl font-bold text-center text-dark-gray mb-12">
-                Turn Your Data Into Revenue Without Risk
+                Market Intelligence That Maximizes Your Data Value
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <motion.div
@@ -90,9 +90,9 @@ export default function HowItWorksPage() {
                   <div className="w-16 h-16 bg-brand-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Lock className="w-8 h-8 text-brand-green" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Data Never Leaves</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Health Score Analysis</h3>
                   <p className="text-medium-gray">
-                    Your data stays in your infrastructure. We only create verified credentials.
+                    AI evaluates your data quality across 5 dimensions with improvement tips.
                   </p>
                 </motion.div>
                 <motion.div
@@ -104,9 +104,9 @@ export default function HowItWorksPage() {
                   <div className="w-16 h-16 bg-electric-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <DollarSign className="w-8 h-8 text-electric-blue" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Automatic Royalties</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Competitive Pricing</h3>
                   <p className="text-medium-gray">
-                    Get paid automatically whenever your data contributes to campaign success.
+                    Benchmark your rates against market standards to capture full value.
                   </p>
                 </motion.div>
                 <motion.div
@@ -118,9 +118,9 @@ export default function HowItWorksPage() {
                   <div className="w-16 h-16 bg-bright-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Brain className="w-8 h-8 text-bright-purple" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Fair Attribution</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Demand Matching</h3>
                   <p className="text-medium-gray">
-                    Valence Enhanced Shapley ensures you're paid fairly for your data's impact.
+                    Match your assets to buyer requests with AI-powered compatibility scores.
                   </p>
                 </motion.div>
               </div>
@@ -331,7 +331,7 @@ precise.createCredentials({
           <section className="py-12 bg-white">
             <div className="container max-w-6xl">
               <h2 className="text-3xl font-bold text-center text-dark-gray mb-12">
-                Access Premium Data Without Privacy Risk
+                AI-Powered Campaign Intelligence That Drives Results
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <motion.div
@@ -343,9 +343,9 @@ precise.createCredentials({
                   <div className="w-16 h-16 bg-brand-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Target className="w-8 h-8 text-brand-green" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Verified Audiences</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Predictive Analytics</h3>
                   <p className="text-medium-gray">
-                    Target real, verified users with deterministic data quality.
+                    AI forecasts CAC 4 weeks ahead with confidence intervals.
                   </p>
                 </motion.div>
                 <motion.div
@@ -357,9 +357,9 @@ precise.createCredentials({
                   <div className="w-16 h-16 bg-electric-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <BarChart3 className="w-8 h-8 text-electric-blue" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Clear Attribution</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Custom Attribution</h3>
                   <p className="text-medium-gray">
-                    See exactly which data sources drive your campaign performance.
+                    Design attribution windows that match your business model.
                   </p>
                 </motion.div>
                 <motion.div
@@ -371,9 +371,9 @@ precise.createCredentials({
                   <div className="w-16 h-16 bg-bright-purple/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Shield className="w-8 h-8 text-bright-purple" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Zero Privacy Risk</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Incrementality Testing</h3>
                   <p className="text-medium-gray">
-                    Never touch raw data. Always compliant with GDPR, CCPA, and more.
+                    Measure true campaign impact with automated holdout groups.
                   </p>
                 </motion.div>
               </div>

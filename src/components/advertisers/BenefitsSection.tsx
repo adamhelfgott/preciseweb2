@@ -6,24 +6,24 @@ import { CheckCircle, TrendingUp, Shield, BarChart3 } from "lucide-react";
 export default function BenefitsSection() {
   const benefits = [
     {
-      icon: CheckCircle,
-      title: "Verified quality",
-      description: "Every audience comes with cryptographic proof of quality and consent. Know exactly what you're buying before you activate.",
-    },
-    {
       icon: TrendingUp,
-      title: "Complete attribution",
-      description: "See which data sources drive conversions. Make optimization decisions based on transparent, verifiable insights.",
-    },
-    {
-      icon: Shield,
-      title: "Built-in compliance",
-      description: "Every audience includes verified consent. Reduce risk and build campaigns with confidence.",
+      title: "Predictive CAC Forecasting",
+      description: "AI-powered predictions show your CAC trajectory 4 weeks ahead with confidence intervals. Stop flying blind.",
     },
     {
       icon: BarChart3,
-      title: "Performance insights",
-      description: "Access historical performance data for every audience. Make informed decisions based on real results.",
+      title: "Custom Attribution Windows",
+      description: "Configure attribution models that match your business. From first-touch to data-driven, see what really drives conversions.",
+    },
+    {
+      icon: CheckCircle,
+      title: "Incrementality Testing",
+      description: "Built-in holdout testing reveals true campaign impact. Know which campaigns actually move the needle.",
+    },
+    {
+      icon: Shield,
+      title: "Creative Fatigue Alerts",
+      description: "AI monitors creative performance and alerts you before fatigue impacts results. Stay ahead of declining CTRs.",
     },
   ];
 
@@ -37,7 +37,7 @@ export default function BenefitsSection() {
           className="text-center mb-16"
         >
           <h2 className="text-display-medium font-bold text-dark-gray">
-            The advantages of verified data
+            Advanced analytics that improve every campaign
           </h2>
         </motion.div>
 

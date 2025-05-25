@@ -1,29 +1,29 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { DollarSign, Shield, Plug, Eye } from "lucide-react";
+import { TrendingUp, BarChart3, Target, Zap } from "lucide-react";
 
 export default function BenefitsSection() {
   const benefits = [
     {
-      icon: DollarSign,
-      title: "New revenue streams",
-      description: "Create value from data you're already collecting. Automated distribution means passive income without operational overhead.",
+      icon: BarChart3,
+      title: "Health Score Analytics",
+      description: "AI analyzes your data across 5 quality dimensions. Get specific recommendations to improve value and unlock premium pricing.",
     },
     {
-      icon: Shield,
-      title: "Privacy-first approach",
-      description: "Your raw data never leaves your control. Share insights and audiences while maintaining complete privacy compliance.",
+      icon: TrendingUp,
+      title: "Market Rate Intelligence",
+      description: "See how your pricing compares to competitors. Dynamic benchmarking ensures you're never undervaluing your assets.",
     },
     {
-      icon: Plug,
-      title: "Simple integration",
-      description: "Works with your existing infrastructure. One-line SDK or native integrations with major platforms.",
+      icon: Target,
+      title: "Demand Matching",
+      description: "Match your data to active buyer requests. Our AI shows compatibility scores and revenue potential for each opportunity.",
     },
     {
-      icon: Eye,
-      title: "Complete transparency",
-      description: "See exactly how your data creates value. Track usage, measure impact, understand attribution.",
+      icon: Zap,
+      title: "Enhancement Insights",
+      description: "Get AI-powered suggestions to increase data value. See projected revenue impact before making changes.",
     },
   ];
 
@@ -37,7 +37,7 @@ export default function BenefitsSection() {
           className="text-center mb-16"
         >
           <h2 className="text-display-medium font-bold text-dark-gray">
-            Why leading companies choose Precise
+            Intelligence tools that maximize your data value
           </h2>
         </motion.div>
 
