@@ -10,6 +10,7 @@ import DataAssetHealthScore from "@/components/app/data-owner/DataAssetHealthSco
 import MarketRateBenchmarking from "@/components/app/data-owner/MarketRateBenchmarking";
 import DataEnhancementSuggestions from "@/components/app/data-owner/DataEnhancementSuggestions";
 import BuyerRequestDashboard from "@/components/app/data-owner/BuyerRequestDashboard";
+import MarketIntelligence from "@/components/app/data-owner/MarketIntelligence";
 
 interface DataAsset {
   id: string;
@@ -391,6 +392,9 @@ export default function DataAssetsPage() {
       {/* Advanced Features Section */}
       <div className="space-y-6 mt-12">
         <h2 className="text-2xl font-bold text-dark-gray">Asset Intelligence</h2>
+        
+        {/* Market Intelligence */}
+        <MarketIntelligence />
         
         {/* Data Asset Health Score */}
         <DataAssetHealthScore />
