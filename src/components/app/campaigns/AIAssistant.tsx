@@ -182,8 +182,8 @@ export default function AIAssistant() {
       </motion.button>
 
       {/* Desktop Panel - Always Visible on Large Screens */}
-      <div className="hidden lg:block fixed right-0 top-0 h-full w-[400px] bg-white shadow-2xl z-40">
-        <div className="h-full flex flex-col">
+      <div className={`hidden lg:block fixed right-0 top-0 ${isMinimized ? 'h-auto' : 'h-full'} w-[400px] bg-white shadow-2xl z-40 transition-all duration-300`}>
+        <div className={`${isMinimized ? '' : 'h-full'} flex flex-col`}>
           {/* Header */}
           <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-4 text-white">
             <div className="flex items-center justify-between">
