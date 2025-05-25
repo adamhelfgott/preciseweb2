@@ -165,9 +165,12 @@ export default function AttributionBreakdown() {
         >
           <div className="flex items-center justify-between mb-2">
             <Sparkles size={20} className="text-brand-green" />
-            <Tooltip content="Average Shapley value across all campaigns">
-              <Info size={14} className="text-medium-gray" />
-            </Tooltip>
+            <div className="group relative">
+              <Info size={14} className="text-medium-gray cursor-help" />
+              <div className="absolute right-0 bottom-full mb-2 hidden group-hover:block bg-dark-gray text-white text-xs p-2 rounded whitespace-nowrap z-10">
+                Average Shapley value across all campaigns
+              </div>
+            </div>
           </div>
           <p className="text-2xl font-bold text-dark-gray">
             {(avgShapleyValue * 100).toFixed(1)}%
@@ -342,11 +345,12 @@ export default function AttributionBreakdown() {
             >
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs text-medium-gray">{metric.metric}</p>
-                <Tooltip
-                  content={`You're in the ${metric.percentile}th percentile`}
-                >
-                  <Award size={14} className="text-brand-orange" />
-                </Tooltip>
+                <div className="group relative">
+                  <Award size={14} className="text-brand-orange cursor-help" />
+                  <div className="absolute right-0 bottom-full mb-2 hidden group-hover:block bg-dark-gray text-white text-xs p-2 rounded whitespace-nowrap z-10">
+                    You're in the {metric.percentile}th percentile
+                  </div>
+                </div>
               </div>
               <p className="text-lg font-bold text-dark-gray">
                 {metric.value}%

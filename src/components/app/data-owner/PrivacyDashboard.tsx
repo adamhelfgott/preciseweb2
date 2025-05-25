@@ -240,9 +240,12 @@ export default function PrivacyDashboard() {
           <div className="flex items-center gap-2">
             <Shield size={20} className="text-brand-purple" />
             <h3 className="font-medium text-dark-gray">Privacy Budget Status</h3>
-            <Tooltip content="Privacy budget ensures differential privacy guarantees">
-              <Info size={14} className="text-medium-gray" />
-            </Tooltip>
+            <div className="group relative">
+              <Info size={14} className="text-medium-gray cursor-help" />
+              <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-dark-gray text-white text-xs p-2 rounded whitespace-nowrap z-10">
+                Privacy budget ensures differential privacy guarantees
+              </div>
+            </div>
           </div>
           <span className="text-sm text-medium-gray">
             Resets in {Math.ceil((privacyBudget.resetDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days
@@ -314,9 +317,12 @@ export default function PrivacyDashboard() {
                       </span>
                     </div>
                   </div>
-                  <Tooltip content={`Threshold: ${metric.threshold}`}>
-                    <Info size={14} className="text-medium-gray" />
-                  </Tooltip>
+                  <div className="group relative">
+                    <Info size={14} className="text-medium-gray cursor-help" />
+                    <div className="absolute right-0 bottom-full mb-2 hidden group-hover:block bg-dark-gray text-white text-xs p-2 rounded whitespace-nowrap z-10">
+                      Threshold: {metric.threshold}
+                    </div>
+                  </div>
                 </div>
                 <div className="relative">
                   <div className="flex items-end justify-between mb-1">
