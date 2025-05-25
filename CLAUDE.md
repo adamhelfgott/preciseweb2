@@ -24,23 +24,33 @@ Key differentiators:
 - Convex backend for real-time features and chat persistence
 - Role-based authentication (DATA_OWNER, MEDIA_BUYER)
 - Responsive design with Tailwind CSS
+- Global search functionality (Cmd+K)
 
 #### Media Buyer Features
 - **Campaigns Page**: Full AdOps command center with AI assistant
 - **Creative Carousel**: Performance tracking with fatigue detection
+- **Creative Fatigue Alert**: Automated alerts when creatives need refresh
 - **DSP Arbitrage**: Multi-DSP optimization dashboard
 - **Multi-Touch Attribution**: Marketing Mix Model implementation
 - **Campaign Health Monitor**: Real-time performance alerts
 - **Budget Pacing**: Spend tracking and forecasting
 - **Audience Insights**: Segment performance analysis
 - **AI Assistant**: Collapsible chat with markdown support and Convex persistence
+- **Predictive CAC Forecasting**: AI-powered 4-week CAC predictions with confidence intervals
+- **Custom Attribution Windows**: Configurable attribution models with visual impact analysis
+- **Incrementality Testing**: Holdout group testing for true campaign impact
 
 #### Data Owner Features
 - **Earnings Dashboard**: Revenue tracking and visualization
+- **Earnings Predictor**: Calculate potential earnings based on data quality
 - **Valence Enhanced Shapley**: Fair value attribution
 - **Asset Performance**: Breakdown by data type
 - **Transaction History**: Detailed payment records
 - **Real-time Activity Feed**: Live usage monitoring
+- **Data Asset Health Score**: Comprehensive quality scoring with improvement recommendations
+- **Market Rate Benchmarking**: Compare pricing to market standards
+- **Data Enhancement Suggestions**: AI-powered recommendations to increase value
+- **Buyer Request Dashboard**: Match assets with active buyer requests
 
 #### Marketing Site
 - Homepage with value propositions
@@ -49,75 +59,65 @@ Key differentiators:
 - Get Started with role-specific onboarding flows
 - Company/Team page with real team photos
 - Developer documentation structure
+- How It Works page with step-by-step flows
+- Pricing page with enterprise contact form
 
 ### 🚨 Critical Issues for Go-Live
 
-1. **Missing Content Pages**:
-   - `/pricing` - Currently shows "under construction"
-   - `/how-it-works` - Currently shows "under construction"
-   - Legal pages (Privacy Policy, Terms of Service) - Not created
-   - Contact/Support page - Not created
-
-2. **Case Studies Page Issues**:
-   - References 3 images that don't exist:
-     - `/case-studies/chicago-cubs.jpg`
-     - `/case-studies/retail.jpg`
-     - `/case-studies/streaming.jpg`
-   - Need to either add images or remove image references
-
-3. **Mock Data Dependencies**:
+1. **Mock Data Dependencies**:
    - All campaign data is mocked
    - All earnings data is mocked
    - No real API integrations
    - No actual DSP connections
 
-4. **Missing Core Features**:
+2. **Missing Core Features**:
    - No actual data upload/management for data owners
    - No real payment processing
    - No actual ad serving integration
    - No real attribution tracking
 
-### 🎯 High-Priority Improvements
+3. **Case Studies Page Issues**:
+   - References 3 images that don't exist (commented out for now)
+   - Need to either add real case study images or create placeholders
 
-#### For Media Buyers
-1. **Predictive CAC Forecasting** - AI-powered cost predictions
-2. **Creative A/B Testing Interface** - Built-in experimentation
-3. **Competitive Intelligence** - Industry benchmarking
-4. **Real-time Bidding Insights** - Live auction data
-5. **Automated Reporting** - Scheduled stakeholder updates
+4. **Legal Pages**:
+   - Privacy Policy - Not created
+   - Terms of Service - Not created
 
-#### For Data Owners
-1. **Data Quality Scoring** - Automated validation and scoring
-2. **Earnings Predictor** - ML-based revenue forecasting
-3. **Market Rate Benchmarking** - Competitive pricing insights
-4. **Enhanced Usage Analytics** - Deeper insights into data usage
-5. **Smart Pricing Recommendations** - AI-optimized pricing
+### 🎯 Features In Progress
 
-#### Platform-Wide
-1. **Mobile Responsiveness** - Many components need mobile optimization
-2. **Loading States** - Add skeleton screens for better UX
-3. **Error Handling** - Graceful degradation for API failures
-4. **Empty States** - Better messaging when no data exists
-5. **Onboarding Tours** - Guided walkthroughs for new users
-6. **Global Search** - Search across all campaigns/assets
-7. **Notifications System** - Real-time alerts
-8. **Performance Optimization** - Code splitting, lazy loading
+#### Media Buyer Features (Not Yet Implemented)
+1. **Audience Overlap Analysis** - Identify redundant targeting
+2. **Competitive Intelligence** - Industry benchmarking
+3. **Smart Budget Reallocation** - AI-driven budget optimization
+4. **Integration Health Dashboard** - Monitor DSP connections
+5. **Collaborative Workspaces** - Team campaign management
+6. **Automated Reporting** - Scheduled stakeholder updates
+
+#### Data Owner Features (Not Yet Implemented)
+1. **Usage Analytics Deep Dive** - Granular usage insights
+2. **Smart Pricing Recommendations** - ML-based price optimization
+3. **Automated Data Validation** - Quality checks and alerts
+4. **Revenue Share Calculator** - Team/partner splits
+5. **White-label Reports** - Branded reports for stakeholders
 
 ### 📋 Go-Live Checklist
 
 **Must Have**:
-- [ ] Complete pricing page content
-- [ ] Complete how-it-works page content  
-- [ ] Add or remove case study images
+- [ ] Replace mock data with real APIs (or clearly mark as demo)
 - [ ] Create privacy policy page
 - [ ] Create terms of service page
 - [ ] Create contact/support page
-- [ ] Replace mock data with real APIs (or clearly mark as demo)
+- [ ] Add or create case study images
 - [ ] Add loading states for all async operations
 - [ ] Add error handling for all API calls
-- [ ] Mobile responsive testing and fixes
+- [ ] Mobile responsive testing and fixes (partially complete)
 - [ ] Accessibility audit (ARIA labels, keyboard nav)
 - [ ] Performance testing (Lighthouse audit)
+- [ ] Security audit (authentication, data privacy)
+- [ ] Production environment setup
+- [ ] SSL certificates
+- [ ] Domain configuration
 
 **Nice to Have**:
 - [ ] FAQ/Help center
@@ -126,6 +126,8 @@ Key differentiators:
 - [ ] Video demos/tutorials
 - [ ] Live chat support integration
 - [ ] Multi-language support
+- [ ] Email notification system
+- [ ] 2FA authentication
 
 ## Development Commands
 
@@ -177,9 +179,23 @@ npx convex dev
 - Mobile-first responsive design
 - Accessibility as a core principle
 
+### Color Palette
+- Dark Gray: #2D3436
+- Medium Gray: #636E72
+- Light Gray: #F5F6F7
+- Silk Gray: #FAFBFC
+- Electric Blue: #0984E3
+- Brand Green: #00B894
+- Warm Coral: #FF6B6B
+- Soft Lavender: #A29BFE
+- Golden Amber: #FDCB6E
+
 ## Important Rules
 
 1. **No Fake Data in Production**: Never show inflated metrics or fake company logos
 2. **Privacy First**: Always abstract exact data values to prevent leverage
 3. **Bug Fixes**: Never remove features when fixing bugs - find the root cause
 4. **Quality**: Prefer fixing existing features over adding new ones
+5. **User Experience**: Always provide loading states and error handling
+6. **Accessibility**: All interactive elements must be keyboard accessible
+7. **Performance**: Lazy load heavy components and optimize images
