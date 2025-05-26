@@ -43,6 +43,11 @@ class DataService {
     }
   }
 
+  // Public method to check if using mock data
+  isUsingMockData(): boolean {
+    return this.mockMode;
+  }
+
   // === CAMPAIGNS ===
   async getCampaigns(organizationId?: string): Promise<Campaign[]> {
     if (this.mockMode) {
