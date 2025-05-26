@@ -1,0 +1,15 @@
+{
+  "name": "precise-production",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "@precise_supabase_url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@precise_supabase_anon_key",
+    "NEXT_PUBLIC_CONVEX_URL": "@precise_convex_url",
+    "OPENAI_API_KEY": "@openai_api_key"
+  }
+}
