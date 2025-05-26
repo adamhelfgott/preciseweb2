@@ -1,11 +1,34 @@
 import { streamText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
+    // Check for authentication
+    const cookieStore = cookies();
+    const authCookie = cookieStore.get('auth-token');
+    
+    if (!authCookie || !authCookie.value) {
+      return NextResponse.json({
+        error: "Unauthorized. Please sign in to use the AI assistant."
+      }, { status: 401 });
+    }
+    
+    // Verify the auth token (basic check for demo)
+    try {
+      const userData = JSON.parse(atob(authCookie.value));
+      if (!userData.email || !userData.role) {
+        throw new Error("Invalid auth token");
+      }
+    } catch (e) {
+      return NextResponse.json({
+        error: "Invalid authentication. Please sign in again."
+      }, { status: 401 });
+    }
+    
     // Extract the `messages` and `context` from the body of the request
     const { messages, context } = await req.json();
 
