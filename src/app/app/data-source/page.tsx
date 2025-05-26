@@ -14,17 +14,20 @@ export default function DataSourcePage() {
     // Check data source
     const checkDataSource = async () => {
       try {
-        setDataSource(dataService.isUsingMockData() ? 'mock' : 'database');
-        
         // Get Supabase URL from environment
         const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'Not configured';
         setSupabaseUrl(url);
+        
+        // Simple check based on environment variables
+        const hasSupabaseConfig = !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+        setDataSource(hasSupabaseConfig ? 'database' : 'mock');
         
         // Try to fetch campaigns
         const campaignsData = await dataService.getCampaigns();
         setCampaigns(campaignsData.slice(0, 3)); // Show first 3
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
+        setDataSource('mock'); // Default to mock on error
       }
     };
 
