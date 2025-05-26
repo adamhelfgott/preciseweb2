@@ -65,6 +65,46 @@ export default function DataSourcePage() {
           </div>
         </div>
 
+        {/* Environment Variables Debug */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <AlertCircle className="w-5 h-5" />
+            Environment Variables Debug
+          </h2>
+          <div className="space-y-3">
+            <div>
+              <p className="text-sm font-medium text-gray-700">NEXT_PUBLIC_SUPABASE_URL:</p>
+              <p className="font-mono text-xs break-all bg-gray-100 p-2 rounded">
+                {process.env.NEXT_PUBLIC_SUPABASE_URL ? 
+                  `${process.env.NEXT_PUBLIC_SUPABASE_URL.substring(0, 30)}...` : 
+                  '❌ NOT SET'}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-700">NEXT_PUBLIC_SUPABASE_ANON_KEY:</p>
+              <p className="font-mono text-xs break-all bg-gray-100 p-2 rounded">
+                {process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 
+                  `${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.substring(0, 20)}...` : 
+                  '❌ NOT SET'}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-700">NEXT_PUBLIC_CONVEX_URL:</p>
+              <p className="font-mono text-xs break-all bg-gray-100 p-2 rounded">
+                {process.env.NEXT_PUBLIC_CONVEX_URL ? 
+                  `${process.env.NEXT_PUBLIC_CONVEX_URL.substring(0, 30)}...` : 
+                  '❌ NOT SET'}
+              </p>
+            </div>
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+              <p className="text-xs text-blue-800">
+                <strong>Note:</strong> Environment variables must be prefixed with NEXT_PUBLIC_ to be available in the browser.
+                Variables are baked in at build time, so changes require a redeploy.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Data Source Status */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
