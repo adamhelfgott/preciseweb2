@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Database, Server, Check, X, AlertCircle } from 'lucide-react';
-import { dataService } from '@/services/DataService';
+import { dataServiceClient } from '@/services/DataServiceClient';
 
 export default function DataSourcePage() {
   const [dataSource, setDataSource] = useState<'loading' | 'mock' | 'database'>('loading');
@@ -18,12 +18,12 @@ export default function DataSourcePage() {
         const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'Not configured';
         setSupabaseUrl(url);
         
-        // Simple check based on environment variables
-        const hasSupabaseConfig = !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-        setDataSource(hasSupabaseConfig ? 'database' : 'mock');
+        // Check if using mock data
+        const isMock = dataServiceClient.isUsingMockData();
+        setDataSource(isMock ? 'mock' : 'database');
         
         // Try to fetch campaigns
-        const campaignsData = await dataService.getCampaigns();
+        const campaignsData = await dataServiceClient.getCampaigns();
         setCampaigns(campaignsData.slice(0, 3)); // Show first 3
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Unknown error');
@@ -100,6 +100,14 @@ export default function DataSourcePage() {
               <p className="text-xs text-blue-800">
                 <strong>Note:</strong> Environment variables must be prefixed with NEXT_PUBLIC_ to be available in the browser.
                 Variables are baked in at build time, so changes require a redeploy.
+              </p>
+            </div>
+            
+            {/* Debug Info */}
+            <div className="mt-4 p-3 bg-gray-100 rounded-lg">
+              <p className="text-xs font-mono text-gray-700">
+                Debug: typeof window = {typeof window}<br/>
+                Debug: in browser = {typeof window !== 'undefined' ? 'true' : 'false'}
               </p>
             </div>
           </div>
