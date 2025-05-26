@@ -1,0 +1,60 @@
+{
+  "mcpServers": {
+    "precise-ai": {
+      "command": "node",
+      "args": ["/opt/precise-ai/mcp-server/index.js"],
+      "env": {
+        "PRECISE_API_KEY": "{{PRECISE_API_KEY}}",
+        "DSP_NAME": "{{DSP_NAME}}",
+        "WEBHOOK_URL": "{{WEBHOOK_URL}}"
+      }
+    }
+  },
+  "tools": {
+    "creative_fatigue_check": {
+      "description": "Check creative fatigue score in real-time",
+      "parameters": {
+        "creative_id": "string",
+        "campaign_id": "string",
+        "check_cross_platform": "boolean"
+      }
+    },
+    "get_bid_modifier": {
+      "description": "Get real-time bid modifier based on incrementality",
+      "parameters": {
+        "impression_id": "string",
+        "user_segments": "array",
+        "current_bid": "number"
+      }
+    },
+    "find_audience_arbitrage": {
+      "description": "Find underpriced audience segments",
+      "parameters": {
+        "target_segments": "array",
+        "budget": "number",
+        "campaign_goals": "object"
+      }
+    },
+    "optimize_supply_path": {
+      "description": "Get optimal SSP/exchange routing",
+      "parameters": {
+        "domain": "string",
+        "geo": "string",
+        "quality_requirements": "object"
+      }
+    },
+    "get_channel_saturation": {
+      "description": "Check if channel is oversaturated",
+      "parameters": {
+        "campaign_id": "string",
+        "channel": "string",
+        "time_window": "string"
+      }
+    }
+  },
+  "prompts": {
+    "campaign_optimization": "You are a DSP optimization agent with access to Precise.ai's cross-platform intelligence. Use the available tools to make real-time bidding and optimization decisions.",
+    "creative_management": "Monitor creative performance across all platforms and proactively suggest rotations before fatigue impacts performance.",
+    "budget_allocation": "Dynamically allocate budgets across channels based on real-time incrementality data from Precise.ai's MMM."
+  }
+}
