@@ -18,6 +18,14 @@ export default function DataSourcePage() {
         const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'Not configured';
         setSupabaseUrl(url);
         
+        // Direct check in the browser
+        const browserUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const browserKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        
+        console.log('Diagnostic page - Direct env check:');
+        console.log('- URL:', !!browserUrl, browserUrl?.substring(0, 30));
+        console.log('- Key:', !!browserKey, browserKey?.substring(0, 20));
+        
         // Check if using mock data
         const isMock = dataServiceClient.isUsingMockData();
         setDataSource(isMock ? 'mock' : 'database');
@@ -107,7 +115,9 @@ export default function DataSourcePage() {
             <div className="mt-4 p-3 bg-gray-100 rounded-lg">
               <p className="text-xs font-mono text-gray-700">
                 Debug: typeof window = {typeof window}<br/>
-                Debug: in browser = {typeof window !== 'undefined' ? 'true' : 'false'}
+                Debug: in browser = {typeof window !== 'undefined' ? 'true' : 'false'}<br/>
+                <br/>
+                <strong>Check Console for DataService logs</strong>
               </p>
             </div>
           </div>

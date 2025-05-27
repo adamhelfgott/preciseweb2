@@ -43,6 +43,10 @@ class DataServiceClient {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     
+    console.log('DataService: Checking Supabase config...');
+    console.log('URL exists:', !!url, url ? `(${url.substring(0, 30)}...)` : '');
+    console.log('Key exists:', !!key, key ? `(${key.substring(0, 20)}...)` : '');
+    
     if (url && key) {
       try {
         this.supabase = createClient();
@@ -54,6 +58,7 @@ class DataServiceClient {
       }
     } else {
       console.log('DataService: No Supabase config, using mock mode');
+      console.log('Missing:', !url ? 'URL' : '', !key ? 'KEY' : '');
       this.mockMode = true;
     }
     
