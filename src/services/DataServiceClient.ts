@@ -110,10 +110,7 @@ class DataServiceClient {
     // Real Supabase query
     let query = this.supabase
       .from('campaigns')
-      .select(`
-        *,
-        metrics:campaign_performance(*)
-      `)
+      .select('*')
       .order('created_at', { ascending: false });
     
     // Only filter by organization if provided
@@ -181,10 +178,7 @@ class DataServiceClient {
 
     let query = this.supabase
       .from('data_assets')
-      .select(`
-        *,
-        usage:data_asset_usage(*)
-      `)
+      .select('*')
       .order('created_at', { ascending: false });
     
     // Only filter by organization if provided
