@@ -108,14 +108,20 @@ class DataServiceClient {
     }
 
     // Real Supabase query
-    const { data: campaigns, error } = await this.supabase
+    let query = this.supabase
       .from('campaigns')
       .select(`
         *,
         metrics:campaign_performance(*)
       `)
-      .eq('organization_id', organizationId || '')
       .order('created_at', { ascending: false });
+    
+    // Only filter by organization if provided
+    if (organizationId) {
+      query = query.eq('organization_id', organizationId);
+    }
+    
+    const { data: campaigns, error } = await query;
 
     if (error) {
       console.error('DataService: Error fetching campaigns', error);
@@ -173,14 +179,20 @@ class DataServiceClient {
       }));
     }
 
-    const { data: assets, error } = await this.supabase
+    let query = this.supabase
       .from('data_assets')
       .select(`
         *,
         usage:data_asset_usage(*)
       `)
-      .eq('organization_id', organizationId || '')
       .order('created_at', { ascending: false });
+    
+    // Only filter by organization if provided
+    if (organizationId) {
+      query = query.eq('organization_id', organizationId);
+    }
+    
+    const { data: assets, error } = await query;
 
     if (error) throw error;
     return assets || [];
