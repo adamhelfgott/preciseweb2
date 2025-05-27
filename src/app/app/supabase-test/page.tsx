@@ -10,11 +10,19 @@ export default function SupabaseTestPage() {
       const testResults: any = {};
       
       // Test 1: Check environment variables
+      const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
       testResults.envVars = {
         url: process.env.NEXT_PUBLIC_SUPABASE_URL,
-        key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET (hidden)' : 'NOT SET',
+        key: anonKey ? `${anonKey.substring(0, 20)}...${anonKey.substring(anonKey.length - 20)}` : 'NOT SET',
         urlLength: process.env.NEXT_PUBLIC_SUPABASE_URL?.length || 0,
-        keyLength: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.length || 0,
+        keyLength: anonKey?.length || 0,
+        keyPreview: anonKey ? {
+          first20: anonKey.substring(0, 20),
+          last20: anonKey.substring(anonKey.length - 20),
+          expectedLength: 265,
+          actualLength: anonKey.length,
+          isTruncated: anonKey.length < 265
+        } : null
       };
       
       // Test 2: Try to create Supabase client directly
