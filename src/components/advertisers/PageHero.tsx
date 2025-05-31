@@ -14,28 +14,28 @@ export default function PageHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <p className="text-brand-green font-medium mb-4">For Intelligence Users</p>
+            <p className="text-brand-green font-medium mb-4">For Media Buyers</p>
             
             <h1 className="text-display-hero font-bold text-dark-gray mb-6">
-              Query intelligence.
+              Verified data activation.
               <br />
-              <span className="text-gradient">Not raw data.</span>
+              <span className="text-gradient">Exceptional performance.</span>
             </h1>
             
             <p className="text-body-large text-medium-gray mb-8 leading-relaxed">
-              Submit approved queries to derive insights without accessing raw data.
-              Use federated learning for model training, closed-loop attribution for
-              measurement, and secure enclaves for computation. Privacy-preserving
-              collaboration at scale.
+              Activate premium data segments with confidence. Reduce CAC with data 
+              you can actually rely on. Built-in verification eliminates data quality 
+              surprises and optimizes campaigns in real-time with cryptographic validation 
+              of every action.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/get-started" className="btn-primary">
-                Configure query permissions
+                Activate campaigns
                 <ArrowRight size={20} />
               </Link>
-              <Link href="/developers" className="btn-secondary">
-                View query architecture
+              <Link href="/how-it-works" className="btn-secondary">
+                See how it works
               </Link>
             </div>
           </motion.div>

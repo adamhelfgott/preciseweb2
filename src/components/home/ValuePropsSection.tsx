@@ -7,7 +7,7 @@ export default function ValuePropsSection() {
     {
       icon: "🧠",
       title: "Predictive CAC Forecasting",
-      description: "AI predicts customer acquisition costs 4 weeks out with 92% accuracy. Plan budgets with confidence.",
+      description: "AI predicts customer acquisition costs weeks in advance. Plan budgets with confidence using verified data signals.",
     },
     {
       icon: "🎯",
@@ -17,7 +17,7 @@ export default function ValuePropsSection() {
     {
       icon: "💸",
       title: "Multi-DSP Arbitrage",
-      description: "Automatically shift budgets between DSPs for optimal performance. Average 2.3x improvement in CAC.",
+      description: "Automatically shift budgets between DSPs for optimal performance. Verified data quality across all channels.",
     },
     {
       icon: "📊",
@@ -29,23 +29,23 @@ export default function ValuePropsSection() {
   const dataControllerProps = [
     {
       icon: "🔐",
-      title: "Stay a Data Controller",
-      description: "Never become a data broker. Your data never leaves your infrastructure. Maintain GDPR/CCPA compliance.",
+      title: "Maintain Control",
+      description: "Your data never leaves your infrastructure. Activate across more channels while maintaining GDPR/CCPA compliance.",
     },
     {
-      icon: "💡",
-      title: "Market Intelligence",
-      description: "See advertiser demand signals in real-time. Know what data is valuable before your competitors.",
+      icon: "💰",
+      title: "Prove Performance Impact",
+      description: "Automated attribution shows exactly how your data drives campaign results. Command premium pricing with proof.",
     },
     {
       icon: "🏆",
       title: "Fair Value Attribution",
-      description: "Valence Enhanced Shapley ensures you're paid based on actual campaign impact, not guesswork.",
+      description: "Get paid based on actual campaign impact, not guesswork. Verification makes the activation valuable.",
     },
     {
-      icon: "🚀",
-      title: "Zero Integration Hassle",
-      description: "Deploy federated nodes in minutes. Works with your existing data infrastructure. SOC2 compliant.",
+      icon: "📊",
+      title: "Performance Intelligence",
+      description: "See real-time performance data from campaigns using your segments. Optimize data value over time.",
     },
   ];
 
@@ -61,10 +61,10 @@ export default function ValuePropsSection() {
         >
           <div className="text-center mb-12">
             <h2 className="text-display-medium font-bold text-dark-gray mb-4">
-              For Media Buyers: AI That Delivers Results
+              For Media Buyers: Verified Data That Drives Performance
             </h2>
             <p className="text-body-large text-medium-gray max-w-3xl mx-auto">
-              Stop guessing. Start knowing. Our AI analyzes millions of signals to optimize your campaigns in real-time.
+              Activate premium data segments with confidence. Reduce CAC with data you can actually rely on — with cryptographic validation of every action.
             </p>
           </div>
 
@@ -98,10 +98,10 @@ export default function ValuePropsSection() {
         >
           <div className="text-center mb-12">
             <h2 className="text-display-medium font-bold text-dark-gray mb-4">
-              For Data Controllers: Intelligence Without Exposure
+              For Data Controllers: Turn Your Data Into a Performance Powerhouse
             </h2>
             <p className="text-body-large text-medium-gray max-w-3xl mx-auto">
-              Enable federated queries while maintaining complete control. Your data never moves, only insights do.
+              Activate your data across more channels while maintaining control. Prove performance impact to command premium prices — with proof.
             </p>
           </div>
 
