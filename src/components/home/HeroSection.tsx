@@ -37,9 +37,9 @@ export default function HeroSection() {
             </div>
 
             <div className="grid grid-cols-3 gap-6">
-              <TrustItem icon="📈" label="Lower CAC with verified data" />
-              <TrustItem icon="🎯" label="Premium pricing with proof" />
-              <TrustItem icon="✅" label="Cryptographic validation" />
+              <TrustItem label="Lower CAC with verified data" />
+              <TrustItem label="Premium pricing with proof" />
+              <TrustItem label="Cryptographic validation" />
             </div>
           </motion.div>
 
@@ -58,10 +58,9 @@ export default function HeroSection() {
   );
 }
 
-function TrustItem({ icon, label }: { icon: string; label: string }) {
+function TrustItem({ label }: { label: string }) {
   return (
     <div className="text-center">
-      <div className="text-2xl mb-2">{icon}</div>
       <p className="text-caption text-medium-gray">{label}</p>
     </div>
   );

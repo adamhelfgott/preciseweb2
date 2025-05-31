@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import GlobalSearch from "./GlobalSearch";
+import Logo from "@/components/Logo";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { user, signOut } = useAuth();
@@ -56,11 +57,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
               
-              <Link href="/app/dashboard" className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-brand-green rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold">P</span>
-                </div>
-                <span className="font-semibold text-xl text-dark-gray hidden sm:block">Precise</span>
+              <Link href="/app/dashboard">
+                <Logo width={100} height={40} />
               </Link>
             </div>
 
