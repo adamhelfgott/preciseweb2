@@ -42,4 +42,5 @@ next-env.d.ts
 
 # ide
 .vscode/
-.idea/
+.idea/precise_images.zip
+precise/
