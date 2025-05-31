@@ -16,30 +16,30 @@ export default function HeroSection() {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-display-hero font-bold text-dark-gray mb-6">
-              Federated intelligence{" "}
-              <span className="text-gradient">without data sharing</span>
+              Verified Activation{" "}
+              <span className="text-gradient">for Modern Marketing</span>
             </h1>
             
             <p className="text-body-large text-medium-gray mb-8 leading-relaxed">
-              The privacy-preserving infrastructure that powers AI-driven campaign 
-              optimization. Predict CAC, detect creative fatigue, optimize across DSPs - 
-              all while data controllers maintain complete control.
+              Where trusted data meets exceptional performance. Precise enables secure 
+              data collaboration that drives real results — with cryptographic validation 
+              of every action, from source to outcome.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
               <Link href="/get-started" className="btn-primary">
-                Enable federated intelligence
+                Activate Campaigns
                 <ArrowRight size={20} />
               </Link>
               <Link href="/how-it-works" className="btn-secondary">
-                How It Works
+                Prove Value
               </Link>
             </div>
 
             <div className="grid grid-cols-3 gap-6">
-              <TrustItem icon="🧠" label="92% CAC prediction accuracy" />
-              <TrustItem icon="📈" label="3.2x average ROAS lift" />
-              <TrustItem icon="🔐" label="Privacy-preserving by design" />
+              <TrustItem icon="📈" label="Lower CAC with verified data" />
+              <TrustItem icon="🎯" label="Premium pricing with proof" />
+              <TrustItem icon="✅" label="Cryptographic validation" />
             </div>
           </motion.div>
 

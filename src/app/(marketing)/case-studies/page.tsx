@@ -122,10 +122,10 @@ export default function CaseStudiesPage() {
             className="text-center max-w-3xl mx-auto"
           >
             <h1 className="text-5xl md:text-6xl font-bold text-dark-gray mb-6">
-              Real Results, Real Revenue
+              Verified Activation in Action
             </h1>
             <p className="text-xl text-medium-gray">
-              See how leading brands are transforming their data into new revenue streams while maintaining the highest privacy standards
+              See how leading brands drive exceptional performance with verified data activation — where trust meets results
             </p>
           </motion.div>
         </div>
@@ -233,7 +233,7 @@ export default function CaseStudiesPage() {
               viewport={{ once: true }}
               className="text-3xl md:text-4xl font-bold text-white mb-6"
             >
-              Ready to Transform Your Data Strategy?
+              Ready for Verified Activation?
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -242,7 +242,7 @@ export default function CaseStudiesPage() {
               transition={{ delay: 0.1 }}
               className="text-xl text-green-100 mb-8"
             >
-              Join leading brands already maximizing their data value with Precise
+              Join leading brands driving exceptional performance with verified data
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
