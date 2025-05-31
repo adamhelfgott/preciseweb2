@@ -17,23 +17,23 @@ export default function PageHero() {
             <p className="text-brand-green font-medium mb-4">For Data Controllers</p>
             
             <h1 className="text-display-hero font-bold text-dark-gray mb-6">
-              Enable intelligence{" "}
-              <span className="text-gradient">without sharing data</span>
+              Turn your data into a{" "}
+              <span className="text-gradient">performance powerhouse</span>
             </h1>
             
             <p className="text-body-large text-medium-gray mb-8 leading-relaxed">
-              Maintain complete control while enabling privacy-preserving queries.
-              Approve query types, set fine-grained permissions, and generate revenue
-              from insights—all without becoming a data broker. Your data never moves.
+              Activate your data across more channels while maintaining control. 
+              Prove performance impact to command premium prices. Automated attribution 
+              shows exactly how your data drives campaign results — with proof.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/get-started" className="btn-primary">
-                Configure permissions
+                Prove value
                 <ArrowRight size={20} />
               </Link>
-              <Link href="#compliance" className="btn-secondary">
-                Learn about compliance
+              <Link href="#performance" className="btn-secondary">
+                See performance benefits
               </Link>
             </div>
           </motion.div>

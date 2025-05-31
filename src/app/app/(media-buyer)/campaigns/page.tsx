@@ -24,7 +24,9 @@ import CreativeFatigueAlert from "@/components/app/campaigns/CreativeFatigueAler
 import PredictiveCACForecasting from "@/components/app/campaigns/PredictiveCACForecasting";
 import CustomAttributionWindows from "@/components/app/campaigns/CustomAttributionWindows";
 import IncrementalityTesting from "@/components/app/campaigns/IncrementalityTesting";
+import CrossChannelIncrementality from "@/components/app/campaigns/CrossChannelIncrementality";
 import CompetitiveIntelligence from "@/components/app/campaigns/CompetitiveIntelligence";
+import RegionalPerformanceTracker from "@/components/app/campaigns/RegionalPerformanceTracker";
 
 // Mock campaign data
 const mockCampaigns = [
@@ -308,8 +310,14 @@ export default function CampaignsPage() {
         <IncrementalityTesting />
       </div>
 
+      {/* Cross-Channel Incrementality - MadHive Feature */}
+      <CrossChannelIncrementality />
+
       {/* Competitive Intelligence */}
       <CompetitiveIntelligence />
+
+      {/* Regional Performance Tracker - MadHive Feature */}
+      <RegionalPerformanceTracker />
 
       {/* Campaign Details Modal */}
       {showDetails && selectedCampaign && (
