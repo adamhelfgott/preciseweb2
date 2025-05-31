@@ -313,21 +313,18 @@ function StepThree({ formData, updateForm }: any) {
   const integrationOptions = [
     {
       id: "sdk",
-      icon: "🚀",
       title: "SDK Integration",
       description: "Add our SDK to your application. Best for real-time data and custom implementations.",
       time: "~30 minutes",
     },
     {
       id: "warehouse",
-      icon: "🏢",
       title: "Data Warehouse",
       description: "Native functions for Snowflake, Databricks, and BigQuery. Best for batch processing.",
       time: "~1 hour",
     },
     {
       id: "api",
-      icon: "🔌",
       title: "Direct API",
       description: "RESTful API for maximum flexibility. Best for existing data pipelines.",
       time: "~2 hours",
@@ -364,7 +361,23 @@ function StepThree({ formData, updateForm }: any) {
             }`}
           >
             <div className="flex items-start gap-4">
-              <div className="text-4xl">{option.icon}</div>
+              <div className="w-12 h-12 bg-brand-green/10 rounded-lg flex items-center justify-center">
+                {option.id === "sdk" && (
+                  <svg className="w-6 h-6 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                )}
+                {option.id === "warehouse" && (
+                  <svg className="w-6 h-6 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                  </svg>
+                )}
+                {option.id === "api" && (
+                  <svg className="w-6 h-6 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                )}
+              </div>
               <div className="flex-1">
                 <h3 className="text-lg font-semibold text-dark-gray mb-1">
                   {option.title}

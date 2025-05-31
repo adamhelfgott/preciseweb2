@@ -5,22 +5,18 @@ import { motion } from "framer-motion";
 export default function ValuePropsSection() {
   const mediaBuyerProps = [
     {
-      icon: "🧠",
       title: "Predictive CAC Forecasting",
       description: "AI predicts customer acquisition costs weeks in advance. Plan budgets with confidence using verified data signals.",
     },
     {
-      icon: "🎯",
       title: "Creative Fatigue Detection",
       description: "Know when to refresh creatives before performance drops. AI monitors engagement decay patterns 24/7.",
     },
     {
-      icon: "💸",
       title: "Multi-DSP Arbitrage",
       description: "Automatically shift budgets between DSPs for optimal performance. Verified data quality across all channels.",
     },
     {
-      icon: "📊",
       title: "Incrementality Testing",
       description: "Built-in holdout groups prove real impact. Know exactly what's driving results vs. coincidence.",
     },
@@ -28,22 +24,18 @@ export default function ValuePropsSection() {
 
   const dataControllerProps = [
     {
-      icon: "🔐",
       title: "Maintain Control",
       description: "Your data never leaves your infrastructure. Activate across more channels while maintaining GDPR/CCPA compliance.",
     },
     {
-      icon: "💰",
       title: "Prove Performance Impact",
       description: "Automated attribution shows exactly how your data drives campaign results. Command premium pricing with proof.",
     },
     {
-      icon: "🏆",
       title: "Fair Value Attribution",
       description: "Get paid based on actual campaign impact, not guesswork. Verification makes the activation valuable.",
     },
     {
-      icon: "📊",
       title: "Performance Intelligence",
       description: "See real-time performance data from campaigns using your segments. Optimize data value over time.",
     },
@@ -78,7 +70,6 @@ export default function ValuePropsSection() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-5xl mb-4">{prop.icon}</div>
                 <h3 className="text-heading-medium font-semibold text-dark-gray mb-3">
                   {prop.title}
                 </h3>
@@ -115,7 +106,6 @@ export default function ValuePropsSection() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-5xl mb-4">{prop.icon}</div>
                 <h3 className="text-heading-medium font-semibold text-dark-gray mb-3">
                   {prop.title}
                 </h3>

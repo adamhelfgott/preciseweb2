@@ -39,8 +39,7 @@ export default function GetStartedPage() {
             onClick={() => setUserType("data-owner")}
             className="card text-left hover:border-brand-green transition-colors group"
           >
-            <div className="text-4xl mb-4">💎</div>
-            <h2 className="text-heading-large font-semibold text-dark-gray mb-2">
+            <h2 className="text-heading-large font-semibold text-dark-gray mb-4">
               I have data to monetize
             </h2>
             <p className="text-medium-gray mb-4">
@@ -57,8 +56,7 @@ export default function GetStartedPage() {
             onClick={() => setUserType("advertiser")}
             className="card text-left hover:border-brand-green transition-colors group"
           >
-            <div className="text-4xl mb-4">🎯</div>
-            <h2 className="text-heading-large font-semibold text-dark-gray mb-2">
+            <h2 className="text-heading-large font-semibold text-dark-gray mb-4">
               I need verified audiences
             </h2>
             <p className="text-medium-gray mb-4">
