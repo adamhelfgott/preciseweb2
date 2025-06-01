@@ -1,9 +1,9 @@
 import { Metadata } from "next";
-import DataSellersHero from "@/components/data-sellers/DataSellersHero";
+import DataSellersHeroWithCMS from "@/components/data-sellers/DataSellersHeroWithCMS";
 import PathSelection from "@/components/data-sellers/PathSelection";
 import RevenueComparison from "@/components/data-sellers/RevenueComparison";
 import UnifiedBenefits from "@/components/data-sellers/UnifiedBenefits";
-import CTASection from "@/components/home/CTASection";
+import CTASectionWithCMS from "@/components/home/CTASectionWithCMS";
 
 export const metadata: Metadata = {
   title: "For Data Sellers - Precise.ai",
@@ -13,11 +13,11 @@ export const metadata: Metadata = {
 export default function DataSellersPage() {
   return (
     <div className="pt-16 md:pt-20">
-      <DataSellersHero />
+      <DataSellersHeroWithCMS />
       <PathSelection />
       <RevenueComparison />
       <UnifiedBenefits />
-      <CTASection />
+      <CTASectionWithCMS />
     </div>
   );
 }

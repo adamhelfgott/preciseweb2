@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import PlatformsHero from "@/components/platforms/PlatformsHero";
+import PlatformsHeroWithCMS from "@/components/platforms/PlatformsHeroWithCMS";
 import PlatformTypes from "@/components/platforms/PlatformTypes";
 import IntegrationFeatures from "@/components/platforms/IntegrationFeatures";
 import CTASection from "@/components/home/CTASection";
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function PlatformsPage() {
   return (
     <div className="pt-16 md:pt-20">
-      <PlatformsHero />
+      <PlatformsHeroWithCMS />
       <PlatformTypes />
       <IntegrationFeatures />
       <CTASection />

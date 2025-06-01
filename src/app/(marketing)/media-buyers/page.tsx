@@ -1,9 +1,9 @@
 import { Metadata } from "next";
-import MediaBuyersHero from "@/components/media-buyers/MediaBuyersHero";
+import MediaBuyersHeroWithCMS from "@/components/media-buyers/MediaBuyersHeroWithCMS";
 import OutcomesSection from "@/components/media-buyers/OutcomesSection";
 import BuyerTypeSelection from "@/components/media-buyers/BuyerTypeSelection";
 import VerificationFlow from "@/components/media-buyers/VerificationFlow";
-import CTASection from "@/components/home/CTASection";
+import CTASectionWithCMS from "@/components/home/CTASectionWithCMS";
 
 export const metadata: Metadata = {
   title: "For Media Buyers - Precise.ai",
@@ -13,11 +13,11 @@ export const metadata: Metadata = {
 export default function MediaBuyersPage() {
   return (
     <div className="pt-16 md:pt-20">
-      <MediaBuyersHero />
+      <MediaBuyersHeroWithCMS />
       <OutcomesSection />
       <BuyerTypeSelection />
       <VerificationFlow />
-      <CTASection />
+      <CTASectionWithCMS />
     </div>
   );
 }

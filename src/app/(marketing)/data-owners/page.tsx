@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import PageHero from "@/components/data-owners/PageHero";
-import BenefitsSection from "@/components/data-owners/BenefitsSection";
+import PageHeroWithCMS from "@/components/data-owners/PageHeroWithCMS";
+import BenefitsSectionWithCMS from "@/components/data-owners/BenefitsSectionWithCMS";
 import ProcessSection from "@/components/data-owners/ProcessSection";
 import TestimonialsSection from "@/components/data-owners/TestimonialsSection";
 import CalculatorSection from "@/components/data-owners/CalculatorSection";
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
 export default function DataOwnersPage() {
   return (
     <div className="pt-16 md:pt-20">
-      <PageHero />
-      <BenefitsSection />
+      <PageHeroWithCMS />
+      <BenefitsSectionWithCMS />
       <ProcessSection />
       <TestimonialsSection />
       <CalculatorSection />

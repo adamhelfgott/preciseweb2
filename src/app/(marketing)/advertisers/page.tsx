@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import PageHero from "@/components/advertisers/PageHero";
+import PageHeroWithCMS from "@/components/advertisers/PageHeroWithCMS";
 import BenefitsSection from "@/components/advertisers/BenefitsSection";
 import IntegrationSection from "@/components/advertisers/IntegrationSection";
 import HowItWorksSection from "@/components/advertisers/HowItWorksSection";
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function AdvertisersPage() {
   return (
     <div className="pt-16 md:pt-20">
-      <PageHero />
+      <PageHeroWithCMS />
       <BenefitsSection />
       <IntegrationSection />
       <HowItWorksSection />
