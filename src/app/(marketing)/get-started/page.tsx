@@ -55,7 +55,7 @@ export default function GetStartedPage() {
               Turn your data into verified credentials and earn automatic royalties
             </p>
             <span className="text-brand-green font-medium group-hover:text-dark-gray transition-colors">
-              Get started as data controller →
+              Get started as data seller →
             </span>
           </motion.button>
 
@@ -80,7 +80,7 @@ export default function GetStartedPage() {
               Access high-quality data with transparent attribution for campaigns
             </p>
             <span className="text-electric-blue font-medium group-hover:text-dark-gray transition-colors">
-              Get started as advertiser →
+              Get started as media buyer →
             </span>
           </motion.button>
         </div>
