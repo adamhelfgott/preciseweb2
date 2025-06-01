@@ -55,16 +55,88 @@ export default function PageHero() {
 }
 
 function AttributionFlowVisualization() {
-  // Channel and measurement terms
+  // Channel and measurement terms with varied styles
   const terms = [
-    { id: "ctv", name: "CTV", angle: 0, radius: 140 },
-    { id: "display", name: "Display", angle: 45, radius: 160 },
-    { id: "audio", name: "Audio", angle: 90, radius: 150 },
-    { id: "dooh", name: "DOOH", angle: 135, radius: 170 },
-    { id: "outcomes", name: "Outcomes", angle: 180, radius: 140 },
-    { id: "measurement", name: "Measurement", angle: 225, radius: 160 },
-    { id: "social", name: "Social", angle: 270, radius: 150 },
-    { id: "mobile", name: "Mobile", angle: 315, radius: 170 },
+    { 
+      id: "ctv", 
+      name: "CTV", 
+      angle: 0, 
+      radius: 140,
+      size: "text-lg",
+      weight: "font-black",
+      gradient: "from-electric-blue to-brand-green",
+      outlined: false,
+    },
+    { 
+      id: "display", 
+      name: "Display", 
+      angle: 45, 
+      radius: 160,
+      size: "text-base",
+      weight: "font-bold",
+      gradient: "from-warm-coral to-golden-amber",
+      outlined: true,
+    },
+    { 
+      id: "audio", 
+      name: "Audio", 
+      angle: 90, 
+      radius: 150,
+      size: "text-xl",
+      weight: "font-extrabold",
+      gradient: "from-soft-lavender to-electric-blue",
+      outlined: false,
+    },
+    { 
+      id: "dooh", 
+      name: "DOOH", 
+      angle: 135, 
+      radius: 170,
+      size: "text-sm",
+      weight: "font-black",
+      gradient: "from-golden-amber to-warm-coral",
+      outlined: true,
+    },
+    { 
+      id: "outcomes", 
+      name: "Outcomes", 
+      angle: 180, 
+      radius: 140,
+      size: "text-base",
+      weight: "font-extrabold",
+      gradient: "from-brand-green to-electric-blue",
+      outlined: false,
+    },
+    { 
+      id: "measurement", 
+      name: "Measurement", 
+      angle: 225, 
+      radius: 160,
+      size: "text-xs",
+      weight: "font-bold",
+      gradient: "from-electric-blue to-soft-lavender",
+      outlined: true,
+    },
+    { 
+      id: "social", 
+      name: "Social", 
+      angle: 270, 
+      radius: 150,
+      size: "text-lg",
+      weight: "font-black",
+      gradient: "from-warm-coral to-brand-green",
+      outlined: false,
+    },
+    { 
+      id: "mobile", 
+      name: "Mobile", 
+      angle: 315, 
+      radius: 170,
+      size: "text-base",
+      weight: "font-extrabold",
+      gradient: "from-soft-lavender to-golden-amber",
+      outlined: true,
+    },
   ];
 
   return (
@@ -115,9 +187,38 @@ function AttributionFlowVisualization() {
               transform: 'translate(-50%, -50%)',
             }}
           >
-            <span className="text-2xl font-bold text-dark-gray">
-              {term.name}
-            </span>
+            {term.outlined ? (
+              <div className="relative">
+                <span 
+                  className={`${term.size} ${term.weight} text-dark-gray`}
+                  style={{
+                    WebkitTextStroke: '1.5px #2D3436',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  {term.name}
+                </span>
+                <span 
+                  className={`${term.size} ${term.weight} text-transparent bg-clip-text bg-gradient-to-r ${term.gradient} absolute inset-0`}
+                  style={{
+                    WebkitTextStroke: '0.5px transparent',
+                    backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))`,
+                    WebkitBackgroundClip: 'text',
+                  }}
+                >
+                  {term.name}
+                </span>
+              </div>
+            ) : (
+              <span 
+                className={`${term.size} ${term.weight} text-transparent bg-clip-text bg-gradient-to-r ${term.gradient}`}
+                style={{
+                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
+                }}
+              >
+                {term.name}
+              </span>
+            )}
           </motion.div>
         );
       })}
