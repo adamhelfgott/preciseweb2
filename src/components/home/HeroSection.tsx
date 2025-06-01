@@ -37,9 +37,9 @@ export default function HeroSection() {
             </div>
 
             <div className="grid grid-cols-3 gap-6">
-              <TrustItem icon="📈" label="Lower CAC with verified data" />
-              <TrustItem icon="🎯" label="Premium pricing with proof" />
-              <TrustItem icon="✅" label="Cryptographic validation" />
+              <TrustItem label="Lower CAC with verified data" />
+              <TrustItem label="Premium pricing with proof" />
+              <TrustItem label="Cryptographic validation" />
             </div>
           </motion.div>
 
@@ -58,10 +58,9 @@ export default function HeroSection() {
   );
 }
 
-function TrustItem({ icon, label }: { icon: string; label: string }) {
+function TrustItem({ label }: { label: string }) {
   return (
     <div className="text-center">
-      <div className="text-2xl mb-2">{icon}</div>
       <p className="text-caption text-medium-gray">{label}</p>
     </div>
   );
@@ -72,7 +71,7 @@ function DataFlowAnimation() {
     <div className="relative w-full h-[500px] flex items-center justify-center">
       {/* Central hub */}
       <motion.div
-        className="absolute w-32 h-32 bg-brand-green rounded-full flex items-center justify-center z-10"
+        className="absolute w-32 h-32 flex items-center justify-center z-10"
         animate={{
           scale: [1, 1.1, 1],
         }}
@@ -82,44 +81,65 @@ function DataFlowAnimation() {
           ease: "easeInOut",
         }}
       >
-        <span className="text-white font-bold text-3xl">P</span>
+        <img 
+          src="/icon.svg" 
+          alt="Precise" 
+          className="w-full h-full"
+        />
       </motion.div>
 
       {/* Orbiting elements */}
       {[0, 1, 2, 3, 4, 5].map((index) => {
-        const angle = (index * 60) * Math.PI / 180;
-        const radius = 150;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
+        const baseAngle = (index * 60) * Math.PI / 180;
+        const baseRadius = 150;
         
         return (
           <motion.div
             key={index}
-            className="absolute w-16 h-16 bg-light-gray rounded-lg flex items-center justify-center"
-            style={{
-              left: `calc(50% + ${x}px - 32px)`,
-              top: `calc(50% + ${y}px - 32px)`,
-            }}
+            className="absolute w-12 h-12 flex items-center justify-center"
             animate={{
-              rotate: 360,
+              x: [
+                Math.cos(baseAngle) * baseRadius,
+                Math.cos(baseAngle + 0.3) * (baseRadius + 20),
+                Math.cos(baseAngle - 0.3) * (baseRadius - 20),
+                Math.cos(baseAngle) * baseRadius,
+              ],
+              y: [
+                Math.sin(baseAngle) * baseRadius,
+                Math.sin(baseAngle + 0.3) * (baseRadius + 20),
+                Math.sin(baseAngle - 0.3) * (baseRadius - 20),
+                Math.sin(baseAngle) * baseRadius,
+              ],
             }}
             transition={{
-              duration: 20 + index * 2,
+              duration: 8 + index * 0.5,
               repeat: Infinity,
-              ease: "linear",
+              ease: "easeInOut",
+              delay: index * 0.3,
+            }}
+            style={{
+              left: '50%',
+              top: '50%',
+              marginLeft: '-24px',
+              marginTop: '-24px',
             }}
           >
             <motion.div
-              className="w-2 h-2 bg-brand-green rounded-full"
+              className="text-brand-green text-2xl font-light"
               animate={{
-                scale: [1, 1.5, 1],
+                rotate: [0, 180, 360],
+                scale: [1, 1.2, 0.8, 1],
+                opacity: [0.5, 1, 0.7, 0.5],
               }}
               transition={{
-                duration: 2,
+                duration: 4,
                 repeat: Infinity,
                 delay: index * 0.2,
+                ease: "easeInOut",
               }}
-            />
+            >
+              +
+            </motion.div>
           </motion.div>
         );
       })}
@@ -139,8 +159,9 @@ function DataFlowAnimation() {
               y1="50%"
               x2={`calc(50% + ${x}px)`}
               y2={`calc(50% + ${y}px)`}
-              stroke="#E5E5E7"
-              strokeWidth="1"
+              stroke="#00B894"
+              strokeWidth="0.5"
+              opacity="0.2"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
               transition={{

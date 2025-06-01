@@ -16,9 +16,10 @@ import SharedCohorts from "@/components/app/data-impact/SharedCohorts";
 import MediaCredits from "@/components/app/data-impact/MediaCredits";
 import DataContribution from "@/components/app/data-impact/DataContribution";
 import LiftAnalysis from "@/components/app/data-impact/LiftAnalysis";
+import FirstPartySignalAmplifier from "@/components/app/data-impact/FirstPartySignalAmplifier";
 
 export default function DataImpactPage() {
-  const [activeTab, setActiveTab] = useState<"contribution" | "cohorts" | "credits" | "lift">("contribution");
+  const [activeTab, setActiveTab] = useState<"contribution" | "cohorts" | "credits" | "lift" | "amplifier">("contribution");
 
   return (
     <div className="space-y-6">
@@ -138,6 +139,16 @@ export default function DataImpactPage() {
         >
           Lift Analysis
         </button>
+        <button
+          onClick={() => setActiveTab("amplifier")}
+          className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-all ${
+            activeTab === "amplifier"
+              ? "text-primary-orange border-b-2 border-primary-orange"
+              : "text-medium-gray hover:text-dark-gray"
+          }`}
+        >
+          First-Party Amplifier
+        </button>
       </div>
 
       {/* Tab Content */}
@@ -146,6 +157,7 @@ export default function DataImpactPage() {
         {activeTab === "cohorts" && <SharedCohorts />}
         {activeTab === "credits" && <MediaCredits />}
         {activeTab === "lift" && <LiftAnalysis />}
+        {activeTab === "amplifier" && <FirstPartySignalAmplifier />}
       </div>
 
       {/* Privacy Notice */}

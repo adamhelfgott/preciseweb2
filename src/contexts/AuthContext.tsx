@@ -54,7 +54,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check for saved session
     const savedUser = localStorage.getItem("precise_user");
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      const user = JSON.parse(savedUser);
+      setUser(user);
+      
+      // Restore auth cookie
+      const authToken = btoa(JSON.stringify({ 
+        email: user.email, 
+        role: user.role,
+        id: user.id 
+      }));
+      document.cookie = `auth-token=${authToken}; path=/; max-age=86400; SameSite=Strict`;
     }
     setIsLoading(false);
   }, []);
@@ -70,6 +79,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (mockUser && password === "demo123") {
       setUser(mockUser);
       localStorage.setItem("precise_user", JSON.stringify(mockUser));
+      
+      // Set auth cookie for API protection (base64 encoded user data)
+      const authToken = btoa(JSON.stringify({ 
+        email: mockUser.email, 
+        role: mockUser.role,
+        id: mockUser.id 
+      }));
+      document.cookie = `auth-token=${authToken}; path=/; max-age=86400; SameSite=Strict`;
       
       // Redirect based on role
       if (mockUser.role === "DATA_OWNER") {
@@ -101,6 +118,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     setUser(newUser);
     localStorage.setItem("precise_user", JSON.stringify(newUser));
+    
+    // Set auth cookie for API protection
+    const authToken = btoa(JSON.stringify({ 
+      email: newUser.email, 
+      role: newUser.role,
+      id: newUser.id 
+    }));
+    document.cookie = `auth-token=${authToken}; path=/; max-age=86400; SameSite=Strict`;
+    
     router.push("/app/onboarding");
     
     setIsLoading(false);
@@ -109,6 +135,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = () => {
     setUser(null);
     localStorage.removeItem("precise_user");
+    // Clear auth cookie
+    document.cookie = "auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Strict";
     router.push("/");
   };
 

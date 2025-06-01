@@ -1,0 +1,14 @@
+{
+  "name": "precise-demo",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_MOCK_MODE": "true",
+    "NEXT_PUBLIC_CONVEX_URL": "@precise_convex_url",
+    "OPENAI_API_KEY": "@openai_api_key"
+  }
+}

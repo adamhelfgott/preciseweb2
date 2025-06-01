@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
-import { TrendingUp, DollarSign, Target, Activity, Plus, ChevronRight, Brain, Layers, LayoutGrid, BarChart3 } from "lucide-react";
+import { TrendingUp, DollarSign, Target, Activity, Plus, ChevronRight, Brain, Layers, LayoutGrid, BarChart3, RefreshCw } from "lucide-react";
 import { 
   LineChart, 
   Line, 
@@ -24,7 +24,9 @@ import CreativeFatigueAlert from "@/components/app/campaigns/CreativeFatigueAler
 import PredictiveCACForecasting from "@/components/app/campaigns/PredictiveCACForecasting";
 import CustomAttributionWindows from "@/components/app/campaigns/CustomAttributionWindows";
 import IncrementalityTesting from "@/components/app/campaigns/IncrementalityTesting";
+import CrossChannelIncrementality from "@/components/app/campaigns/CrossChannelIncrementality";
 import CompetitiveIntelligence from "@/components/app/campaigns/CompetitiveIntelligence";
+import RegionalPerformanceTracker from "@/components/app/campaigns/RegionalPerformanceTracker";
 
 // Mock campaign data
 const mockCampaigns = [
@@ -115,10 +117,19 @@ export default function CampaignsPage() {
             AI-powered campaign optimization with Precise data infrastructure
           </p>
         </div>
-        <button className="btn-primary w-full sm:w-auto">
-          <Plus size={20} />
-          New Campaign
-        </button>
+        <div className="flex gap-2">
+          <a 
+            href="/app/campaigns/sync"
+            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2"
+          >
+            <RefreshCw size={18} />
+            Sync DSPs
+          </a>
+          <button className="btn-primary">
+            <Plus size={18} />
+            New Campaign
+          </button>
+        </div>
       </div>
 
       {/* View Tabs */}
@@ -299,8 +310,14 @@ export default function CampaignsPage() {
         <IncrementalityTesting />
       </div>
 
+      {/* Cross-Channel Incrementality - MadHive Feature */}
+      <CrossChannelIncrementality />
+
       {/* Competitive Intelligence */}
       <CompetitiveIntelligence />
+
+      {/* Regional Performance Tracker - MadHive Feature */}
+      <RegionalPerformanceTracker />
 
       {/* Campaign Details Modal */}
       {showDetails && selectedCampaign && (

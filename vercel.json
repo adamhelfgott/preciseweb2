@@ -1,6 +1,14 @@
 {
-  "public": true,
-  "github": {
-    "silent": true
-  }
+  "git": {
+    "deploymentEnabled": {
+      "master": true,
+      "demo-ux-only": false
+    }
+  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ]
 }

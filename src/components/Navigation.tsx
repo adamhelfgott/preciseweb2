@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
+import Logo from "@/components/Logo";
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -21,7 +22,7 @@ export default function Navigation() {
   const navLinks = [
     { href: "/how-it-works", label: "How it works" },
     { href: "/data-owners", label: "For data controllers" },
-    { href: "/advertisers", label: "For intelligence users" },
+    { href: "/advertisers", label: "For advertisers" },
     { href: "/compliance", label: "Compliance" },
     { href: "/developers", label: "Developers" },
     { href: "/company", label: "Company" },
@@ -39,11 +40,8 @@ export default function Navigation() {
       <div className="container">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-brand-green rounded-full flex items-center justify-center transition-transform group-hover:scale-110">
-              <span className="text-white font-bold text-lg">P</span>
-            </div>
-            <span className="font-semibold text-xl text-dark-gray">Precise</span>
+          <Link href="/" className="group">
+            <Logo className="transition-transform group-hover:scale-105" />
           </Link>
 
           {/* Desktop Navigation */}

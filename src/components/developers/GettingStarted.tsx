@@ -8,21 +8,18 @@ export default function GettingStarted() {
   const options = [
     {
       icon: Rocket,
-      emoji: "🚀",
       title: "Quick start",
       description: "Get up and running with our SDK in under 5 minutes",
       link: "/developers/quickstart",
     },
     {
       icon: FileCode,
-      emoji: "🏗️",
       title: "Integration guides",
       description: "Step-by-step guides for popular platforms",
       link: "/developers/integrations",
     },
     {
       icon: Lightbulb,
-      emoji: "💡",
       title: "Examples",
       description: "Sample applications and common patterns",
       link: "/developers/examples",
@@ -54,7 +51,9 @@ export default function GettingStarted() {
             >
               <Link href={option.link} className="card block hover:border-brand-green transition-colors group h-full">
                 <div className="text-center">
-                  <div className="text-5xl mb-4">{option.emoji}</div>
+                  <div className="w-16 h-16 bg-brand-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <option.icon className="w-8 h-8 text-brand-green" />
+                  </div>
                   
                   <h3 className="text-heading-medium font-semibold text-dark-gray mb-3">
                     {option.title}

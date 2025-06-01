@@ -42,5 +42,8 @@ next-env.d.ts
 
 # ide
 .vscode/
-.idea/precise_images.zip
+.idea/
+
+# feedback images
 precise/
+precise_images.zip
