@@ -4,6 +4,7 @@ import { useState } from "react";
 import DataOwnerOnboarding from "@/components/onboarding/DataOwnerOnboarding";
 import AdvertiserOnboarding from "@/components/onboarding/AdvertiserOnboarding";
 import { motion } from "framer-motion";
+import { Database, Target } from "lucide-react";
 
 export default function GetStartedPage() {
   const [userType, setUserType] = useState<"data-owner" | "advertiser" | null>(null);
@@ -37,8 +38,16 @@ export default function GetStartedPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setUserType("data-owner")}
-            className="card text-left hover:border-brand-green transition-colors group"
+            className="relative card text-left hover:border-brand-green transition-all group overflow-hidden"
           >
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-brand-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            
+            {/* Icon */}
+            <div className="w-14 h-14 bg-gradient-to-br from-brand-green to-brand-green/70 rounded-xl p-3 mb-6">
+              <Database className="w-full h-full text-white" />
+            </div>
+            
             <h2 className="text-heading-large font-semibold text-dark-gray mb-4">
               I have data to monetize
             </h2>
@@ -54,15 +63,23 @@ export default function GetStartedPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setUserType("advertiser")}
-            className="card text-left hover:border-brand-green transition-colors group"
+            className="relative card text-left hover:border-electric-blue transition-all group overflow-hidden"
           >
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-electric-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            
+            {/* Icon */}
+            <div className="w-14 h-14 bg-gradient-to-br from-electric-blue to-electric-blue/70 rounded-xl p-3 mb-6">
+              <Target className="w-full h-full text-white" />
+            </div>
+            
             <h2 className="text-heading-large font-semibold text-dark-gray mb-4">
               I need verified audiences
             </h2>
             <p className="text-medium-gray mb-4">
               Access high-quality data with transparent attribution for campaigns
             </p>
-            <span className="text-brand-green font-medium group-hover:text-dark-gray transition-colors">
+            <span className="text-electric-blue font-medium group-hover:text-dark-gray transition-colors">
               Get started as advertiser →
             </span>
           </motion.button>

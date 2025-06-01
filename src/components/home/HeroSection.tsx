@@ -90,38 +90,52 @@ function DataFlowAnimation() {
 
       {/* Orbiting elements */}
       {[0, 1, 2, 3, 4, 5].map((index) => {
-        const angle = (index * 60) * Math.PI / 180;
-        const radius = 150;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
+        const baseAngle = (index * 60) * Math.PI / 180;
+        const baseRadius = 150;
         
         return (
           <motion.div
             key={index}
             className="absolute w-12 h-12 flex items-center justify-center"
-            style={{
-              left: `calc(50% + ${x}px - 24px)`,
-              top: `calc(50% + ${y}px - 24px)`,
-            }}
             animate={{
-              rotate: 360,
+              x: [
+                Math.cos(baseAngle) * baseRadius,
+                Math.cos(baseAngle + 0.3) * (baseRadius + 20),
+                Math.cos(baseAngle - 0.3) * (baseRadius - 20),
+                Math.cos(baseAngle) * baseRadius,
+              ],
+              y: [
+                Math.sin(baseAngle) * baseRadius,
+                Math.sin(baseAngle + 0.3) * (baseRadius + 20),
+                Math.sin(baseAngle - 0.3) * (baseRadius - 20),
+                Math.sin(baseAngle) * baseRadius,
+              ],
             }}
             transition={{
-              duration: 20 + index * 2,
+              duration: 8 + index * 0.5,
               repeat: Infinity,
-              ease: "linear",
+              ease: "easeInOut",
+              delay: index * 0.3,
+            }}
+            style={{
+              left: '50%',
+              top: '50%',
+              marginLeft: '-24px',
+              marginTop: '-24px',
             }}
           >
             <motion.div
               className="text-brand-green text-2xl font-light"
               animate={{
-                scale: [1, 1.3, 1],
-                opacity: [0.6, 1, 0.6],
+                rotate: [0, 180, 360],
+                scale: [1, 1.2, 0.8, 1],
+                opacity: [0.5, 1, 0.7, 0.5],
               }}
               transition={{
-                duration: 2,
+                duration: 4,
                 repeat: Infinity,
                 delay: index * 0.2,
+                ease: "easeInOut",
               }}
             >
               +
