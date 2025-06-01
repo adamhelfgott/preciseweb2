@@ -71,7 +71,7 @@ function DataFlowAnimation() {
     <div className="relative w-full h-[500px] flex items-center justify-center">
       {/* Central hub */}
       <motion.div
-        className="absolute w-32 h-32 bg-brand-green rounded-full flex items-center justify-center z-10"
+        className="absolute w-32 h-32 flex items-center justify-center z-10"
         animate={{
           scale: [1, 1.1, 1],
         }}
@@ -81,7 +81,11 @@ function DataFlowAnimation() {
           ease: "easeInOut",
         }}
       >
-        <span className="text-white font-bold text-3xl">P</span>
+        <img 
+          src="/icon.svg" 
+          alt="Precise" 
+          className="w-full h-full"
+        />
       </motion.div>
 
       {/* Orbiting elements */}
@@ -94,10 +98,10 @@ function DataFlowAnimation() {
         return (
           <motion.div
             key={index}
-            className="absolute w-16 h-16 bg-light-gray rounded-lg flex items-center justify-center"
+            className="absolute w-12 h-12 flex items-center justify-center"
             style={{
-              left: `calc(50% + ${x}px - 32px)`,
-              top: `calc(50% + ${y}px - 32px)`,
+              left: `calc(50% + ${x}px - 24px)`,
+              top: `calc(50% + ${y}px - 24px)`,
             }}
             animate={{
               rotate: 360,
@@ -109,16 +113,19 @@ function DataFlowAnimation() {
             }}
           >
             <motion.div
-              className="w-2 h-2 bg-brand-green rounded-full"
+              className="text-brand-green text-2xl font-light"
               animate={{
-                scale: [1, 1.5, 1],
+                scale: [1, 1.3, 1],
+                opacity: [0.6, 1, 0.6],
               }}
               transition={{
                 duration: 2,
                 repeat: Infinity,
                 delay: index * 0.2,
               }}
-            />
+            >
+              +
+            </motion.div>
           </motion.div>
         );
       })}
@@ -138,8 +145,9 @@ function DataFlowAnimation() {
               y1="50%"
               x2={`calc(50% + ${x}px)`}
               y2={`calc(50% + ${y}px)`}
-              stroke="#E5E5E7"
-              strokeWidth="1"
+              stroke="#00B894"
+              strokeWidth="0.5"
+              opacity="0.2"
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
               transition={{
