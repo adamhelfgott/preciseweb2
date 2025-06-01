@@ -55,11 +55,16 @@ export default function PageHero() {
 }
 
 function AttributionFlowVisualization() {
-  // Campaign types
-  const campaigns = [
-    { id: "social", name: "Social", color: "from-electric-blue to-electric-blue/70" },
-    { id: "display", name: "Display", color: "from-warm-coral to-warm-coral/70" },
-    { id: "ctv", name: "CTV/OTT", color: "from-soft-lavender to-soft-lavender/70" },
+  // Channel and measurement terms
+  const terms = [
+    { id: "ctv", name: "CTV", angle: 0, radius: 140 },
+    { id: "display", name: "Display", angle: 45, radius: 160 },
+    { id: "audio", name: "Audio", angle: 90, radius: 150 },
+    { id: "dooh", name: "DOOH", angle: 135, radius: 170 },
+    { id: "outcomes", name: "Outcomes", angle: 180, radius: 140 },
+    { id: "measurement", name: "Measurement", angle: 225, radius: 160 },
+    { id: "social", name: "Social", angle: 270, radius: 150 },
+    { id: "mobile", name: "Mobile", angle: 315, radius: 170 },
   ];
 
   return (
@@ -83,42 +88,36 @@ function AttributionFlowVisualization() {
         />
       </motion.div>
 
-      {/* Campaign boxes orbiting */}
-      {campaigns.map((campaign, index) => {
-        const angle = (index * 120) * Math.PI / 180;
-        const radius = 160;
+      {/* Floating terms */}
+      {terms.map((term, index) => {
+        const angleRad = (term.angle * Math.PI) / 180;
+        const x = Math.cos(angleRad) * term.radius;
+        const y = Math.sin(angleRad) * term.radius;
         
         return (
           <motion.div
-            key={campaign.id}
+            key={term.id}
             className="absolute"
             animate={{
-              x: [
-                Math.cos(angle) * radius,
-                Math.cos(angle + 0.5) * radius,
-                Math.cos(angle) * radius,
-              ],
-              y: [
-                Math.sin(angle) * radius,
-                Math.sin(angle + 0.5) * radius,
-                Math.sin(angle) * radius,
-              ],
+              x: [x, x + 10, x - 10, x],
+              y: [y, y - 10, y + 10, y],
+              opacity: [0.6, 1, 0.6],
             }}
             transition={{
-              duration: 4 + index,
+              duration: 4 + (index * 0.5),
               repeat: Infinity,
               ease: "easeInOut",
+              delay: index * 0.2,
             }}
             style={{
               left: '50%',
               top: '50%',
-              marginLeft: '-60px',
-              marginTop: '-40px',
+              transform: 'translate(-50%, -50%)',
             }}
           >
-            <div className={`w-28 h-20 bg-gradient-to-r ${campaign.color} rounded-xl flex items-center justify-center shadow-lg`}>
-              <span className="text-white font-medium text-sm">{campaign.name}</span>
-            </div>
+            <span className="text-2xl font-bold text-dark-gray">
+              {term.name}
+            </span>
           </motion.div>
         );
       })}
