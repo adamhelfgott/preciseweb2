@@ -55,81 +55,114 @@ export default function PageHero() {
 }
 
 function AttributionFlowVisualization() {
+  // Campaign types
+  const campaigns = [
+    { id: "social", name: "Social", color: "from-electric-blue to-electric-blue/70" },
+    { id: "display", name: "Display", color: "from-warm-coral to-warm-coral/70" },
+    { id: "ctv", name: "CTV/OTT", color: "from-soft-lavender to-soft-lavender/70" },
+  ];
+
   return (
-    <div className="relative w-full h-[500px]">
-      {/* Data sources */}
-      <div className="absolute top-0 left-0 right-0 flex justify-between">
-        {[1, 2, 3].map((i) => (
+    <div className="relative w-full h-[500px] flex items-center justify-center">
+      {/* Central Precise logo */}
+      <motion.div
+        className="absolute w-24 h-24 flex items-center justify-center z-20"
+        animate={{
+          scale: [1, 1.05, 1],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        <img 
+          src="/icon.svg" 
+          alt="Precise" 
+          className="w-full h-full"
+        />
+      </motion.div>
+
+      {/* Campaign boxes orbiting */}
+      {campaigns.map((campaign, index) => {
+        const angle = (index * 120) * Math.PI / 180;
+        const radius = 160;
+        
+        return (
           <motion.div
-            key={i}
-            className="w-20 h-20 bg-gradient-to-br from-brand-green/20 to-bright-purple/20 rounded-lg"
+            key={campaign.id}
+            className="absolute"
             animate={{
-              y: [0, 10, 0],
+              x: [
+                Math.cos(angle) * radius,
+                Math.cos(angle + 0.5) * radius,
+                Math.cos(angle) * radius,
+              ],
+              y: [
+                Math.sin(angle) * radius,
+                Math.sin(angle + 0.5) * radius,
+                Math.sin(angle) * radius,
+              ],
             }}
             transition={{
-              duration: 2 + i * 0.5,
+              duration: 4 + index,
               repeat: Infinity,
               ease: "easeInOut",
             }}
-          />
-        ))}
-      </div>
+            style={{
+              left: '50%',
+              top: '50%',
+              marginLeft: '-60px',
+              marginTop: '-40px',
+            }}
+          >
+            <div className={`w-28 h-20 bg-gradient-to-r ${campaign.color} rounded-xl flex items-center justify-center shadow-lg`}>
+              <span className="text-white font-medium text-sm">{campaign.name}</span>
+            </div>
+          </motion.div>
+        );
+      })}
 
-      {/* Central processing */}
-      <motion.div
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-        animate={{
-          rotate: 360,
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-      >
-        <div className="w-40 h-40 bg-white rounded-full shadow-lg flex items-center justify-center">
-          <div className="w-32 h-32 bg-brand-green/10 rounded-full flex items-center justify-center">
-            <span className="text-2xl font-bold text-brand-green">AI</span>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Outcomes */}
-      <div className="absolute bottom-0 left-0 right-0 flex justify-center">
+      {/* Data flow indicators */}
+      {[...Array(6)].map((_, i) => (
         <motion.div
-          className="w-32 h-16 bg-brand-green rounded-lg flex items-center justify-center text-white font-medium"
+          key={`flow-${i}`}
+          className="absolute w-1 h-1 bg-brand-green rounded-full"
           animate={{
-            scale: [1, 1.1, 1],
+            scale: [0, 2, 0],
+            opacity: [0, 1, 0],
           }}
           transition={{
             duration: 2,
             repeat: Infinity,
+            delay: i * 0.3,
           }}
-        >
-          Results
-        </motion.div>
-      </div>
+          style={{
+            left: `${50 + Math.cos((i * 60) * Math.PI / 180) * 30}%`,
+            top: `${50 + Math.sin((i * 60) * Math.PI / 180) * 30}%`,
+          }}
+        />
+      ))}
 
-      {/* Flow lines */}
-      <svg className="absolute inset-0 w-full h-full" style={{ zIndex: -1 }}>
-        {[0, 1, 2].map((i) => (
-          <motion.path
-            key={i}
-            d={`M ${100 + i * 150} 50 Q ${200 + i * 75} 250 200 400`}
-            stroke="#1DB954"
-            strokeWidth="2"
-            fill="none"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{
-              duration: 2,
-              delay: i * 0.5,
-              repeat: Infinity,
-              repeatType: "reverse",
-            }}
-          />
-        ))}
-      </svg>
+      {/* Performance metrics */}
+      <motion.div
+        className="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-white px-6 py-3 rounded-full shadow-lg border border-silk-gray"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+      >
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-brand-green rounded-full" />
+            <span className="text-sm text-medium-gray">Verified Data</span>
+          </div>
+          <div className="w-px h-4 bg-silk-gray" />
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-electric-blue rounded-full" />
+            <span className="text-sm text-medium-gray">Real Attribution</span>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
