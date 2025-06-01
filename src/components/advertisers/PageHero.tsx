@@ -55,97 +55,18 @@ export default function PageHero() {
 }
 
 function AttributionFlowVisualization() {
-  // Channel and measurement terms with varied styles
-  const terms = [
-    { 
-      id: "ctv", 
-      name: "CTV", 
-      angle: 0, 
-      radius: 140,
-      size: "text-lg",
-      weight: "font-black",
-      gradient: "from-electric-blue to-brand-green",
-      outlined: false,
-    },
-    { 
-      id: "display", 
-      name: "Display", 
-      angle: 45, 
-      radius: 160,
-      size: "text-base",
-      weight: "font-bold",
-      gradient: "from-warm-coral to-golden-amber",
-      outlined: true,
-    },
-    { 
-      id: "audio", 
-      name: "Audio", 
-      angle: 90, 
-      radius: 150,
-      size: "text-xl",
-      weight: "font-extrabold",
-      gradient: "from-soft-lavender to-electric-blue",
-      outlined: false,
-    },
-    { 
-      id: "dooh", 
-      name: "DOOH", 
-      angle: 135, 
-      radius: 170,
-      size: "text-sm",
-      weight: "font-black",
-      gradient: "from-golden-amber to-warm-coral",
-      outlined: true,
-    },
-    { 
-      id: "outcomes", 
-      name: "Outcomes", 
-      angle: 180, 
-      radius: 140,
-      size: "text-base",
-      weight: "font-extrabold",
-      gradient: "from-brand-green to-electric-blue",
-      outlined: false,
-    },
-    { 
-      id: "measurement", 
-      name: "Measurement", 
-      angle: 225, 
-      radius: 160,
-      size: "text-xs",
-      weight: "font-bold",
-      gradient: "from-electric-blue to-soft-lavender",
-      outlined: true,
-    },
-    { 
-      id: "social", 
-      name: "Social", 
-      angle: 270, 
-      radius: 150,
-      size: "text-lg",
-      weight: "font-black",
-      gradient: "from-warm-coral to-brand-green",
-      outlined: false,
-    },
-    { 
-      id: "mobile", 
-      name: "Mobile", 
-      angle: 315, 
-      radius: 170,
-      size: "text-base",
-      weight: "font-extrabold",
-      gradient: "from-soft-lavender to-golden-amber",
-      outlined: true,
-    },
-  ];
+  // Simplified: Input → Precise → Output flow
+  const dataTypes = ["1st Party", "3rd Party", "Behavioral"];
+  const channels = ["CTV", "Social", "Display"];
+  const outcomes = ["↓34% CAC", "4.2x ROAS", "Verified"];
 
   return (
     <div className="relative w-full h-[500px] flex items-center justify-center">
-      {/* Central Precise logo */}
+      {/* Central Precise logo with verification badge */}
       <motion.div
-        className="absolute w-24 h-24 flex items-center justify-center z-20"
+        className="absolute w-20 h-20 flex items-center justify-center z-20"
         animate={{
-          scale: [1, 1.05, 1],
+          scale: [1, 1.1, 1],
         }}
         transition={{
           duration: 3,
@@ -153,116 +74,112 @@ function AttributionFlowVisualization() {
           ease: "easeInOut",
         }}
       >
-        <img 
-          src="/icon.svg" 
-          alt="Precise" 
-          className="w-full h-full"
-        />
-      </motion.div>
-
-      {/* Floating terms */}
-      {terms.map((term, index) => {
-        const angleRad = (term.angle * Math.PI) / 180;
-        const x = Math.cos(angleRad) * term.radius;
-        const y = Math.sin(angleRad) * term.radius;
-        
-        return (
+        <div className="relative">
+          <img 
+            src="/icon.svg" 
+            alt="Precise" 
+            className="w-full h-full"
+          />
           <motion.div
-            key={term.id}
-            className="absolute"
+            className="absolute -bottom-1 -right-1 w-6 h-6 bg-brand-green rounded-full flex items-center justify-center"
             animate={{
-              x: [x, x + 10, x - 10, x],
-              y: [y, y - 10, y + 10, y],
-              opacity: [0.6, 1, 0.6],
+              scale: [0.8, 1.2, 0.8],
             }}
             transition={{
-              duration: 4 + (index * 0.5),
+              duration: 2,
               repeat: Infinity,
               ease: "easeInOut",
-              delay: index * 0.2,
-            }}
-            style={{
-              left: '50%',
-              top: '50%',
-              transform: 'translate(-50%, -50%)',
             }}
           >
-            {term.outlined ? (
-              <div className="relative">
-                <span 
-                  className={`${term.size} ${term.weight} text-dark-gray`}
-                  style={{
-                    WebkitTextStroke: '1.5px #2D3436',
-                    WebkitTextFillColor: 'transparent',
-                  }}
-                >
-                  {term.name}
-                </span>
-                <span 
-                  className={`${term.size} ${term.weight} text-transparent bg-clip-text bg-gradient-to-r ${term.gradient} absolute inset-0`}
-                  style={{
-                    WebkitTextStroke: '0.5px transparent',
-                    backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))`,
-                    WebkitBackgroundClip: 'text',
-                  }}
-                >
-                  {term.name}
-                </span>
-              </div>
-            ) : (
-              <span 
-                className={`${term.size} ${term.weight} text-transparent bg-clip-text bg-gradient-to-r ${term.gradient}`}
-                style={{
-                  filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
-                }}
-              >
-                {term.name}
-              </span>
-            )}
+            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
           </motion.div>
-        );
-      })}
+        </div>
+      </motion.div>
 
-      {/* Data flow indicators */}
-      {[...Array(6)].map((_, i) => (
+      {/* Data types (left) */}
+      <div className="absolute left-0 top-1/2 -translate-y-1/2 space-y-4">
+        {dataTypes.map((type, index) => (
+          <motion.div
+            key={type}
+            className="text-sm font-medium text-medium-gray"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.2 }}
+          >
+            {type}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Channels (right) */}
+      <div className="absolute right-0 top-1/2 -translate-y-1/2 space-y-4">
+        {channels.map((channel, index) => (
+          <motion.div
+            key={channel}
+            className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-electric-blue to-brand-green"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.2 + 0.5 }}
+          >
+            {channel}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Flowing particles */}
+      {[...Array(9)].map((_, i) => (
         <motion.div
-          key={`flow-${i}`}
-          className="absolute w-1 h-1 bg-brand-green rounded-full"
+          key={i}
+          className="absolute w-2 h-2 rounded-full"
+          style={{
+            background: i % 3 === 0 ? '#0984E3' : i % 3 === 1 ? '#00B894' : '#FF6B6B',
+          }}
           animate={{
-            scale: [0, 2, 0],
+            x: [-200, 0, 200],
+            y: [(i % 3 - 1) * 60, 0, (i % 3 - 1) * 60],
             opacity: [0, 1, 0],
+            scale: [0.5, 1, 0.5],
           }}
           transition={{
-            duration: 2,
+            duration: 3,
             repeat: Infinity,
-            delay: i * 0.3,
+            delay: i * 0.4,
+            ease: "easeInOut",
           }}
           style={{
-            left: `${50 + Math.cos((i * 60) * Math.PI / 180) * 30}%`,
-            top: `${50 + Math.sin((i * 60) * Math.PI / 180) * 30}%`,
+            left: '50%',
+            top: '50%',
           }}
         />
       ))}
 
-      {/* Performance metrics */}
-      <motion.div
-        className="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-white px-6 py-3 rounded-full shadow-lg border border-silk-gray"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-      >
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-brand-green rounded-full" />
-            <span className="text-sm text-medium-gray">Verified Data</span>
-          </div>
-          <div className="w-px h-4 bg-silk-gray" />
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-electric-blue rounded-full" />
-            <span className="text-sm text-medium-gray">Real Attribution</span>
-          </div>
-        </div>
-      </motion.div>
+      {/* Outcomes (bottom) */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-8">
+        {outcomes.map((outcome, index) => (
+          <motion.div
+            key={outcome}
+            className="text-sm font-semibold text-dark-gray bg-white px-4 py-2 rounded-full shadow-sm border border-silk-gray"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1 + index * 0.1 }}
+          >
+            <motion.span
+              animate={{
+                opacity: [0.5, 1, 0.5],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                delay: index * 0.5,
+              }}
+            >
+              {outcome}
+            </motion.span>
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 }
