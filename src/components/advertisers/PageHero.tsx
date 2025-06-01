@@ -55,97 +55,235 @@ export default function PageHero() {
 }
 
 function AttributionFlowVisualization() {
-  // Simplified: Input → Precise → Output flow
-  const dataTypes = ["1st Party", "3rd Party", "Behavioral"];
-  const channels = ["CTV", "Social", "Display"];
-  const outcomes = ["↓34% CAC", "4.2x ROAS", "Verified"];
+  // All the fun terms with varied styles
+  const allTerms = [
+    { 
+      id: "ctv", 
+      name: "CTV", 
+      angle: 0, 
+      radius: 140,
+      size: "text-lg",
+      weight: "font-black",
+      gradient: "from-electric-blue to-brand-green",
+      type: "channel",
+    },
+    { 
+      id: "1st-party", 
+      name: "1st Party", 
+      angle: 30, 
+      radius: 180,
+      size: "text-sm",
+      weight: "font-bold",
+      gradient: "from-warm-coral to-golden-amber",
+      type: "data",
+    },
+    { 
+      id: "display", 
+      name: "Display", 
+      angle: 60, 
+      radius: 160,
+      size: "text-base",
+      weight: "font-extrabold",
+      gradient: "from-soft-lavender to-electric-blue",
+      type: "channel",
+    },
+    { 
+      id: "behavioral", 
+      name: "Behavioral", 
+      angle: 90, 
+      radius: 170,
+      size: "text-xs",
+      weight: "font-black",
+      gradient: "from-golden-amber to-warm-coral",
+      type: "data",
+    },
+    { 
+      id: "social", 
+      name: "Social", 
+      angle: 120, 
+      radius: 150,
+      size: "text-xl",
+      weight: "font-bold",
+      gradient: "from-brand-green to-electric-blue",
+      type: "channel",
+    },
+    { 
+      id: "3rd-party", 
+      name: "3rd Party", 
+      angle: 150, 
+      radius: 190,
+      size: "text-sm",
+      weight: "font-extrabold",
+      gradient: "from-electric-blue to-soft-lavender",
+      type: "data",
+    },
+    { 
+      id: "dooh", 
+      name: "DOOH", 
+      angle: 180, 
+      radius: 140,
+      size: "text-base",
+      weight: "font-black",
+      gradient: "from-warm-coral to-brand-green",
+      type: "channel",
+    },
+    { 
+      id: "cac", 
+      name: "↓34% CAC", 
+      angle: 210, 
+      radius: 170,
+      size: "text-lg",
+      weight: "font-extrabold",
+      gradient: "from-brand-green to-golden-amber",
+      type: "outcome",
+    },
+    { 
+      id: "audio", 
+      name: "Audio", 
+      angle: 240, 
+      radius: 155,
+      size: "text-base",
+      weight: "font-bold",
+      gradient: "from-soft-lavender to-golden-amber",
+      type: "channel",
+    },
+    { 
+      id: "roas", 
+      name: "4.2x ROAS", 
+      angle: 270, 
+      radius: 180,
+      size: "text-sm",
+      weight: "font-black",
+      gradient: "from-electric-blue to-warm-coral",
+      type: "outcome",
+    },
+    { 
+      id: "mobile", 
+      name: "Mobile", 
+      angle: 300, 
+      radius: 160,
+      size: "text-lg",
+      weight: "font-extrabold",
+      gradient: "from-golden-amber to-brand-green",
+      type: "channel",
+    },
+    { 
+      id: "verified", 
+      name: "Verified ✓", 
+      angle: 330, 
+      radius: 145,
+      size: "text-base",
+      weight: "font-bold",
+      gradient: "from-brand-green to-electric-blue",
+      type: "outcome",
+    },
+  ];
 
   return (
-    <div className="relative w-full h-[500px] flex items-center justify-center">
-      {/* Central Precise logo with verification badge */}
+    <div className="relative w-full h-[500px] flex items-center justify-center overflow-hidden">
+      {/* Central Precise logo */}
       <motion.div
         className="absolute w-20 h-20 flex items-center justify-center z-20"
         animate={{
           scale: [1, 1.1, 1],
+          rotate: [0, 5, -5, 0],
         }}
         transition={{
-          duration: 3,
+          duration: 4,
           repeat: Infinity,
           ease: "easeInOut",
         }}
       >
-        <div className="relative">
-          <img 
-            src="/icon.svg" 
-            alt="Precise" 
-            className="w-full h-full"
-          />
-          <motion.div
-            className="absolute -bottom-1 -right-1 w-6 h-6 bg-brand-green rounded-full flex items-center justify-center"
-            animate={{
-              scale: [0.8, 1.2, 0.8],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          >
-            <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-          </motion.div>
-        </div>
+        <img 
+          src="/icon.svg" 
+          alt="Precise" 
+          className="w-full h-full"
+        />
       </motion.div>
 
-      {/* Data types (left) */}
-      <div className="absolute left-0 top-1/2 -translate-y-1/2 space-y-4">
-        {dataTypes.map((type, index) => (
+      {/* All floating terms */}
+      {allTerms.map((term, index) => {
+        const angleRad = (term.angle * Math.PI) / 180;
+        const x = Math.cos(angleRad) * term.radius;
+        const y = Math.sin(angleRad) * term.radius;
+        
+        return (
           <motion.div
-            key={type}
-            className="text-sm font-medium text-medium-gray"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.2 }}
+            key={term.id}
+            className="absolute"
+            animate={{
+              x: [
+                x,
+                x + Math.random() * 30 - 15,
+                x - Math.random() * 30 + 15,
+                x,
+              ],
+              y: [
+                y,
+                y - Math.random() * 30 + 15,
+                y + Math.random() * 30 - 15,
+                y,
+              ],
+              rotate: [0, -10, 10, 0],
+            }}
+            transition={{
+              duration: 5 + Math.random() * 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: index * 0.15,
+            }}
+            style={{
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+            }}
           >
-            {type}
+            <motion.span 
+              className={`${term.size} ${term.weight} text-transparent bg-clip-text bg-gradient-to-r ${term.gradient} inline-block`}
+              animate={{
+                opacity: [0.4, 1, 0.4],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                delay: index * 0.2,
+              }}
+              style={{
+                filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))',
+              }}
+            >
+              {term.name}
+            </motion.span>
           </motion.div>
-        ))}
-      </div>
+        );
+      })}
 
-      {/* Channels (right) */}
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 space-y-4">
-        {channels.map((channel, index) => (
-          <motion.div
-            key={channel}
-            className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-electric-blue to-brand-green"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.2 + 0.5 }}
-          >
-            {channel}
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Flowing particles */}
-      {[...Array(9)].map((_, i) => (
+      {/* Playful floating particles */}
+      {[...Array(15)].map((_, i) => (
         <motion.div
-          key={i}
-          className="absolute w-2 h-2 rounded-full"
+          key={`particle-${i}`}
+          className="absolute w-1 h-1 rounded-full"
           style={{
-            background: i % 3 === 0 ? '#0984E3' : i % 3 === 1 ? '#00B894' : '#FF6B6B',
+            background: ['#0984E3', '#00B894', '#FF6B6B', '#A29BFE', '#FDCB6E'][i % 5],
           }}
           animate={{
-            x: [-200, 0, 200],
-            y: [(i % 3 - 1) * 60, 0, (i % 3 - 1) * 60],
+            x: [
+              Math.random() * 400 - 200,
+              Math.random() * 400 - 200,
+              Math.random() * 400 - 200,
+            ],
+            y: [
+              Math.random() * 400 - 200,
+              Math.random() * 400 - 200,
+              Math.random() * 400 - 200,
+            ],
+            scale: [0, 1, 0],
             opacity: [0, 1, 0],
-            scale: [0.5, 1, 0.5],
           }}
           transition={{
-            duration: 3,
+            duration: 4 + Math.random() * 2,
             repeat: Infinity,
-            delay: i * 0.4,
+            delay: i * 0.3,
             ease: "easeInOut",
           }}
           style={{
@@ -154,32 +292,6 @@ function AttributionFlowVisualization() {
           }}
         />
       ))}
-
-      {/* Outcomes (bottom) */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-8">
-        {outcomes.map((outcome, index) => (
-          <motion.div
-            key={outcome}
-            className="text-sm font-semibold text-dark-gray bg-white px-4 py-2 rounded-full shadow-sm border border-silk-gray"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 + index * 0.1 }}
-          >
-            <motion.span
-              animate={{
-                opacity: [0.5, 1, 0.5],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                delay: index * 0.5,
-              }}
-            >
-              {outcome}
-            </motion.span>
-          </motion.div>
-        ))}
-      </div>
     </div>
   );
 }
