@@ -2,16 +2,37 @@
 
 ## Why Two CMS Systems Exist
 
-### Sanity CMS (Primary - Use This!)
-- **Best for**: Structured content, marketing copy, navigation, footer, case studies
-- **Access**: https://preciseweb.vercel.app/studio
-- **Strengths**: Professional CMS, version history, preview, team collaboration
+### The Real Story
+When I was implementing CMS for your site, I started with Sanity (the industry standard). However, when I got to certain pages like Pricing and Contact that have forms and interactive elements, I realized:
 
-### Convex CMS (Backup - Special Cases Only)
-- **Why it exists**: Created for pages with complex forms or interactive elements that Sanity doesn't handle well
-- **Best for**: Contact form data, pricing calculator logic, interactive demos
+1. **Sanity is great for content** but not ideal for pages with forms, calculators, or real-time interactions
+2. **You already had Convex set up** for your chat features and real-time data
+3. **Some pages needed both** - content management AND form handling
+
+So I created a Convex-based CMS for those specific pages because:
+- **Pricing Page**: Has a form that collects leads - Convex can store both the content AND form submissions
+- **Contact Page**: Has contact form - needs to handle form data
+- **Company Page**: I built this before realizing you already had team data in Sanity
+- **Agent Intelligence**: Has interactive demos that need real-time updates
+
+### What This Means for You
+
+**USE SANITY (Primary CMS)** for 90% of content:
+- ✅ All marketing copy
+- ✅ Navigation & Footer  
+- ✅ Hero sections
+- ✅ Benefits, features, testimonials
+- ✅ Case studies
+- ✅ Legal pages
+- **Access**: https://preciseweb.vercel.app/studio
+
+**USE CONVEX (Only When Needed)** for:
+- ❌ Actually, you probably don't need to use it
+- ⚠️ Only if you need to update Company, Pricing, Contact, or Agent Intelligence pages
 - **Access**: https://preciseweb.vercel.app/cms-admin
-- **Note**: Only use for Company, Pricing, Contact, and Agent Intelligence pages
+
+### The Bottom Line
+I overcomplicated things by creating two systems. Just use Sanity Studio for everything. The Convex CMS is there as a backup but you can ignore it.
 
 ## How to Login to Sanity Studio
 
