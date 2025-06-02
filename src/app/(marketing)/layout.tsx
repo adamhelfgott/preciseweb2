@@ -1,5 +1,5 @@
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/home/Footer";
+import NavigationWithCMS from "@/components/NavigationWithCMS";
+import FooterWithCMS from "@/components/home/FooterWithCMS";
 
 export default function MarketingLayout({
   children,
@@ -8,9 +8,9 @@ export default function MarketingLayout({
 }) {
   return (
     <>
-      <Navigation />
+      <NavigationWithCMS />
       <main className="flex-grow">{children}</main>
-      <Footer />
+      <FooterWithCMS />
     </>
   );
 }

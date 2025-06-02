@@ -289,3 +289,83 @@ export const mediaBuyersHeroQuery = groq`
     "secondaryButtonHref": content.secondaryCTA.href
   }
 `;
+
+// Footer Query
+export const footerQuery = groq`
+  *[_type == "footer"][0] {
+    brandName,
+    brandTagline,
+    copyrightText,
+    sections[] {
+      title,
+      links[] {
+        label,
+        href,
+        isExternal
+      }
+    },
+    socialLinks[] {
+      platform,
+      url,
+      label
+    },
+    securityBadges[] {
+      label,
+      icon
+    }
+  }
+`;
+
+// Compliance Page Query
+export const compliancePageQuery = groq`
+  *[_type == "compliancePage"][0] {
+    heroTitle,
+    heroDescription,
+    keyBenefits[] {
+      title,
+      description,
+      iconType,
+      colorScheme
+    },
+    dataBrokerSection {
+      title,
+      description,
+      traditionalBroker {
+        title,
+        points
+      },
+      withPrecise {
+        title,
+        points
+      }
+    },
+    architectureSection {
+      title,
+      description,
+      features[] {
+        title,
+        description,
+        codeExample,
+        iconType,
+        colorScheme
+      }
+    },
+    standardsSection {
+      title,
+      description,
+      standards[] {
+        name,
+        description,
+        colorScheme
+      }
+    },
+    ctaSection {
+      title,
+      description,
+      primaryButtonText,
+      primaryButtonLink,
+      secondaryButtonText,
+      secondaryButtonLink
+    }
+  }
+`;

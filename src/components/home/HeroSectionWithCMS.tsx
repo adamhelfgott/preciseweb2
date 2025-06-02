@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSanityData } from "@/hooks/useSanityData";
 import { heroSectionQuery } from "@/sanity/lib/queries";
+import ClientOnlyAnimation from "./ClientOnlyAnimation";
 
 type HeroData = {
   headline: string;
@@ -72,7 +73,9 @@ export default function HeroSectionWithCMS() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative"
           >
-            <DataFlowAnimation />
+            <ClientOnlyAnimation>
+              <DataFlowAnimation />
+            </ClientOnlyAnimation>
           </motion.div>
         </div>
       </div>

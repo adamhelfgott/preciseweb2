@@ -15,11 +15,7 @@ type TeamMember = {
   twitter?: string;
 };
 
-type TeamData = {
-  headline: string;
-  subheadline: string;
-  members: TeamMember[];
-};
+type TeamData = TeamMember[];
 
 const DEFAULT_TEAM_MEMBERS = [
   {
@@ -102,14 +98,37 @@ const DEFAULT_TEAM_MEMBERS = [
 
 export default function TeamSectionWithCMS() {
   // Fetch team data from Sanity
-  const { data: teamData } = useSanityData<TeamData>(teamSectionQuery);
+  const { data: teamMembers } = useSanityData<TeamData>(teamSectionQuery);
 
-  // Fallback to hardcoded content
-  const data = teamData || {
-    headline: "Leadership Team",
-    subheadline: "Building the infrastructure for the AI data economy with decades of experience from the world's leading media and technology companies.",
-    members: DEFAULT_TEAM_MEMBERS,
-  };
+  // Debug logging
+  if (teamMembers) {
+    console.log('[TeamSection] Raw team data:', teamMembers);
+  }
+
+  // Use Sanity data if available AND has content, otherwise use hardcoded
+  const rawMembers = teamMembers && teamMembers.length > 0 ? teamMembers : DEFAULT_TEAM_MEMBERS;
+  
+  // Filter and deduplicate
+  const seenNames = new Set<string>();
+  const members = rawMembers.filter(member => {
+    const isValid = member && member.name && typeof member.name === 'string';
+    if (!isValid && member) {
+      console.warn('[TeamSection] Invalid member data:', member);
+      return false;
+    }
+    
+    // Check for duplicates
+    if (seenNames.has(member.name)) {
+      console.warn('[TeamSection] Duplicate member filtered out:', member.name);
+      return false;
+    }
+    
+    seenNames.add(member.name);
+    return true;
+  });
+  
+  const headline = "Leadership Team";
+  const subheadline = "Building the infrastructure for the AI data economy with decades of experience from the world's leading media and technology companies.";
 
   return (
     <section className="section-padding bg-soft-white" id="team">
@@ -121,17 +140,17 @@ export default function TeamSectionWithCMS() {
           className="text-center mb-12"
         >
           <h2 className="text-display-medium font-bold text-dark-gray mb-4">
-            {data.headline}
+            {headline}
           </h2>
           <p className="text-body-large text-medium-gray max-w-3xl mx-auto">
-            {data.subheadline}
+            {subheadline}
           </p>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {data.members.map((member, index) => (
+          {Array.isArray(members) && members.length > 0 ? members.map((member, index) => (
             <motion.div
-              key={member.name}
+              key={`${member.name}-${index}`}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -142,14 +161,20 @@ export default function TeamSectionWithCMS() {
               <div className="relative w-40 h-40 mx-auto mb-4">
                 {member.imageUrl ? (
                   <img 
-                    src={member.imageUrl.startsWith('http') ? member.imageUrl : `https://precise.ai/static/img/photo/${member.imageUrl.split('/').pop()}`}
-                    alt={member.name} 
+                    src={
+                      member.imageUrl.startsWith('http') 
+                        ? member.imageUrl 
+                        : `https://precise.ai/static/img/photo/${member.imageUrl.includes('/') ? member.imageUrl.split('/').pop() : member.imageUrl}`
+                    }
+                    alt={member.name || 'Team member'} 
                     className="w-full h-full object-cover rounded-lg"
                   />
                 ) : (
                   <div className="w-full h-full bg-light-gray rounded-lg flex items-center justify-center">
                     <span className="text-4xl text-medium-gray">
-                      {member.name.split(' ').map(n => n[0]).join('')}
+                      {member.name && typeof member.name === 'string' 
+                        ? member.name.split(' ').filter(n => n).map(n => n[0]).join('') 
+                        : '?'}
                     </span>
                   </div>
                 )}
@@ -188,15 +213,17 @@ export default function TeamSectionWithCMS() {
                 {member.role}
               </p>
               <p className="text-sm text-medium-gray leading-relaxed">
-                {member.bio.split(', ').map((company, i) => (
-                  <span key={company}>
-                    {company}
-                    {i < member.bio.split(', ').length - 1 && <br />}
-                  </span>
-                ))}
+                {member.bio && typeof member.bio === 'string' 
+                  ? member.bio.split(', ').map((company, i, arr) => (
+                      <span key={company}>
+                        {company}
+                        {i < arr.length - 1 && <br />}
+                      </span>
+                    ))
+                  : member.bio || ''}
               </p>
             </motion.div>
-          ))}
+          )) : null}
         </div>
 
         {/* Additional team note */}

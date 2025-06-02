@@ -77,3 +77,81 @@ export const featuresQuery = groq`
     gradient
   }
 `;
+
+// Case Studies Queries
+export const caseStudiesQuery = groq`
+  *[_type == "caseStudy" && isActive == true] | order(order asc) {
+    _id,
+    title,
+    slug,
+    client,
+    industry,
+    challenge,
+    solution,
+    results,
+    testimonial,
+    image
+  }
+`;
+
+export const caseStudiesHeroQuery = groq`
+  *[_type == "caseStudiesHero"][0] {
+    headline,
+    subheadline,
+    ctaSection
+  }
+`;
+
+// Compliance Page Query
+export const compliancePageQuery = groq`
+  *[_type == "compliancePage"][0] {
+    heroTitle,
+    heroDescription,
+    keyBenefits[] {
+      title,
+      description,
+      iconType,
+      colorScheme
+    },
+    dataBrokerSection {
+      title,
+      description,
+      traditionalBroker {
+        title,
+        points
+      },
+      withPrecise {
+        title,
+        points
+      }
+    },
+    architectureSection {
+      title,
+      description,
+      features[] {
+        title,
+        description,
+        codeExample,
+        iconType,
+        colorScheme
+      }
+    },
+    standardsSection {
+      title,
+      description,
+      standards[] {
+        name,
+        description,
+        colorScheme
+      }
+    },
+    ctaSection {
+      title,
+      description,
+      primaryButtonText,
+      primaryButtonLink,
+      secondaryButtonText,
+      secondaryButtonLink
+    }
+  }
+`;

@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import PlatformsHeroWithCMS from "@/components/platforms/PlatformsHeroWithCMS";
-import PlatformTypes from "@/components/platforms/PlatformTypes";
-import IntegrationFeatures from "@/components/platforms/IntegrationFeatures";
-import CTASection from "@/components/home/CTASection";
+import PlatformTypesWithCMS from "@/components/platforms/PlatformTypesWithCMS";
+import IntegrationFeaturesWithCMS from "@/components/platforms/IntegrationFeaturesWithCMS";
+import CTASectionWithCMS from "@/components/home/CTASectionWithCMS";
 
 export const metadata: Metadata = {
   title: "For Platforms - Precise.ai",
@@ -13,9 +13,9 @@ export default function PlatformsPage() {
   return (
     <div className="pt-16 md:pt-20">
       <PlatformsHeroWithCMS />
-      <PlatformTypes />
-      <IntegrationFeatures />
-      <CTASection />
+      <PlatformTypesWithCMS />
+      <IntegrationFeaturesWithCMS />
+      <CTASectionWithCMS />
     </div>
   );
 }

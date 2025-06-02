@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import MeasurementHeroWithCMS from "@/components/measurement/MeasurementHeroWithCMS";
-import IntegrationBenefits from "@/components/measurement/IntegrationBenefits";
-import AttributionFlow from "@/components/measurement/AttributionFlow";
-import CTASection from "@/components/home/CTASection";
+import IntegrationBenefitsWithCMS from "@/components/measurement/IntegrationBenefitsWithCMS";
+import AttributionFlowWithCMS from "@/components/measurement/AttributionFlowWithCMS";
+import CTASectionWithCMS from "@/components/home/CTASectionWithCMS";
 
 export const metadata: Metadata = {
   title: "For Measurement Partners - Precise.ai",
@@ -13,9 +13,9 @@ export default function MeasurementPartnersPage() {
   return (
     <div className="pt-16 md:pt-20">
       <MeasurementHeroWithCMS />
-      <IntegrationBenefits />
-      <AttributionFlow />
-      <CTASection />
+      <IntegrationBenefitsWithCMS />
+      <AttributionFlowWithCMS />
+      <CTASectionWithCMS />
     </div>
   );
 }

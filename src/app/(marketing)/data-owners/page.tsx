@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 import PageHeroWithCMS from "@/components/data-owners/PageHeroWithCMS";
 import BenefitsSectionWithCMS from "@/components/data-owners/BenefitsSectionWithCMS";
-import ProcessSection from "@/components/data-owners/ProcessSection";
-import TestimonialsSection from "@/components/data-owners/TestimonialsSection";
+import ProcessSectionWithCMS from "@/components/data-owners/ProcessSectionWithCMS";
+import TestimonialsSectionWithCMS from "@/components/data-owners/TestimonialsSectionWithCMS";
 import CalculatorSection from "@/components/data-owners/CalculatorSection";
-import FAQSection from "@/components/data-owners/FAQSection";
-import CTASection from "@/components/home/CTASection";
+import FAQSectionWithCMS from "@/components/data-owners/FAQSectionWithCMS";
+import CTASectionWithCMS from "@/components/home/CTASectionWithCMS";
 
 export const metadata: Metadata = {
   title: "For Data Controllers - Precise.ai",
@@ -17,11 +17,11 @@ export default function DataOwnersPage() {
     <div className="pt-16 md:pt-20">
       <PageHeroWithCMS />
       <BenefitsSectionWithCMS />
-      <ProcessSection />
-      <TestimonialsSection />
+      <ProcessSectionWithCMS />
+      <TestimonialsSectionWithCMS />
       <CalculatorSection />
-      <FAQSection />
-      <CTASection />
+      <FAQSectionWithCMS />
+      <CTASectionWithCMS />
     </div>
   );
 }

@@ -7,6 +7,10 @@ import buyerPersona from './buyerPersona';
 import outcomeMetric from './outcomeMetric';
 import featureBenefit from './featureBenefit';
 import teamMember from './teamMember';
+import caseStudy from './caseStudy';
+import caseStudiesHero from './caseStudiesHero';
+import compliancePage from './compliancePage';
+import legalPage from './legalPage';
 
 export default [
   heroSection,
@@ -17,4 +21,8 @@ export default [
   outcomeMetric,
   featureBenefit,
   teamMember,
+  caseStudy,
+  caseStudiesHero,
+  compliancePage,
+  legalPage,
 ];
