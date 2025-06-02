@@ -12,6 +12,19 @@ import caseStudiesHero from './caseStudiesHero';
 import compliancePage from './compliancePage';
 import legalPage from './legalPage';
 import howItWorksPage from './howItWorksPage';
+import logoBar from './logoBar';
+import howItWorksSection from './howItWorksSection';
+import ctaSection from './ctaSection';
+import navigation from './navigation';
+import footer from './footer';
+import pageHero from './pageHero';
+import processStep from './processStep';
+import benefitCard from './benefitCard';
+import faq from './faq';
+import testimonial from './testimonial';
+import calculatorSection from './calculatorSection';
+import integrationPartner from './integrationPartner';
+import howItWorksMetrics from './howItWorksMetrics';
 
 export default [
   heroSection,
@@ -27,4 +40,17 @@ export default [
   compliancePage,
   legalPage,
   howItWorksPage,
+  logoBar,
+  howItWorksSection,
+  ctaSection,
+  navigation,
+  footer,
+  pageHero,
+  processStep,
+  benefitCard,
+  faq,
+  testimonial,
+  calculatorSection,
+  integrationPartner,
+  howItWorksMetrics,
 ];

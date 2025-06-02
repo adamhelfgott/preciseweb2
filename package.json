@@ -13,7 +13,8 @@
     "seed:content": "tsx scripts/seed-all-hardcoded-content.ts",
     "seed:how-it-works": "tsx scripts/seed-how-it-works-full.ts",
     "seed:data-sellers": "tsx scripts/seed-data-sellers-content.ts",
-    "seed:media-buyers": "tsx scripts/seed-media-buyers-content.ts"
+    "seed:media-buyers": "tsx scripts/seed-media-buyers-content.ts",
+    "seed:comprehensive": "cd sanity && npx tsx scripts/comprehensive-seed.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.22",
