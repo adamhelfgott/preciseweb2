@@ -316,6 +316,49 @@ export const footerQuery = groq`
   }
 `;
 
+// Case Studies Page Queries
+export const caseStudiesQuery = groq`
+  *[_type == "caseStudy" && isActive != false] | order(order asc) {
+    _id,
+    title,
+    slug,
+    client,
+    industry,
+    challenge,
+    solution,
+    results[] {
+      metric,
+      value,
+      description
+    },
+    testimonial {
+      quote,
+      author,
+      title
+    },
+    image
+  }
+`;
+
+export const caseStudiesHeroQuery = groq`
+  *[_type == "caseStudiesHero"][0] {
+    headline,
+    subheadline,
+    ctaSection {
+      headline,
+      subheadline,
+      primaryButton {
+        text,
+        href
+      },
+      secondaryButton {
+        text,
+        href
+      }
+    }
+  }
+`;
+
 // Compliance Page Query
 export const compliancePageQuery = groq`
   *[_type == "compliancePage"][0] {

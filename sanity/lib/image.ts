@@ -9,3 +9,5 @@ const builder = imageUrlBuilder(client);
 export function urlForImage(source: SanityImageSource) {
   return builder.image(source);
 }
+
+export { urlForImage as urlFor };
