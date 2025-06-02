@@ -11,6 +11,7 @@ import caseStudy from './caseStudy';
 import caseStudiesHero from './caseStudiesHero';
 import compliancePage from './compliancePage';
 import legalPage from './legalPage';
+import howItWorksPage from './howItWorksPage';
 
 export default [
   heroSection,
@@ -25,4 +26,5 @@ export default [
   caseStudiesHero,
   compliancePage,
   legalPage,
+  howItWorksPage,
 ];

@@ -47,3 +47,4 @@ next-env.d.ts
 # feedback images
 precise/
 precise_images.zip
+.env.uxonly

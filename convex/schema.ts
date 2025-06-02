@@ -158,4 +158,13 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_timestamp", ["timestamp"]),
+
+  // CMS Content for marketing pages
+  cmsContent: defineTable({
+    page: v.string(), // page identifier (e.g., "company", "pricing", etc.)
+    content: v.any(), // flexible content structure for each page
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_page", ["page"]),
 });
