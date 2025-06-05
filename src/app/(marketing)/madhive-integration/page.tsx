@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { Shield, Zap, Brain, TrendingUp, Network, Database, Lock, BarChart3 } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 export default function MadHiveIntegrationPage() {
   return (
@@ -24,11 +24,11 @@ export default function MadHiveIntegrationPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              What Precise Powers for MadHive
+              Precise Powers MadHive's Unified Execution
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Precise powers the cross-platform intelligence that helps OMG earn media credits. 
-              When Hulu insights improve Fox performance, those efficiency gains become real dollar savings.
+              Precise enables MadHive to deliver true unified execution across all platforms. 
+              See and control Hulu, Disney+, Fox, NBC campaigns in one real-time dashboard.
             </p>
           </div>
         </div>
@@ -42,7 +42,7 @@ export default function MadHiveIntegrationPage() {
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-8 rounded-2xl">
               <div className="flex items-center mb-4">
-                <Lock className="w-8 h-8 text-blue-600 mr-3" />
+                <span className="text-3xl mr-3">🔒</span>
                 <h3 className="text-xl font-bold">Privacy-Safe Data Collaboration</h3>
               </div>
               <p className="text-gray-700 mb-4"><strong>What MadHive Promises:</strong> "Activate first-party data without sharing it"</p>
@@ -56,22 +56,22 @@ export default function MadHiveIntegrationPage() {
 
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-8 rounded-2xl">
               <div className="flex items-center mb-4">
-                <Brain className="w-8 h-8 text-green-600 mr-3" />
-                <h3 className="text-xl font-bold">Unified Intelligence System</h3>
+                <span className="text-3xl mr-3">🌐</span>
+                <h3 className="text-xl font-bold">Unified Platform Intelligence</h3>
               </div>
               <p className="text-gray-700 mb-4"><strong>What MadHive Promises:</strong> "AI that gets smarter with every campaign"</p>
               <ul className="space-y-2 text-gray-600">
-                <li>• Hulu viewing patterns optimize Disney+ targeting</li>
-                <li>• Fox Sports insights improve NBC primetime campaigns</li>
-                <li>• Every platform learns from all others in real-time</li>
-                <li>• Efficiency gains convert to media credits: $77,000+ per campaign</li>
+                <li>• Single dashboard controls Hulu, Disney+, Fox, NBC simultaneously</li>
+                <li>• Click any platform to see all campaigns running there</li>
+                <li>• Real-time performance updates across all publishers</li>
+                <li>• Budget automatically flows to best-performing platforms</li>
               </ul>
             </div>
 
             <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-2xl">
               <div className="flex items-center mb-4">
-                <Shield className="w-8 h-8 text-purple-600 mr-3" />
-                <h3 className="text-xl font-bold">Cryptographic Attribution & Verification</h3>
+                <span className="text-3xl mr-3">✅</span>
+                <h3 className="text-xl font-bold">Verified Performance Attribution</h3>
               </div>
               <p className="text-gray-700 mb-4"><strong>What MadHive Promises:</strong> "Prove ROI with mathematical certainty"</p>
               <ul className="space-y-2 text-gray-600">
@@ -84,15 +84,15 @@ export default function MadHiveIntegrationPage() {
 
             <div className="bg-gradient-to-br from-orange-50 to-red-50 p-8 rounded-2xl">
               <div className="flex items-center mb-4">
-                <Zap className="w-8 h-8 text-orange-600 mr-3" />
-                <h3 className="text-xl font-bold">Real-Time Cross-Platform Optimization</h3>
+                <span className="text-3xl mr-3">⚡</span>
+                <h3 className="text-xl font-bold">Real-Time Cross-Platform Control</h3>
               </div>
               <p className="text-gray-700 mb-4"><strong>What MadHive Promises:</strong> "Unified buying across all platforms"</p>
               <ul className="space-y-2 text-gray-600">
-                <li>• Real-time budget flows from NBC to Hulu based on performance</li>
-                <li>• Cross-platform insights: "Young professionals on NBC convert 87% on Hulu"</li>
-                <li>• Media credits generated from efficiency gains</li>
-                <li>• Platform-level reporting with campaign drill-downs</li>
+                <li>• One dashboard shows all platforms: streaming, broadcast, linear</li>
+                <li>• Click into any platform to see individual campaigns</li>
+                <li>• Real-time updates as performance changes</li>
+                <li>• Automatic budget reallocation to top performers</li>
               </ul>
             </div>
           </div>
@@ -111,20 +111,20 @@ export default function MadHiveIntegrationPage() {
                 <h3 className="font-bold text-lg mb-3 text-blue-800">MadHive Platform Layer (What clients see)</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-white rounded-lg p-3 text-center">
-                    <Database className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-                    <p className="text-sm">Unified UI/UX</p>
+                    <span className="text-2xl block mb-2">🎬</span>
+                    <p className="text-sm">Unified Dashboard</p>
                   </div>
                   <div className="bg-white rounded-lg p-3 text-center">
-                    <Network className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-                    <p className="text-sm">MediaOcean Integration</p>
+                    <span className="text-2xl block mb-2">🎨</span>
+                    <p className="text-sm">All Platforms</p>
                   </div>
                   <div className="bg-white rounded-lg p-3 text-center">
-                    <TrendingUp className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-                    <p className="text-sm">Publisher Connections</p>
+                    <span className="text-2xl block mb-2">🎯</span>
+                    <p className="text-sm">Click to Drill In</p>
                   </div>
                   <div className="bg-white rounded-lg p-3 text-center">
-                    <BarChart3 className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-                    <p className="text-sm">Reporting Dashboard</p>
+                    <span className="text-2xl block mb-2">⚡</span>
+                    <p className="text-sm">Real-Time Control</p>
                   </div>
                 </div>
               </div>
@@ -139,20 +139,20 @@ export default function MadHiveIntegrationPage() {
                 <h3 className="font-bold text-lg mb-3 text-green-800">Maverick AI Layer (What optimizes)</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-white rounded-lg p-3 text-center">
-                    <Brain className="w-6 h-6 mx-auto mb-2 text-green-600" />
-                    <p className="text-sm">Audience Modeling</p>
+                    <span className="text-2xl block mb-2">🔄</span>
+                    <p className="text-sm">Platform Learning</p>
                   </div>
                   <div className="bg-white rounded-lg p-3 text-center">
-                    <Zap className="w-6 h-6 mx-auto mb-2 text-green-600" />
-                    <p className="text-sm">Bid Optimization</p>
+                    <span className="text-2xl block mb-2">🚀</span>
+                    <p className="text-sm">Auto-Optimization</p>
                   </div>
                   <div className="bg-white rounded-lg p-3 text-center">
-                    <TrendingUp className="w-6 h-6 mx-auto mb-2 text-green-600" />
-                    <p className="text-sm">Creative Selection</p>
+                    <span className="text-2xl block mb-2">🎨</span>
+                    <p className="text-sm">Smart Allocation</p>
                   </div>
                   <div className="bg-white rounded-lg p-3 text-center">
-                    <BarChart3 className="w-6 h-6 mx-auto mb-2 text-green-600" />
-                    <p className="text-sm">Budget Allocation</p>
+                    <span className="text-2xl block mb-2">📊</span>
+                    <p className="text-sm">Performance Driven</p>
                   </div>
                 </div>
               </div>
@@ -167,20 +167,20 @@ export default function MadHiveIntegrationPage() {
                 <h3 className="font-bold text-lg mb-3 text-purple-800">Precise Intelligence Layer (What enables)</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-white rounded-lg p-3 text-center">
-                    <Lock className="w-6 h-6 mx-auto mb-2 text-purple-600" />
-                    <p className="text-sm">Secure Multi-Party Computation</p>
+                    <span className="text-2xl block mb-2">🔒</span>
+                    <p className="text-sm">Privacy Engine</p>
                   </div>
                   <div className="bg-white rounded-lg p-3 text-center">
-                    <Network className="w-6 h-6 mx-auto mb-2 text-purple-600" />
-                    <p className="text-sm">Federated Learning</p>
+                    <span className="text-2xl block mb-2">🌐</span>
+                    <p className="text-sm">Platform Network</p>
                   </div>
                   <div className="bg-white rounded-lg p-3 text-center">
-                    <Shield className="w-6 h-6 mx-auto mb-2 text-purple-600" />
-                    <p className="text-sm">Cryptographic Engine</p>
+                    <span className="text-2xl block mb-2">✅</span>
+                    <p className="text-sm">Verified Results</p>
                   </div>
                   <div className="bg-white rounded-lg p-3 text-center">
-                    <Database className="w-6 h-6 mx-auto mb-2 text-purple-600" />
-                    <p className="text-sm">Privacy Identity Graph</p>
+                    <span className="text-2xl block mb-2">🔮</span>
+                    <p className="text-sm">Intelligence Layer</p>
                   </div>
                 </div>
               </div>
@@ -195,7 +195,7 @@ export default function MadHiveIntegrationPage() {
           <h2 className="text-3xl font-bold text-center mb-12">The Power of Unified Intelligence</h2>
           
           <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-8 mb-8">
-            <h3 className="text-2xl font-bold mb-6 text-center">How Buckets Learn From Each Other</h3>
+            <h3 className="text-2xl font-bold mb-6 text-center">One Dashboard Controls Everything</h3>
             
             <div className="grid md:grid-cols-4 gap-6">
               <div className="bg-white rounded-xl p-6 text-center">
@@ -233,8 +233,8 @@ export default function MadHiveIntegrationPage() {
             
             <div className="mt-8 text-center">
               <p className="text-lg font-semibold text-gray-800">
-                Your campaign data creates value. Every insight that improves another platform's performance 
-                generates media credits - real dollars back to your budget.
+                Every platform visible. Every campaign controllable. Every insight actionable. 
+                All from one unified dashboard that updates in real-time.
               </p>
             </div>
           </div>
@@ -317,8 +317,8 @@ export default function MadHiveIntegrationPage() {
               <strong>Without Precise:</strong> Each platform operates in isolation - Hulu, Disney+, Fox all separate
             </p>
             <p className="text-lg">
-              <strong>With Precise:</strong> Every platform learns from all others. Hulu insights improve Fox performance. 
-              Those efficiency gains become media credits - real dollars back to OMG's budget.
+              <strong>With Precise:</strong> One unified dashboard controls every platform. Click into any platform 
+              to see campaigns. Watch performance update in real-time. Budget flows automatically to what works.
             </p>
           </div>
         </div>

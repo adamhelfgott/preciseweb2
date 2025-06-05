@@ -95,12 +95,13 @@ const campaignData = {
 };
 
 export default function OMGUnifiedDashboard() {
-  const [selectedView, setSelectedView] = useState<'unified' | 'platforms' | 'insights' | 'optimization'>('unified');
+  const [selectedView, setSelectedView] = useState<'unified' | 'platforms' | 'insights' | 'optimization' | 'internal'>('unified');
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['all']);
   const [selectedCampaign] = useState('Q1-2025-AUTO');
   const [expandedPlatform, setExpandedPlatform] = useState<string | null>(null);
   const [showReallocation, setShowReallocation] = useState(false);
   const [pivotView, setPivotView] = useState<'campaign' | 'channel'>('campaign');
+  const [selectedPlatformDetail, setSelectedPlatformDetail] = useState<string | null>(null);
 
   const campaign = campaignData[selectedCampaign];
 
@@ -151,17 +152,9 @@ export default function OMGUnifiedDashboard() {
                 <span className="font-semibold">Precise Intelligence</span>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="bg-green-50 px-4 py-2 rounded-lg flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-green-600" />
-                <span className="text-sm font-medium text-green-700">
-                  ${calculateTotalSavings().toLocaleString()} in Media Credits Earned
-                </span>
-              </div>
-              <div className="flex items-center gap-2 bg-purple-50 px-3 py-1.5 rounded-lg">
-                <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
-                <span className="text-sm text-purple-700">Cross-Platform Intelligence Active</span>
-              </div>
+            <div className="flex items-center gap-2 bg-purple-50 px-3 py-1.5 rounded-lg">
+              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-purple-700">Unified Execution Active</span>
             </div>
           </div>
         </div>
@@ -210,6 +203,16 @@ export default function OMGUnifiedDashboard() {
               }`}
             >
               AI Optimization
+            </button>
+            <button
+              onClick={() => setSelectedView('internal')}
+              className={`py-4 border-b-2 font-medium transition-colors ${
+                selectedView === 'internal'
+                  ? 'border-purple-600 text-purple-600'
+                  : 'border-transparent text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Internal Metrics
             </button>
           </div>
         </div>
@@ -274,10 +277,10 @@ export default function OMGUnifiedDashboard() {
                 </div>
                 <div className="text-right">
                   <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-3">
-                    <p className="text-sm text-purple-100">Media Credits Generated</p>
-                    <p className="text-2xl font-bold">${calculateTotalSavings().toLocaleString()}</p>
+                    <p className="text-sm text-purple-100">Cross-Platform Performance</p>
+                    <p className="text-2xl font-bold">{Object.keys(campaign.platforms).length} Active</p>
                     <p className="text-sm text-purple-100 mt-1">
-                      {calculateEfficiencyGain()}% additional efficiency
+                      Real-time unified execution
                     </p>
                   </div>
                 </div>
@@ -294,7 +297,7 @@ export default function OMGUnifiedDashboard() {
                   animate={{ opacity: 1, scale: 1 }}
                   whileHover={{ scale: 1.02 }}
                   className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 cursor-pointer"
-                  onClick={() => setExpandedPlatform(expandedPlatform === platform ? null : platform)}
+                  onClick={() => setSelectedPlatformDetail(platform)}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
@@ -774,6 +777,79 @@ export default function OMGUnifiedDashboard() {
             </div>
           </div>
         )}
+
+        {selectedView === 'internal' && (
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold text-gray-900">Internal Performance Metrics</h3>
+            
+            {/* Media Credits Section */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h4 className="font-semibold mb-4">Media Credits & Efficiency Gains</h4>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-sm text-gray-600 mb-1">Campaign Credits</p>
+                  <p className="text-2xl font-bold text-green-600">${calculateTotalSavings().toLocaleString()}</p>
+                  <p className="text-xs text-gray-500 mt-1">From cross-platform optimization</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-sm text-gray-600 mb-1">Efficiency Gain</p>
+                  <p className="text-2xl font-bold text-purple-600">{calculateEfficiencyGain()}%</p>
+                  <p className="text-xs text-gray-500 mt-1">Lower effective CPM</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-sm text-gray-600 mb-1">Quarterly Total</p>
+                  <p className="text-2xl font-bold text-blue-600">$250K+</p>
+                  <p className="text-xs text-gray-500 mt-1">Across all campaigns</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Platform Learning Matrix */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h4 className="font-semibold mb-4">Cross-Platform Intelligence Matrix</h4>
+              <div className="space-y-3">
+                {campaign.insights.map((insight, idx) => (
+                  <div key={idx} className="bg-gray-50 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">{platforms.streaming.find(p => p.name === insight.source)?.logo || platforms.broadcast.find(p => p.name === insight.source)?.logo}</span>
+                        <span className="font-medium">{insight.source}</span>
+                        <ArrowRight className="w-4 h-4 text-gray-400" />
+                        <span className="text-lg">{platforms.streaming.find(p => p.name === insight.application)?.logo || platforms.broadcast.find(p => p.name === insight.application)?.logo}</span>
+                        <span className="font-medium">{insight.application}</span>
+                      </div>
+                      <span className="text-green-600 font-bold">+${insight.savings.toLocaleString()}</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">{insight.insight}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Technical Metrics */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <h4 className="font-semibold mb-4">System Performance</h4>
+              <div className="grid md:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 mb-1">Attribution Speed</p>
+                  <p className="text-xl font-bold">< 500ms</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 mb-1">Platform Sync</p>
+                  <p className="text-xl font-bold">Real-time</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 mb-1">Data Processing</p>
+                  <p className="text-xl font-bold">24/7</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm text-gray-600 mb-1">Uptime</p>
+                  <p className="text-xl font-bold">99.99%</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Reallocation Success Modal */}
@@ -802,6 +878,158 @@ export default function OMGUnifiedDashboard() {
                 </p>
               </div>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Platform Detail Modal */}
+      <AnimatePresence>
+        {selectedPlatformDetail && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            onClick={() => setSelectedPlatformDetail(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              className="bg-white rounded-xl max-w-4xl w-full max-h-[80vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">
+                      {platforms.streaming.find(p => p.name === selectedPlatformDetail)?.logo ||
+                       platforms.broadcast.find(p => p.name === selectedPlatformDetail)?.logo ||
+                       platforms.integrated.find(p => p.name === selectedPlatformDetail)?.logo}
+                    </span>
+                    <h2 className="text-2xl font-bold">{selectedPlatformDetail}</h2>
+                  </div>
+                  <button
+                    onClick={() => setSelectedPlatformDetail(null)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-6">
+                {selectedPlatformDetail === 'MadHive' ? (
+                  // MadHive Publisher Partners
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Publisher Partners</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      {['Fox', 'NBC', 'CBS', 'ABC', 'Hulu', 'Disney+', 'Paramount+', 'Peacock'].map(publisher => (
+                        <div key={publisher} className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 cursor-pointer transition-colors">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xl">
+                                {platforms.streaming.find(p => p.name === publisher)?.logo ||
+                                 platforms.broadcast.find(p => p.name === publisher)?.logo}
+                              </span>
+                              <h4 className="font-semibold">{publisher}</h4>
+                            </div>
+                            <span className="text-sm text-green-600">Active</span>
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            <p>Inventory: {Math.floor(Math.random() * 500 + 100)}M avails</p>
+                            <p>Avg CPM: ${Math.floor(Math.random() * 10 + 20)}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  // Regular Platform Campaign View
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Active Campaigns</h3>
+                    <div className="space-y-4">
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-semibold">Q1 Auto Launch - Sedan Line</h4>
+                          <span className="text-sm bg-green-100 text-green-700 px-2 py-1 rounded">Active</span>
+                        </div>
+                        <div className="grid grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <p className="text-gray-600">Budget</p>
+                            <p className="font-semibold">${(campaign.platforms[selectedPlatformDetail].budget * 0.4 / 1000000).toFixed(2)}M</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Spent</p>
+                            <p className="font-semibold">${(campaign.platforms[selectedPlatformDetail].spent * 0.4 / 1000000).toFixed(2)}M</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">CPM</p>
+                            <p className="font-semibold">${campaign.platforms[selectedPlatformDetail].cpm}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Conversions</p>
+                            <p className="font-semibold">{Math.floor(campaign.platforms[selectedPlatformDetail].conversions * 0.4).toLocaleString()}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-semibold">Q1 Auto Launch - SUV Line</h4>
+                          <span className="text-sm bg-green-100 text-green-700 px-2 py-1 rounded">Active</span>
+                        </div>
+                        <div className="grid grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <p className="text-gray-600">Budget</p>
+                            <p className="font-semibold">${(campaign.platforms[selectedPlatformDetail].budget * 0.3 / 1000000).toFixed(2)}M</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Spent</p>
+                            <p className="font-semibold">${(campaign.platforms[selectedPlatformDetail].spent * 0.3 / 1000000).toFixed(2)}M</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">CPM</p>
+                            <p className="font-semibold">${campaign.platforms[selectedPlatformDetail].cpm + 2}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Conversions</p>
+                            <p className="font-semibold">{Math.floor(campaign.platforms[selectedPlatformDetail].conversions * 0.3).toLocaleString()}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-semibold">Q1 Auto Launch - EV Line</h4>
+                          <span className="text-sm bg-yellow-100 text-yellow-700 px-2 py-1 rounded">Optimizing</span>
+                        </div>
+                        <div className="grid grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <p className="text-gray-600">Budget</p>
+                            <p className="font-semibold">${(campaign.platforms[selectedPlatformDetail].budget * 0.3 / 1000000).toFixed(2)}M</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Spent</p>
+                            <p className="font-semibold">${(campaign.platforms[selectedPlatformDetail].spent * 0.3 / 1000000).toFixed(2)}M</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">CPM</p>
+                            <p className="font-semibold">${campaign.platforms[selectedPlatformDetail].cpm - 1}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Conversions</p>
+                            <p className="font-semibold">{Math.floor(campaign.platforms[selectedPlatformDetail].conversions * 0.3).toLocaleString()}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

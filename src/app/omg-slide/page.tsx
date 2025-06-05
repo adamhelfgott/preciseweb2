@@ -3,18 +3,8 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import {
-  Brain,
-  Shield,
-  Zap,
-  BarChart3,
   ArrowRight,
-  CheckCircle,
-  TrendingUp,
-  Users,
-  Lock,
-  Play,
-  Eye,
-  RefreshCw
+  Play
 } from 'lucide-react';
 
 export default function OMGSlidePage() {
@@ -41,10 +31,10 @@ export default function OMGSlidePage() {
             </div>
           </div>
           <h1 className="text-5xl font-bold text-white mb-4">
-            Platform Intelligence That Creates Media Credits
+            One Dashboard. All Platforms. Real-Time Execution.
           </h1>
           <p className="text-xl text-white/80">
-            How your campaign data generates savings across Hulu, Disney+, Fox, NBC and more
+            See and control every campaign across Hulu, Disney+, Fox, NBC in one unified view
           </p>
         </motion.div>
 
@@ -57,27 +47,27 @@ export default function OMGSlidePage() {
             transition={{ delay: 0.2 }}
             className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20"
           >
-            <h3 className="text-xl font-bold text-white mb-4">Your Platforms</h3>
+            <h3 className="text-xl font-bold text-white mb-4">What You Control</h3>
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <span className="text-2xl flex-shrink-0">🟢</span>
+                <span className="text-2xl flex-shrink-0">🎬</span>
                 <div>
-                  <p className="text-white font-medium">Hulu, Disney+, Paramount+</p>
-                  <p className="text-white/70 text-sm">Premium streaming inventory</p>
+                  <p className="text-white font-medium">Every Platform</p>
+                  <p className="text-white/70 text-sm">Streaming, broadcast, linear - unified</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <span className="text-2xl flex-shrink-0">🦊</span>
+                <span className="text-2xl flex-shrink-0">⚡</span>
                 <div>
-                  <p className="text-white font-medium">Fox, NBC, CBS, ABC</p>
-                  <p className="text-white/70 text-sm">Broadcast and linear</p>
+                  <p className="text-white font-medium">Real-Time Execution</p>
+                  <p className="text-white/70 text-sm">See changes happen instantly</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <span className="text-2xl flex-shrink-0">💵</span>
+                <span className="text-2xl flex-shrink-0">🎯</span>
                 <div>
-                  <p className="text-white font-medium">Media Credits Earned</p>
-                  <p className="text-white/70 text-sm">$77,000+ in current campaign</p>
+                  <p className="text-white font-medium">Campaign-Level Control</p>
+                  <p className="text-white/70 text-sm">Drill down to any detail</p>
                 </div>
               </div>
             </div>
@@ -90,27 +80,27 @@ export default function OMGSlidePage() {
             transition={{ delay: 0.4 }}
             className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20"
           >
-            <h3 className="text-xl font-bold text-white mb-4">MadHive Platform</h3>
+            <h3 className="text-xl font-bold text-white mb-4">Platform Network</h3>
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <BarChart3 className="w-6 h-6 text-purple-400 flex-shrink-0" />
+                <span className="text-2xl flex-shrink-0">🟢</span>
                 <div>
-                  <p className="text-white font-medium">Maverick AI</p>
-                  <p className="text-white/70 text-sm">Optimization engine</p>
+                  <p className="text-white font-medium">Hulu & Disney+</p>
+                  <p className="text-white/70 text-sm">Click to see all campaigns</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Users className="w-6 h-6 text-purple-400 flex-shrink-0" />
+                <span className="text-2xl flex-shrink-0">🦊</span>
                 <div>
-                  <p className="text-white font-medium">Publisher Network</p>
-                  <p className="text-white/70 text-sm">Disney+, Hulu, Fox, etc.</p>
+                  <p className="text-white font-medium">Fox & NBC</p>
+                  <p className="text-white/70 text-sm">Real-time performance data</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <TrendingUp className="w-6 h-6 text-purple-400 flex-shrink-0" />
+                <span className="text-2xl flex-shrink-0">🟣</span>
                 <div>
-                  <p className="text-white font-medium">Data Marketplace</p>
-                  <p className="text-white/70 text-sm">Annalect activation</p>
+                  <p className="text-white font-medium">MadHive Network</p>
+                  <p className="text-white/70 text-sm">All publishers unified</p>
                 </div>
               </div>
             </div>
@@ -123,27 +113,27 @@ export default function OMGSlidePage() {
             transition={{ delay: 0.6 }}
             className="bg-gradient-to-br from-green-500/20 to-green-600/20 backdrop-blur-sm rounded-xl p-6 border-2 border-green-400/50"
           >
-            <h3 className="text-xl font-bold text-white mb-4">Intelligence Creates Value</h3>
+            <h3 className="text-xl font-bold text-white mb-4">What Makes It Work</h3>
             <div className="space-y-3">
               <div className="flex items-start gap-3">
-                <Brain className="w-6 h-6 text-green-400 flex-shrink-0" />
+                <span className="text-2xl flex-shrink-0">🔄</span>
                 <div>
-                  <p className="text-white font-medium">Cross-Platform Learning</p>
-                  <p className="text-white/70 text-sm">Hulu insights improve Fox CPMs</p>
+                  <p className="text-white font-medium">Unified Intelligence</p>
+                  <p className="text-white/70 text-sm">Every platform learns from others</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Zap className="w-6 h-6 text-green-400 flex-shrink-0" />
+                <span className="text-2xl flex-shrink-0">🎨</span>
                 <div>
-                  <p className="text-white font-medium">Media Credit Generation</p>
-                  <p className="text-white/70 text-sm">Efficiency gains = dollar savings</p>
+                  <p className="text-white font-medium">Dynamic Allocation</p>
+                  <p className="text-white/70 text-sm">Budget flows to performance</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Shield className="w-6 h-6 text-green-400 flex-shrink-0" />
+                <span className="text-2xl flex-shrink-0">🔒</span>
                 <div>
-                  <p className="text-white font-medium">Privacy-Safe Attribution</p>
-                  <p className="text-white/70 text-sm">Learn without exposure</p>
+                  <p className="text-white font-medium">Verified Attribution</p>
+                  <p className="text-white/70 text-sm">Cryptographic proof of results</p>
                 </div>
               </div>
             </div>
@@ -158,36 +148,36 @@ export default function OMGSlidePage() {
           className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-white/10"
         >
           <h3 className="text-2xl font-bold text-white mb-6 text-center">
-            See Your Media Credits Grow in Real-Time
+            The Power of Unified Execution
           </h3>
           <div className="grid grid-cols-4 gap-6">
             <div className="text-center">
               <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                <span className="text-3xl">💰</span>
+                <span className="text-3xl">📊</span>
               </div>
-              <p className="text-white font-medium">Media Credits</p>
-              <p className="text-white/60 text-sm">$77,000+ this campaign</p>
+              <p className="text-white font-medium">Single Dashboard</p>
+              <p className="text-white/60 text-sm">All platforms unified</p>
             </div>
             <div className="text-center">
               <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                <RefreshCw className="w-10 h-10 text-white" />
+                <span className="text-3xl">🎮</span>
               </div>
-              <p className="text-white font-medium">Platform Allocation</p>
-              <p className="text-white/60 text-sm">Budget flows to performance</p>
+              <p className="text-white font-medium">Total Control</p>
+              <p className="text-white/60 text-sm">Click any platform to drill in</p>
             </div>
             <div className="text-center">
               <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Brain className="w-10 h-10 text-white" />
+                <span className="text-3xl">🚀</span>
               </div>
-              <p className="text-white font-medium">Cross-Platform AI</p>
-              <p className="text-white/60 text-sm">Hulu learnings → Fox gains</p>
+              <p className="text-white font-medium">Real-Time Updates</p>
+              <p className="text-white/60 text-sm">See changes instantly</p>
             </div>
             <div className="text-center">
               <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                <TrendingUp className="w-10 h-10 text-white" />
+                <span className="text-3xl">🎯</span>
               </div>
-              <p className="text-white font-medium">Efficiency Gains</p>
-              <p className="text-white/60 text-sm">Lower CPMs over time</p>
+              <p className="text-white font-medium">Performance Driven</p>
+              <p className="text-white/60 text-sm">Budget flows to what works</p>
             </div>
           </div>
         </motion.div>
@@ -204,8 +194,8 @@ export default function OMGSlidePage() {
               See the Unified Intelligence System in Action
             </h3>
             <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-              Watch your media credits grow as Hulu insights improve Fox performance. See how every platform 
-              - from Disney+ to NBC - learns from each other to lower your CPMs in real-time.
+              Control every campaign across every platform in one unified view. Click into any platform 
+              to see campaigns. Watch budgets flow to performance. All in real-time.
             </p>
             <Link 
               href="/app/omg-unified-dashboard"
@@ -216,7 +206,7 @@ export default function OMGSlidePage() {
               <ArrowRight className="w-6 h-6" />
             </Link>
             <p className="text-white/70 text-sm mt-4">
-              Campaign-level reporting • Dynamic spend allocation • Real-time cross-platform optimization
+              Unified platform control • Click to drill down • Real-time execution
             </p>
           </div>
         </motion.div>

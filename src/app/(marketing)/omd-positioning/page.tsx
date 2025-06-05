@@ -27,8 +27,8 @@ export default function OMDPositioningPage() {
               Precise Powers MadHive's Unified Platform for OMD
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              How Precise transforms your campaigns across Hulu, Disney+, Fox, NBC and more into a 
-              unified intelligence system that generates media credits through cross-platform optimization
+              See and control every campaign across Hulu, Disney+, Fox, NBC in one unified dashboard. 
+              Real-time execution, platform-level drill downs, automatic optimization.
             </p>
           </div>
         </div>
