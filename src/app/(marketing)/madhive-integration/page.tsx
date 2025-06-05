@@ -1,15 +1,23 @@
-'use client'
-
 import React from 'react'
-import Logo from '@/components/Logo'
-import Navigation from '@/components/Navigation'
-import Footer from '@/components/Footer'
+import Link from 'next/link'
 import { Shield, Zap, Brain, TrendingUp, Network, Database, Lock, BarChart3 } from 'lucide-react'
 
 export default function MadHiveIntegrationPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <Navigation />
+      {/* Simple Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold">P</span>
+              </div>
+              <span className="font-semibold text-xl">Precise</span>
+            </Link>
+          </div>
+        </div>
+      </nav>
       
       {/* Hero Section */}
       <section className="relative pt-32 pb-16 px-4">
@@ -315,7 +323,20 @@ export default function MadHiveIntegrationPage() {
         </div>
       </section>
 
-      <Footer />
+      {/* Simple Footer */}
+      <footer className="bg-gray-50 border-t border-gray-200 mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">P</span>
+              </div>
+              <span className="font-semibold">Precise</span>
+            </div>
+            <p className="text-sm text-gray-600">© {new Date().getFullYear()} Precise. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
