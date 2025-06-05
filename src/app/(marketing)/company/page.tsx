@@ -1,10 +1,6 @@
-import { Metadata } from "next";
-import CompanyPageWithCMS from "@/components/company/CompanyPageWithCMS";
+'use client';
 
-export const metadata: Metadata = {
-  title: "Company - Precise.ai",
-  description: "Meet the leadership team building the infrastructure for the AI data economy.",
-};
+import CompanyPageWithCMS from "@/components/company/CompanyPageWithCMS";
 
 export default function CompanyPage() {
   return <CompanyPageWithCMS />;
