@@ -57,8 +57,32 @@ const platforms = {
   ]
 };
 
+// Type definitions
+type PlatformData = {
+  budget: number;
+  spent: number;
+  impressions: number;
+  cpm: number;
+  reach: number;
+  conversions: number;
+};
+
+type CampaignData = {
+  name: string;
+  totalBudget: number;
+  spent: number;
+  platforms: Record<string, PlatformData>;
+  insights: Array<{
+    source: string;
+    insight: string;
+    application: string;
+    impact: string;
+    savings: number;
+  }>;
+};
+
 // Mock campaign data with platform-specific performance
-const campaignData = {
+const campaignData: Record<string, CampaignData> = {
   'Q1-2025-AUTO': {
     name: 'Q1 Auto Launch',
     totalBudget: 5200000,
@@ -832,7 +856,7 @@ export default function OMGUnifiedDashboard() {
               <div className="grid md:grid-cols-4 gap-4">
                 <div className="text-center">
                   <p className="text-sm text-gray-600 mb-1">Attribution Speed</p>
-                  <p className="text-xl font-bold">< 500ms</p>
+                  <p className="text-xl font-bold">&lt; 500ms</p>
                 </div>
                 <div className="text-center">
                   <p className="text-sm text-gray-600 mb-1">Platform Sync</p>
@@ -946,7 +970,7 @@ export default function OMGUnifiedDashboard() {
                       ))}
                     </div>
                   </div>
-                ) : (
+                ) : campaign.platforms[selectedPlatformDetail] ? (
                   // Regular Platform Campaign View
                   <div>
                     <h3 className="text-lg font-semibold mb-4">Active Campaigns</h3>
@@ -1027,7 +1051,7 @@ export default function OMGUnifiedDashboard() {
                       </div>
                     </div>
                   </div>
-                )}
+                ) : null}
               </div>
             </motion.div>
           </motion.div>
