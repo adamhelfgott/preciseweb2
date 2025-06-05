@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { Logo } from '@/components/Logo'
-import { Navigation } from '@/components/Navigation'
-import { Footer } from '@/components/Footer'
+import Logo from '@/components/Logo'
+import Navigation from '@/components/Navigation'
+import Footer from '@/components/Footer'
 import { ArrowRight, Shield, Zap, Brain, TrendingUp, Users, Target, BarChart3, Layers } from 'lucide-react'
 
 export default function OMDPositioningPage() {

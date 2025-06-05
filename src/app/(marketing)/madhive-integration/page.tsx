@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { Logo } from '@/components/Logo'
-import { Navigation } from '@/components/Navigation'
-import { Footer } from '@/components/Footer'
+import Logo from '@/components/Logo'
+import Navigation from '@/components/Navigation'
+import Footer from '@/components/Footer'
 import { Shield, Zap, Brain, TrendingUp, Network, Database, Lock, BarChart3 } from 'lucide-react'
 
 export default function MadHiveIntegrationPage() {

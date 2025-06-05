@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSanityData } from "@/hooks/useSanityData";
 import { caseStudiesQuery, caseStudiesHeroQuery } from "@/sanity/lib/queries";
-import { urlForImage } from "@/sanity/lib/image";
+import { urlFor as urlForImage } from "@/sanity/lib/image";
 
 interface CaseStudyResult {
   metric: string;
