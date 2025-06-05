@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { ArrowRight, Shield, Zap, Brain, TrendingUp, Users, Target, BarChart3, Layers, RefreshCw, Play, Eye } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 export default function OMDPositioningPage() {
   return (
@@ -27,8 +27,8 @@ export default function OMDPositioningPage() {
               Precise Powers MadHive's Unified Platform for OMD
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              How Precise's intelligence layer enables MadHive to deliver unified cross-platform optimization 
-              with cryptographic verification for OMG's campaigns
+              How Precise transforms your campaigns across Hulu, Disney+, Fox, NBC and more into a 
+              unified intelligence system that generates media credits through cross-platform optimization
             </p>
           </div>
         </div>
@@ -45,22 +45,22 @@ export default function OMDPositioningPage() {
               <h3 className="text-xl font-bold mb-6 text-blue-800 text-center">What OMG Sees</h3>
               <div className="space-y-4">
                 <div className="bg-white rounded-lg p-4">
-                  <Users className="w-6 h-6 text-blue-600 mb-2" />
-                  <h4 className="font-semibold mb-1">Single Dashboard</h4>
-                  <p className="text-sm text-gray-600">All publishers, all metrics, one view</p>
+                  <span className="text-2xl mb-2 block">🎬</span>
+                  <h4 className="font-semibold mb-1">Platform Dashboard</h4>
+                  <p className="text-sm text-gray-600">Hulu, Disney+, Fox, NBC - unified view</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
-                  <Target className="w-6 h-6 text-blue-600 mb-2" />
-                  <h4 className="font-semibold mb-1">Unified Targeting</h4>
-                  <p className="text-sm text-gray-600">Consistent audiences across all inventory</p>
+                  <span className="text-2xl mb-2 block">💵</span>
+                  <h4 className="font-semibold mb-1">Media Credits</h4>
+                  <p className="text-sm text-gray-600">$77,000+ earned this campaign</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
-                  <BarChart3 className="w-6 h-6 text-blue-600 mb-2" />
+                  <span className="text-2xl mb-2 block">⚡</span>
                   <h4 className="font-semibold mb-1">Real-Time Performance</h4>
                   <p className="text-sm text-gray-600">Instant insights, immediate optimization</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
-                  <Shield className="w-6 h-6 text-blue-600 mb-2" />
+                  <span className="text-2xl mb-2 block">🔐</span>
                   <h4 className="font-semibold mb-1">Verified Attribution</h4>
                   <p className="text-sm text-gray-600">Cryptographically proven results</p>
                 </div>
@@ -72,22 +72,22 @@ export default function OMDPositioningPage() {
               <h3 className="text-xl font-bold mb-6 text-green-800 text-center">MadHive Platform</h3>
               <div className="space-y-4">
                 <div className="bg-white rounded-lg p-4">
-                  <Layers className="w-6 h-6 text-green-600 mb-2" />
+                  <span className="text-2xl mb-2 block">🌐</span>
                   <h4 className="font-semibold mb-1">Unified Local Workflow</h4>
                   <p className="text-sm text-gray-600">All supply sources integrated</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
-                  <Brain className="w-6 h-6 text-green-600 mb-2" />
+                  <span className="text-2xl mb-2 block">🎯</span>
                   <h4 className="font-semibold mb-1">Maverick AI</h4>
                   <p className="text-sm text-gray-600">Cross-platform optimization engine</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
-                  <Zap className="w-6 h-6 text-green-600 mb-2" />
+                  <span className="text-2xl mb-2 block">🚀</span>
                   <h4 className="font-semibold mb-1">Real-Time Decisioning</h4>
                   <p className="text-sm text-gray-600">Sub-second bid optimization</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
-                  <TrendingUp className="w-6 h-6 text-green-600 mb-2" />
+                  <span className="text-2xl mb-2 block">🔄</span>
                   <h4 className="font-semibold mb-1">MediaOcean Integration</h4>
                   <p className="text-sm text-gray-600">Seamless workflow connection</p>
                 </div>
@@ -99,22 +99,22 @@ export default function OMDPositioningPage() {
               <h3 className="text-xl font-bold mb-6 text-purple-800 text-center">Precise Powers</h3>
               <div className="space-y-4">
                 <div className="bg-white rounded-lg p-4">
-                  <Shield className="w-6 h-6 text-purple-600 mb-2" />
+                  <span className="text-2xl mb-2 block">✨</span>
                   <h4 className="font-semibold mb-1">Cryptographic Verification</h4>
                   <p className="text-sm text-gray-600">Every impression mathematically proven</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
-                  <Brain className="w-6 h-6 text-purple-600 mb-2" />
-                  <h4 className="font-semibold mb-1">Unified Intelligence</h4>
-                  <p className="text-sm text-gray-600">Buckets learn from each other</p>
+                  <span className="text-2xl mb-2 block">🔮</span>
+                  <h4 className="font-semibold mb-1">Cross-Platform AI</h4>
+                  <p className="text-sm text-gray-600">Hulu insights → Fox gains</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
-                  <Users className="w-6 h-6 text-purple-600 mb-2" />
+                  <span className="text-2xl mb-2 block">🎭</span>
                   <h4 className="font-semibold mb-1">Privacy-Safe Activation</h4>
                   <p className="text-sm text-gray-600">Use Annalect data without exposure</p>
                 </div>
                 <div className="bg-white rounded-lg p-4">
-                  <TrendingUp className="w-6 h-6 text-purple-600 mb-2" />
+                  <span className="text-2xl mb-2 block">🌊</span>
                   <h4 className="font-semibold mb-1">Network Learning</h4>
                   <p className="text-sm text-gray-600">Every campaign improves all others</p>
                 </div>
@@ -143,7 +143,8 @@ export default function OMDPositioningPage() {
           <div className="bg-white rounded-2xl p-8 shadow-lg">
             <div className="text-center mb-8">
               <p className="text-lg text-gray-700">
-                Every bucket continuously learns from and improves the others through Maverick AI powered by Precise
+                Your campaign data creates value. When Hulu insights improve Fox performance, 
+                those efficiency gains become media credits - real dollars back to your budget.
               </p>
             </div>
             
@@ -153,8 +154,8 @@ export default function OMDPositioningPage() {
                 <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <span className="text-3xl">📺</span>
                 </div>
-                <h3 className="font-bold mb-2">Streaming Intelligence</h3>
-                <p className="text-sm text-gray-600">Disney+, Hulu, Peacock patterns enhance broadcast performance</p>
+                <h3 className="font-bold mb-2">Hulu → Fox Sports</h3>
+                <p className="text-sm text-gray-600">Young professional insights = $45K savings</p>
               </div>
               
               {/* Broadcast Bucket */}
@@ -162,8 +163,8 @@ export default function OMDPositioningPage() {
                 <div className="w-24 h-24 bg-gradient-to-br from-green-100 to-green-200 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <span className="text-3xl">🏢</span>
                 </div>
-                <h3 className="font-bold mb-2">Broadcast Intelligence</h3>
-                <p className="text-sm text-gray-600">Fox, NBC, CBS insights optimize streaming targeting</p>
+                <h3 className="font-bold mb-2">Disney+ → NBC</h3>
+                <p className="text-sm text-gray-600">Family viewing patterns = $32K savings</p>
               </div>
               
               {/* Linear Bucket */}
@@ -171,8 +172,8 @@ export default function OMDPositioningPage() {
                 <div className="w-24 h-24 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <span className="text-3xl">📡</span>
                 </div>
-                <h3 className="font-bold mb-2">Linear Intelligence</h3>
-                <p className="text-sm text-gray-600">Traditional TV data amplifies digital campaign performance</p>
+                <h3 className="font-bold mb-2">CBS → Paramount+</h3>
+                <p className="text-sm text-gray-600">Prime time data = Better streaming CPMs</p>
               </div>
               
               {/* Data Bucket */}
@@ -180,8 +181,8 @@ export default function OMDPositioningPage() {
                 <div className="w-24 h-24 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <span className="text-3xl">💎</span>
                 </div>
-                <h3 className="font-bold mb-2">Data Intelligence</h3>
-                <p className="text-sm text-gray-600">Annalect insights power all channels without exposure</p>
+                <h3 className="font-bold mb-2">Total Savings</h3>
+                <p className="text-sm text-gray-600">$250K+ media credits this quarter</p>
               </div>
             </div>
             
@@ -217,28 +218,28 @@ export default function OMDPositioningPage() {
               <h3 className="text-2xl font-bold mb-6">Traditional Approach</h3>
               <ul className="space-y-4">
                 <li className="flex items-start">
-                  <span className="text-red-500 mr-3">✗</span>
+                  <span className="text-2xl mr-3">🛑</span>
                   <div>
                     <p className="font-semibold">Siloed Platforms</p>
-                    <p className="text-sm text-gray-600">Each DSP operates independently</p>
+                    <p className="text-sm text-gray-600">Hulu doesn't talk to Fox, NBC is isolated</p>
                   </div>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-red-500 mr-3">✗</span>
+                  <span className="text-2xl mr-3">🛑</span>
                   <div>
                     <p className="font-semibold">Delayed Attribution</p>
                     <p className="text-sm text-gray-600">Days or weeks to understand performance</p>
                   </div>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-red-500 mr-3">✗</span>
+                  <span className="text-2xl mr-3">🛑</span>
                   <div>
                     <p className="font-semibold">Limited Learning</p>
                     <p className="text-sm text-gray-600">Each campaign starts from scratch</p>
                   </div>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-red-500 mr-3">✗</span>
+                  <span className="text-2xl mr-3">🛑</span>
                   <div>
                     <p className="font-semibold">Data Exposure Risk</p>
                     <p className="text-sm text-gray-600">Must share data to activate it</p>
@@ -251,28 +252,28 @@ export default function OMDPositioningPage() {
               <h3 className="text-2xl font-bold mb-6">MadHive + Precise</h3>
               <ul className="space-y-4">
                 <li className="flex items-start">
-                  <span className="text-green-500 mr-3">✓</span>
+                  <span className="text-2xl mr-3">💰</span>
                   <div>
-                    <p className="font-semibold">Unified Intelligence</p>
-                    <p className="text-sm text-gray-600">All platforms learn from each other instantly</p>
+                    <p className="font-semibold">Platform Intelligence Network</p>
+                    <p className="text-sm text-gray-600">Hulu insights = $45K savings on Fox</p>
                   </div>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-green-500 mr-3">✓</span>
+                  <span className="text-2xl mr-3">💰</span>
                   <div>
                     <p className="font-semibold">Real-Time Verification</p>
                     <p className="text-sm text-gray-600">Cryptographic proof within seconds</p>
                   </div>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-green-500 mr-3">✓</span>
+                  <span className="text-2xl mr-3">💰</span>
                   <div>
                     <p className="font-semibold">Compound Learning</p>
                     <p className="text-sm text-gray-600">Every campaign improves all future campaigns</p>
                   </div>
                 </li>
                 <li className="flex items-start">
-                  <span className="text-green-500 mr-3">✓</span>
+                  <span className="text-2xl mr-3">💰</span>
                   <div>
                     <p className="font-semibold">Zero-Exposure Activation</p>
                     <p className="text-sm text-gray-600">Use Annalect data without sharing it</p>
@@ -331,23 +332,27 @@ export default function OMDPositioningPage() {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Campaign Performance?</h2>
           <p className="text-xl mb-8">
-            MadHive + Precise delivers the unified intelligence system that makes every 
-            campaign smarter than the last, with cryptographic proof of success.
+            Watch your media credits grow as every platform learns from all others. 
+            $77,000+ earned this campaign. $250,000+ this quarter.
           </p>
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 max-w-2xl mx-auto">
-            <p className="text-lg font-semibold mb-4">Only With Precise</p>
+            <p className="text-lg font-semibold mb-4">Real Platform Intelligence</p>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="bg-white/5 rounded-lg p-3">
-                <p>Streaming learns from broadcast</p>
+              <div className="bg-white/5 rounded-lg p-3 flex items-center gap-2">
+                <span>🟢</span>
+                <p>Hulu → Fox: +$45K saved</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-3">
-                <p>Linear enhances digital</p>
+              <div className="bg-white/5 rounded-lg p-3 flex items-center gap-2">
+                <span>🔵</span>
+                <p>Disney+ → NBC: +$32K saved</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-3">
-                <p>Data amplifies all channels</p>
+              <div className="bg-white/5 rounded-lg p-3 flex items-center gap-2">
+                <span>📺</span>
+                <p>CBS → Paramount+: Lower CPMs</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-3">
-                <p>Every impression verified</p>
+              <div className="bg-white/5 rounded-lg p-3 flex items-center gap-2">
+                <span>💸</span>
+                <p>Total quarterly credits: $250K+</p>
               </div>
             </div>
           </div>

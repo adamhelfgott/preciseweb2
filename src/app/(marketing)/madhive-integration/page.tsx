@@ -27,8 +27,8 @@ export default function MadHiveIntegrationPage() {
               What Precise Powers for MadHive
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Precise is the invisible intelligence layer that transforms MadHive from a unified buying platform 
-              into an AI-powered optimization engine with cryptographic verification.
+              Precise powers the cross-platform intelligence that helps OMG earn media credits. 
+              When Hulu insights improve Fox performance, those efficiency gains become real dollar savings.
             </p>
           </div>
         </div>
@@ -61,10 +61,10 @@ export default function MadHiveIntegrationPage() {
               </div>
               <p className="text-gray-700 mb-4"><strong>What MadHive Promises:</strong> "AI that gets smarter with every campaign"</p>
               <ul className="space-y-2 text-gray-600">
-                <li>• Streaming, broadcast, linear, and data buckets learn from each other</li>
-                <li>• Cross-platform insights flow instantly between all channels</li>
-                <li>• Each bucket's performance enhances all others exponentially</li>
-                <li>• Continuous optimization that improves every second</li>
+                <li>• Hulu viewing patterns optimize Disney+ targeting</li>
+                <li>• Fox Sports insights improve NBC primetime campaigns</li>
+                <li>• Every platform learns from all others in real-time</li>
+                <li>• Efficiency gains convert to media credits: $77,000+ per campaign</li>
               </ul>
             </div>
 
@@ -87,12 +87,12 @@ export default function MadHiveIntegrationPage() {
                 <Zap className="w-8 h-8 text-orange-600 mr-3" />
                 <h3 className="text-xl font-bold">Real-Time Cross-Platform Optimization</h3>
               </div>
-              <p className="text-gray-700 mb-4"><strong>What MadHive Promises:</strong> "Unified buying across linear and digital"</p>
+              <p className="text-gray-700 mb-4"><strong>What MadHive Promises:</strong> "Unified buying across all platforms"</p>
               <ul className="space-y-2 text-gray-600">
-                <li>• Sub-second attribution updates across all channels</li>
-                <li>• Automated budget reallocation based on verified performance</li>
-                <li>• Frequency capping that actually works across walled gardens</li>
-                <li>• Incrementality testing with holdout groups in real-time</li>
+                <li>• Real-time budget flows from NBC to Hulu based on performance</li>
+                <li>• Cross-platform insights: "Young professionals on NBC convert 87% on Hulu"</li>
+                <li>• Media credits generated from efficiency gains</li>
+                <li>• Platform-level reporting with campaign drill-downs</li>
               </ul>
             </div>
           </div>
@@ -202,38 +202,39 @@ export default function MadHiveIntegrationPage() {
                 <div className="w-16 h-16 bg-blue-100 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <span className="text-2xl">📺</span>
                 </div>
-                <h4 className="font-bold mb-2">Streaming</h4>
-                <p className="text-sm text-gray-600">Disney+, Hulu insights improve broadcast targeting</p>
+                <h4 className="font-bold mb-2">Hulu → Fox Sports</h4>
+                <p className="text-sm text-gray-600">Young professional insights = +$45K savings</p>
               </div>
               
               <div className="bg-white rounded-xl p-6 text-center">
                 <div className="w-16 h-16 bg-green-100 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <span className="text-2xl">🏢</span>
                 </div>
-                <h4 className="font-bold mb-2">Broadcast</h4>
-                <p className="text-sm text-gray-600">Fox, NBC patterns optimize streaming campaigns</p>
+                <h4 className="font-bold mb-2">Disney+ → NBC</h4>
+                <p className="text-sm text-gray-600">Family viewing patterns = +$32K savings</p>
               </div>
               
               <div className="bg-white rounded-xl p-6 text-center">
                 <div className="w-16 h-16 bg-purple-100 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <span className="text-2xl">📡</span>
                 </div>
-                <h4 className="font-bold mb-2">Linear</h4>
-                <p className="text-sm text-gray-600">Traditional TV data enhances digital performance</p>
+                <h4 className="font-bold mb-2">CBS → Paramount+</h4>
+                <p className="text-sm text-gray-600">Prime time patterns = Better streaming CPMs</p>
               </div>
               
               <div className="bg-white rounded-xl p-6 text-center">
                 <div className="w-16 h-16 bg-orange-100 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <span className="text-2xl">💎</span>
                 </div>
-                <h4 className="font-bold mb-2">Data</h4>
-                <p className="text-sm text-gray-600">Annalect insights amplify all channels</p>
+                <h4 className="font-bold mb-2">All Platforms</h4>
+                <p className="text-sm text-gray-600">Total media credits this quarter: $250K+</p>
               </div>
             </div>
             
             <div className="mt-8 text-center">
               <p className="text-lg font-semibold text-gray-800">
-                Every impression makes every bucket smarter. Intelligence flows instantly between all platforms.
+                Your campaign data creates value. Every insight that improves another platform's performance 
+                generates media credits - real dollars back to your budget.
               </p>
             </div>
           </div>
@@ -247,19 +248,19 @@ export default function MadHiveIntegrationPage() {
           
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white rounded-2xl p-8 shadow-lg">
-              <h3 className="text-xl font-bold mb-4 text-blue-600">Revenue Enhancement</h3>
+              <h3 className="text-xl font-bold mb-4 text-blue-600">Media Credits & Savings</h3>
               <ul className="space-y-3 text-gray-600">
                 <li className="flex items-start">
                   <span className="text-green-500 mr-2">✓</span>
-                  <span>Premium pricing for verified performance</span>
+                  <span>OMG earns $77,000+ media credits per campaign</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-500 mr-2">✓</span>
-                  <span>Data marketplace monetization without data transfer</span>
+                  <span>Platform insights create 18-25% efficiency gains</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-500 mr-2">✓</span>
-                  <span>Performance guarantees backed by cryptographic proof</span>
+                  <span>Your data enhances the entire network's performance</span>
                 </li>
               </ul>
             </div>
@@ -308,16 +309,16 @@ export default function MadHiveIntegrationPage() {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">The Bottom Line</h2>
           <p className="text-xl mb-8">
-            Precise transforms MadHive from a "unified buying platform" into an 
-            "intelligence-powered optimization engine with cryptographic proof."
+            Precise transforms every platform into a source of intelligence and every campaign 
+            into an opportunity to earn media credits through cross-platform optimization.
           </p>
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
             <p className="text-lg mb-4">
-              <strong>Without Precise:</strong> MadHive is another DSP with good publisher relationships
+              <strong>Without Precise:</strong> Each platform operates in isolation - Hulu, Disney+, Fox all separate
             </p>
             <p className="text-lg">
-              <strong>With Precise:</strong> MadHive is the only platform that can prove performance 
-              with mathematical certainty while learning from the entire ecosystem
+              <strong>With Precise:</strong> Every platform learns from all others. Hulu insights improve Fox performance. 
+              Those efficiency gains become media credits - real dollars back to OMG's budget.
             </p>
           </div>
         </div>
