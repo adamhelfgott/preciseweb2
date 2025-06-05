@@ -1,10 +1,6 @@
-import { Metadata } from "next";
-import AgentIntelligencePageWithCMS from "@/components/agent-intelligence/AgentIntelligencePageWithCMS";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Agent Intelligence - Precise.ai",
-  description: "Transform your DSP into a self-optimizing system with Precise.ai's cross-platform intelligence.",
-};
+import AgentIntelligencePageWithCMS from "@/components/agent-intelligence/AgentIntelligencePageWithCMS";
 
 export default function AgentIntelligencePage() {
   return <AgentIntelligencePageWithCMS />;
