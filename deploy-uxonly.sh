@@ -1,19 +1,14 @@
 #!/bin/bash
 
-# Deploy to uxonly environment on Vercel
+echo "🚀 Deploying UX-only demo to Vercel..."
 
-echo "Deploying to uxonly environment..."
+# Set environment variables for deployment
+export NEXT_PUBLIC_MOCK_MODE=true
+export NEXT_PUBLIC_SANITY_PROJECT_ID=dummy
+export NEXT_PUBLIC_SANITY_DATASET=production
+export NEXT_PUBLIC_CONVEX_URL=https://animated-starfish-207.convex.cloud
 
-# Set environment variables for the build
-export NEXT_PUBLIC_SANITY_PROJECT_ID="qjy49msn"
-export NEXT_PUBLIC_SANITY_DATASET="production"
-export NEXT_PUBLIC_SANITY_API_VERSION="2025-06-01"
+# Deploy to Vercel
+vercel --prod --env NEXT_PUBLIC_MOCK_MODE=true --env NEXT_PUBLIC_SANITY_PROJECT_ID=dummy --env NEXT_PUBLIC_SANITY_DATASET=production --env NEXT_PUBLIC_CONVEX_URL=https://animated-starfish-207.convex.cloud
 
-# Deploy using Vercel CLI with production flag
-npx vercel deploy --prod \
-  --env NEXT_PUBLIC_SANITY_PROJECT_ID="qjy49msn" \
-  --env NEXT_PUBLIC_SANITY_DATASET="production" \
-  --env NEXT_PUBLIC_SANITY_API_VERSION="2025-06-01" \
-  --yes
-
-echo "Deployment initiated!"
+echo "✅ Deployment complete!"

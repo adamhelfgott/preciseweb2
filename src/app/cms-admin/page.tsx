@@ -1,10 +1,6 @@
-import { Metadata } from "next";
-import CMSAdminPanel from "@/components/cms/CMSAdminPanel";
+'use client';
 
-export const metadata: Metadata = {
-  title: "CMS Admin - Precise.ai",
-  description: "Content management system for Precise.ai marketing pages",
-};
+import CMSAdminPanel from "@/components/cms/CMSAdminPanel";
 
 export default function CMSAdminPage() {
   return <CMSAdminPanel />;
