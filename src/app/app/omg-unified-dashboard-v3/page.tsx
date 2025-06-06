@@ -48,8 +48,16 @@ import {
   Layers,
   Plus,
   Minus,
-  Command
+  Command,
+  MapPin,
+  Map
 } from 'lucide-react';
+import { 
+  ComposableMap, 
+  Geographies, 
+  Geography,
+  Marker
+} from 'react-simple-maps';
 
 // Real platforms OMG works with
 const platforms = {
@@ -1885,7 +1893,7 @@ export default function OMGUnifiedDashboardV3() {
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <div className="w-4 h-4 bg-red-500 rounded"></div>
-                    <span>Low (<50%)</span>
+                    <span>Low (&lt;50%)</span>
                   </div>
                 </div>
               </div>
