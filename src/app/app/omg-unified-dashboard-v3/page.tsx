@@ -148,6 +148,22 @@ const advertisers: Record<string, Advertiser> = {
   }
 };
 
+// Mock DMA data for heat map
+const dmaMarkets: DMAData[] = [
+  { id: '501', name: 'New York', state: 'NY', coordinates: [-74.006, 40.7128], streamingReach: 2340000, linearReach: 3450000, blendedReach: 5790000, targetDelivery: 68.2, population: 8500000 },
+  { id: '803', name: 'Los Angeles', state: 'CA', coordinates: [-118.2437, 34.0522], streamingReach: 1890000, linearReach: 2560000, blendedReach: 4450000, targetDelivery: 62.5, population: 7100000 },
+  { id: '602', name: 'Chicago', state: 'IL', coordinates: [-87.6298, 41.8781], streamingReach: 1560000, linearReach: 1980000, blendedReach: 3540000, targetDelivery: 71.3, population: 4970000 },
+  { id: '504', name: 'Philadelphia', state: 'PA', coordinates: [-75.1652, 39.9526], streamingReach: 980000, linearReach: 1240000, blendedReach: 2220000, targetDelivery: 64.8, population: 3420000 },
+  { id: '623', name: 'Dallas', state: 'TX', coordinates: [-96.7970, 32.7767], streamingReach: 1120000, linearReach: 1450000, blendedReach: 2570000, targetDelivery: 58.9, population: 4360000 },
+  { id: '506', name: 'Boston', state: 'MA', coordinates: [-71.0589, 42.3601], streamingReach: 890000, linearReach: 1100000, blendedReach: 1990000, targetDelivery: 72.1, population: 2760000 },
+  { id: '511', name: 'Washington DC', state: 'DC', coordinates: [-77.0369, 38.9072], streamingReach: 1120000, linearReach: 1380000, blendedReach: 2500000, targetDelivery: 69.5, population: 3600000 },
+  { id: '524', name: 'Atlanta', state: 'GA', coordinates: [-84.3880, 33.7490], streamingReach: 980000, linearReach: 1290000, blendedReach: 2270000, targetDelivery: 61.2, population: 3710000 },
+  { id: '807', name: 'San Francisco', state: 'CA', coordinates: [-122.4194, 37.7749], streamingReach: 760000, linearReach: 890000, blendedReach: 1650000, targetDelivery: 75.8, population: 2180000 },
+  { id: '505', name: 'Detroit', state: 'MI', coordinates: [-83.0458, 42.3314], streamingReach: 670000, linearReach: 950000, blendedReach: 1620000, targetDelivery: 59.3, population: 2730000 }
+];
+
+const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
+
 // Mock campaign data with platform-specific performance
 const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
   // Genesis Motors Campaigns
@@ -156,10 +172,16 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     advertiserId: 'genesis-motors',
     totalBudget: 5200000,
     spent: 3120000,
+    targetAudience: {
+      definition: 'Adults 35-54, HHI $100K+',
+      totalSize: 28000000,
+      demographics: { gender: 'All', ageRange: '35-54', income: '$100K+' }
+    },
+    dmaData: dmaMarkets,
     platforms: {
-      'Hulu': { budget: 800000, spent: 480000, impressions: 24000000, cpm: 20, reach: 8000000, conversions: 4800, status: 'healthy' },
-      'Disney+': { budget: 700000, spent: 420000, impressions: 19000000, cpm: 22, reach: 6500000, conversions: 3900, status: 'attention' },
-      'Fox': { budget: 600000, spent: 360000, impressions: 15000000, cpm: 24, reach: 5000000, conversions: 3000, status: 'healthy' },
+      'Hulu': { budget: 800000, spent: 480000, impressions: 24000000, cpm: 20, reach: 8000000, conversions: 4800, status: 'healthy', grp: 28.6, reachPercentage: 28.6, targetReachPercentage: 71.4 },
+      'Disney+': { budget: 700000, spent: 420000, impressions: 19000000, cpm: 22, reach: 6500000, conversions: 3900, status: 'attention', grp: 23.2, reachPercentage: 23.2, targetReachPercentage: 68.7 },
+      'Fox': { budget: 600000, spent: 360000, impressions: 15000000, cpm: 24, reach: 5000000, conversions: 3000, status: 'healthy', grp: 17.9, reachPercentage: 17.9, targetReachPercentage: 65.2 },
       'NBC': { budget: 500000, spent: 300000, impressions: 12000000, cpm: 25, reach: 4000000, conversions: 2400, status: 'optimizing' },
       'Paramount+': { budget: 400000, spent: 240000, impressions: 10000000, cpm: 24, reach: 3500000, conversions: 2000, status: 'healthy' },
       'Peacock': { budget: 350000, spent: 210000, impressions: 8400000, cpm: 25, reach: 2800000, conversions: 1680, status: 'healthy' },
@@ -173,15 +195,17 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
         source: 'Hulu',
         insight: 'Young professionals engage 3x more with luxury auto content during weekday evenings',
         application: 'Fox Sports',
-        impact: '+2.5M incremental reach',
-        reachGain: 2500000
+        impact: '+2.5M incremental reach among Adults 35-54',
+        reachGain: 2500000,
+        targetDemo: 'Adults 35-54'
       },
       {
         source: 'Disney+',
         insight: 'Family viewing patterns show high conversion for SUV models',
         application: 'NBC',
-        impact: '+1.8M new impressions',
-        reachGain: 1800000
+        impact: '+1.8M new impressions among HHI $100K+',
+        reachGain: 1800000,
+        targetDemo: 'HHI $100K+'
       }
     ],
     alerts: [
@@ -245,6 +269,12 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     advertiserId: 'burger-king',
     totalBudget: 2800000,
     spent: 2100000,
+    targetAudience: {
+      definition: 'Adults 18-34',
+      totalSize: 45000000,
+      demographics: { gender: 'All', ageRange: '18-34' }
+    },
+    dmaData: dmaMarkets,
     platforms: {
       'Hulu': { budget: 500000, spent: 375000, impressions: 18750000, cpm: 20, reach: 6250000, conversions: 37500, status: 'healthy' },
       'Fox': { budget: 600000, spent: 450000, impressions: 20000000, cpm: 23, reach: 6700000, conversions: 40000, status: 'healthy' },
@@ -310,6 +340,12 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     advertiserId: 'target',
     totalBudget: 4500000,
     spent: 3600000,
+    targetAudience: {
+      definition: 'Parents with children 5-17',
+      totalSize: 32000000,
+      demographics: { gender: 'All', ageRange: '25-54' }
+    },
+    dmaData: dmaMarkets,
     platforms: {
       'Hulu': { budget: 700000, spent: 560000, impressions: 28000000, cpm: 20, reach: 9300000, conversions: 56000, status: 'healthy' },
       'Disney+': { budget: 900000, spent: 720000, impressions: 32000000, cpm: 23, reach: 10700000, conversions: 64000, status: 'healthy' },
@@ -377,7 +413,7 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
 
 export default function OMGUnifiedDashboardV3() {
   // State management
-  const [selectedView, setSelectedView] = useState<'unified' | 'platforms' | 'insights' | 'optimization' | 'internal'>('unified');
+  const [selectedView, setSelectedView] = useState<'unified' | 'platforms' | 'insights' | 'optimization' | 'internal' | 'dma'>('unified');
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['all']);
   const [selectedAdvertiser, setSelectedAdvertiser] = useState<string>('all');
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
@@ -579,6 +615,9 @@ export default function OMGUnifiedDashboardV3() {
           break;
         case 'i':
           setSelectedView('insights');
+          break;
+        case 'd':
+          setSelectedView('dma');
           break;
         case ' ':
           e.preventDefault();
@@ -875,6 +914,17 @@ export default function OMGUnifiedDashboardV3() {
             <Settings2 className="w-4 h-4 inline-block mr-2" />
             Internal Metrics
             <span className="ml-2 text-xs text-gray-500">(OMG Only)</span>
+          </button>
+          <button
+            onClick={() => setSelectedView('dma')}
+            className={`px-4 py-3 border-b-2 font-medium text-sm transition-colors ${
+              selectedView === 'dma'
+                ? 'border-purple-600 text-purple-600'
+                : 'border-transparent text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            <Map className="w-4 h-4 inline-block mr-2" />
+            DMA Performance
           </button>
         </div>
       </div>
@@ -1240,11 +1290,19 @@ export default function OMGUnifiedDashboardV3() {
                           {getStatusBadge(campaign?.platforms[platform.name]?.status)}
                         </div>
                         <h4 className="font-semibold mb-1">{platform.name}</h4>
-                        <p className="text-xs text-gray-600 mb-2">
-                          ${(data.spent / 1000000).toFixed(1)}M spent
-                        </p>
-                        <div className="text-sm font-medium text-green-600">
-                          {((data.spent / data.budget) * 100).toFixed(0)}% pacing
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-gray-600">GRP</span>
+                            <span className="font-medium">{(data.grp || ((data.reach / (campaign?.targetAudience?.totalSize || 1)) * 100 * 3.2)).toFixed(1)}</span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-gray-600">Reach</span>
+                            <span className="font-medium">{campaign?.targetAudience ? ((data.reach / campaign.targetAudience.totalSize) * 100).toFixed(1) : '-'}%</span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-gray-600">Spend</span>
+                            <span className="font-medium">${(data.spent / 1000).toFixed(0)}K</span>
+                          </div>
                         </div>
                       </div>
                     );
@@ -1274,11 +1332,19 @@ export default function OMGUnifiedDashboardV3() {
                           {getStatusBadge(campaign?.platforms[platform.name]?.status)}
                         </div>
                         <h4 className="font-semibold mb-1">{platform.name}</h4>
-                        <p className="text-xs text-gray-600 mb-2">
-                          ${(data.spent / 1000000).toFixed(1)}M spent
-                        </p>
-                        <div className="text-sm font-medium text-green-600">
-                          {((data.spent / data.budget) * 100).toFixed(0)}% pacing
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-xs">
+                            <span className="text-gray-600">GRP</span>
+                            <span className="font-medium">{(data.grp || ((data.reach / (campaign?.targetAudience?.totalSize || 1)) * 100 * 3.2)).toFixed(1)}</span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-gray-600">Reach</span>
+                            <span className="font-medium">{campaign?.targetAudience ? ((data.reach / campaign.targetAudience.totalSize) * 100).toFixed(1) : '-'}%</span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span className="text-gray-600">Spend</span>
+                            <span className="font-medium">${(data.spent / 1000).toFixed(0)}K</span>
+                          </div>
                         </div>
                       </div>
                     );
@@ -1635,6 +1701,24 @@ export default function OMGUnifiedDashboardV3() {
               </div>
             </div>
 
+            {/* Target Audience Context */}
+            {campaign?.targetAudience && (
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-purple-900 mb-1">Campaign Target Audience</h3>
+                    <p className="text-purple-700 font-medium">{campaign.targetAudience.definition}</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-purple-900">
+                      {((Object.values(campaign.platforms).reduce((sum, p) => sum + p.reach, 0) / campaign.targetAudience.totalSize) * 100).toFixed(1)}%
+                    </div>
+                    <div className="text-purple-600">Total Reached</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* ML Credits Section */}
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h3 className="text-lg font-semibold mb-6">MadHive ML Credits</h3>
@@ -1760,6 +1844,193 @@ export default function OMGUnifiedDashboardV3() {
                     );
                   });
                 })()}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* DMA Performance View */}
+        {selectedView === 'dma' && (
+          <div className="space-y-6">
+            {/* DMA Overview Header */}
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-blue-900 mb-1">DMA Performance Analysis</h3>
+                  <p className="text-blue-700">Blended streaming and linear reach by market</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-blue-900">
+                    {campaign?.targetAudience ? 
+                      `${((campaign.dmaData?.reduce((sum, dma) => sum + dma.blendedReach, 0) || 0) / campaign.targetAudience.totalSize * 100).toFixed(1)}%` : 
+                      '-'}
+                  </div>
+                  <div className="text-blue-600">National Target Coverage</div>
+                </div>
+              </div>
+            </div>
+
+            {/* DMA Heat Map */}
+            <div className="bg-white rounded-xl shadow-sm p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Market Coverage Heat Map</h3>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-4 h-4 bg-green-500 rounded"></div>
+                    <span>High Coverage (70%+)</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+                    <span>Medium (50-70%)</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <div className="w-4 h-4 bg-red-500 rounded"></div>
+                    <span>Low (<50%)</span>
+                  </div>
+                </div>
+              </div>
+              <div className="h-[500px] relative">
+                <ComposableMap projection="geoAlbersUsa" className="w-full h-full">
+                  <Geographies geography={geoUrl}>
+                    {({ geographies }) =>
+                      geographies.map((geo) => (
+                        <Geography
+                          key={geo.rsmKey}
+                          geography={geo}
+                          fill="#E5E7EB"
+                          stroke="#D1D5DB"
+                          strokeWidth={0.5}
+                        />
+                      ))
+                    }
+                  </Geographies>
+                  {dmaMarkets.map((dma) => {
+                    const targetDelivery = dma.targetDelivery;
+                    const color = targetDelivery >= 70 ? '#10B981' : targetDelivery >= 50 ? '#F59E0B' : '#EF4444';
+                    const radius = Math.sqrt(dma.blendedReach) / 400;
+                    
+                    return (
+                      <Marker key={dma.id} coordinates={dma.coordinates}>
+                        <motion.g
+                          whileHover={{ scale: 1.2 }}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <circle
+                            r={radius}
+                            fill={color}
+                            fillOpacity={0.7}
+                            stroke="#fff"
+                            strokeWidth={2}
+                          />
+                          <text
+                            textAnchor="middle"
+                            y={-radius - 10}
+                            className="text-xs font-medium fill-gray-700"
+                          >
+                            {dma.name}
+                          </text>
+                          <text
+                            textAnchor="middle"
+                            y={-radius - 25}
+                            className="text-xs font-bold fill-gray-900"
+                          >
+                            {targetDelivery.toFixed(0)}%
+                          </text>
+                        </motion.g>
+                      </Marker>
+                    );
+                  })}
+                </ComposableMap>
+              </div>
+            </div>
+
+            {/* DMA Performance Table */}
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold mb-4">DMA Performance Breakdown</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DMA</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Streaming Reach</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Linear Reach</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Blended Reach</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Target Delivery %</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Population</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {dmaMarkets.sort((a, b) => b.blendedReach - a.blendedReach).map(dma => (
+                        <tr key={dma.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-2">
+                              <MapPin className="w-4 h-4 text-gray-400" />
+                              <div>
+                                <div className="font-medium text-gray-900">{dma.name}</div>
+                                <div className="text-sm text-gray-500">{dma.state}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-right whitespace-nowrap">
+                            {(dma.streamingReach / 1000000).toFixed(1)}M
+                          </td>
+                          <td className="px-4 py-4 text-right whitespace-nowrap">
+                            {(dma.linearReach / 1000000).toFixed(1)}M
+                          </td>
+                          <td className="px-4 py-4 text-right whitespace-nowrap font-semibold">
+                            {(dma.blendedReach / 1000000).toFixed(1)}M
+                          </td>
+                          <td className="px-4 py-4 text-right whitespace-nowrap">
+                            <div className="flex items-center justify-end gap-2">
+                              <span className={`font-medium ${
+                                dma.targetDelivery >= 70 ? 'text-green-600' : 
+                                dma.targetDelivery >= 50 ? 'text-yellow-600' : 
+                                'text-red-600'
+                              }`}>
+                                {dma.targetDelivery.toFixed(1)}%
+                              </span>
+                              <div className="w-20 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className={`h-2 rounded-full ${
+                                    dma.targetDelivery >= 70 ? 'bg-green-500' : 
+                                    dma.targetDelivery >= 50 ? 'bg-yellow-500' : 
+                                    'bg-red-500'
+                                  }`}
+                                  style={{ width: `${Math.min(dma.targetDelivery, 100)}%` }}
+                                />
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-right whitespace-nowrap text-gray-500">
+                            {(dma.population / 1000000).toFixed(1)}M
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot className="bg-gray-50">
+                      <tr>
+                        <td className="px-4 py-3 font-semibold">Total</td>
+                        <td className="px-4 py-3 text-right font-semibold">
+                          {(dmaMarkets.reduce((sum, dma) => sum + dma.streamingReach, 0) / 1000000).toFixed(1)}M
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold">
+                          {(dmaMarkets.reduce((sum, dma) => sum + dma.linearReach, 0) / 1000000).toFixed(1)}M
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold">
+                          {(dmaMarkets.reduce((sum, dma) => sum + dma.blendedReach, 0) / 1000000).toFixed(1)}M
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold">
+                          {(dmaMarkets.reduce((sum, dma) => sum + dma.targetDelivery * dma.population, 0) / 
+                            dmaMarkets.reduce((sum, dma) => sum + dma.population, 0)).toFixed(1)}%
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold">
+                          {(dmaMarkets.reduce((sum, dma) => sum + dma.population, 0) / 1000000).toFixed(1)}M
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
@@ -1916,6 +2187,10 @@ export default function OMGUnifiedDashboardV3() {
                 <div className="flex justify-between">
                   <span className="text-sm">Switch to Insights</span>
                   <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">I</kbd>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Switch to DMA View</span>
+                  <kbd className="px-2 py-1 bg-gray-100 rounded text-xs">D</kbd>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm">Quick Campaign Switch</span>
