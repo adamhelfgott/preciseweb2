@@ -190,13 +190,13 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
       'Hulu': { budget: 800000, spent: 480000, impressions: 24000000, cpm: 20, reach: 8000000, conversions: 4800, status: 'healthy', grp: 28.6, reachPercentage: 28.6, targetReachPercentage: 71.4 },
       'Disney+': { budget: 700000, spent: 420000, impressions: 19000000, cpm: 22, reach: 6500000, conversions: 3900, status: 'attention', grp: 23.2, reachPercentage: 23.2, targetReachPercentage: 68.7 },
       'Fox': { budget: 600000, spent: 360000, impressions: 15000000, cpm: 24, reach: 5000000, conversions: 3000, status: 'healthy', grp: 17.9, reachPercentage: 17.9, targetReachPercentage: 65.2 },
-      'NBC': { budget: 500000, spent: 300000, impressions: 12000000, cpm: 25, reach: 4000000, conversions: 2400, status: 'optimizing' },
-      'Paramount+': { budget: 400000, spent: 240000, impressions: 10000000, cpm: 24, reach: 3500000, conversions: 2000, status: 'healthy' },
-      'Peacock': { budget: 350000, spent: 210000, impressions: 8400000, cpm: 25, reach: 2800000, conversions: 1680, status: 'healthy' },
-      'CBS': { budget: 300000, spent: 180000, impressions: 7000000, cpm: 26, reach: 2300000, conversions: 1400, status: 'healthy' },
-      'ABC': { budget: 250000, spent: 150000, impressions: 5500000, cpm: 27, reach: 1800000, conversions: 1100, status: 'action' },
-      'Discovery+': { budget: 200000, spent: 120000, impressions: 4500000, cpm: 27, reach: 1500000, conversions: 900, status: 'healthy' },
-      'MadHive': { budget: 1100000, spent: 660000, impressions: 30000000, cpm: 22, reach: 10000000, conversions: 6000, status: 'healthy' }
+      'NBC': { budget: 500000, spent: 300000, impressions: 12000000, cpm: 25, reach: 4000000, conversions: 2400, status: 'optimizing', grp: 14.3, reachPercentage: 14.3, targetReachPercentage: 63.1 },
+      'Paramount+': { budget: 400000, spent: 240000, impressions: 10000000, cpm: 24, reach: 3500000, conversions: 2000, status: 'healthy', grp: 12.5, reachPercentage: 12.5, targetReachPercentage: 60.7 },
+      'Peacock': { budget: 350000, spent: 210000, impressions: 8400000, cpm: 25, reach: 2800000, conversions: 1680, status: 'healthy', grp: 10.0, reachPercentage: 10.0, targetReachPercentage: 57.9 },
+      'CBS': { budget: 300000, spent: 180000, impressions: 7000000, cpm: 26, reach: 2300000, conversions: 1400, status: 'healthy', grp: 8.2, reachPercentage: 8.2, targetReachPercentage: 55.4 },
+      'ABC': { budget: 250000, spent: 150000, impressions: 5500000, cpm: 27, reach: 1800000, conversions: 1100, status: 'action', grp: 6.4, reachPercentage: 6.4, targetReachPercentage: 52.1 },
+      'Discovery+': { budget: 200000, spent: 120000, impressions: 4500000, cpm: 27, reach: 1500000, conversions: 900, status: 'healthy', grp: 5.4, reachPercentage: 5.4, targetReachPercentage: 49.3 },
+      'MadHive': { budget: 1100000, spent: 660000, impressions: 30000000, cpm: 22, reach: 10000000, conversions: 6000, status: 'healthy', grp: 35.7, reachPercentage: 35.7, targetReachPercentage: 78.6 }
     },
     insights: [
       {
@@ -284,11 +284,11 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     },
     dmaData: dmaMarkets,
     platforms: {
-      'Hulu': { budget: 500000, spent: 375000, impressions: 18750000, cpm: 20, reach: 6250000, conversions: 37500, status: 'healthy' },
-      'Fox': { budget: 600000, spent: 450000, impressions: 20000000, cpm: 23, reach: 6700000, conversions: 40000, status: 'healthy' },
-      'NBC': { budget: 500000, spent: 375000, impressions: 15000000, cpm: 25, reach: 5000000, conversions: 30000, status: 'healthy' },
-      'Peacock': { budget: 400000, spent: 300000, impressions: 13000000, cpm: 23, reach: 4300000, conversions: 26000, status: 'healthy' },
-      'MadHive': { budget: 800000, spent: 600000, impressions: 30000000, cpm: 20, reach: 10000000, conversions: 60000, status: 'healthy' }
+      'Hulu': { budget: 500000, spent: 375000, impressions: 18750000, cpm: 20, reach: 6250000, conversions: 37500, status: 'healthy', grp: 13.9, reachPercentage: 13.9, targetReachPercentage: 44.6 },
+      'Fox': { budget: 600000, spent: 450000, impressions: 20000000, cpm: 23, reach: 6700000, conversions: 40000, status: 'healthy', grp: 14.9, reachPercentage: 14.9, targetReachPercentage: 47.7 },
+      'NBC': { budget: 500000, spent: 375000, impressions: 15000000, cpm: 25, reach: 5000000, conversions: 30000, status: 'healthy', grp: 11.1, reachPercentage: 11.1, targetReachPercentage: 35.6 },
+      'Peacock': { budget: 400000, spent: 300000, impressions: 13000000, cpm: 23, reach: 4300000, conversions: 26000, status: 'healthy', grp: 9.6, reachPercentage: 9.6, targetReachPercentage: 30.7 },
+      'MadHive': { budget: 800000, spent: 600000, impressions: 30000000, cpm: 20, reach: 10000000, conversions: 60000, status: 'healthy', grp: 22.2, reachPercentage: 22.2, targetReachPercentage: 71.1 }
     },
     insights: [
       {
@@ -355,13 +355,13 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     },
     dmaData: dmaMarkets,
     platforms: {
-      'Hulu': { budget: 700000, spent: 560000, impressions: 28000000, cpm: 20, reach: 9300000, conversions: 56000, status: 'healthy' },
-      'Disney+': { budget: 900000, spent: 720000, impressions: 32000000, cpm: 23, reach: 10700000, conversions: 64000, status: 'healthy' },
-      'NBC': { budget: 600000, spent: 480000, impressions: 19200000, cpm: 25, reach: 6400000, conversions: 38400, status: 'healthy' },
-      'Peacock': { budget: 500000, spent: 400000, impressions: 16000000, cpm: 25, reach: 5300000, conversions: 32000, status: 'healthy' },
-      'Paramount+': { budget: 400000, spent: 320000, impressions: 12800000, cpm: 25, reach: 4300000, conversions: 25600, status: 'healthy' },
-      'ABC': { budget: 400000, spent: 320000, impressions: 11500000, cpm: 28, reach: 3800000, conversions: 23000, status: 'attention' },
-      'MadHive': { budget: 1000000, spent: 800000, impressions: 36000000, cpm: 22, reach: 12000000, conversions: 72000, status: 'healthy' }
+      'Hulu': { budget: 700000, spent: 560000, impressions: 28000000, cpm: 20, reach: 9300000, conversions: 56000, status: 'healthy', grp: 29.1, reachPercentage: 29.1, targetReachPercentage: 93.0 },
+      'Disney+': { budget: 900000, spent: 720000, impressions: 32000000, cpm: 23, reach: 10700000, conversions: 64000, status: 'healthy', grp: 33.4, reachPercentage: 33.4, targetReachPercentage: 107.0 },
+      'NBC': { budget: 600000, spent: 480000, impressions: 19200000, cpm: 25, reach: 6400000, conversions: 38400, status: 'healthy', grp: 20.0, reachPercentage: 20.0, targetReachPercentage: 64.0 },
+      'Peacock': { budget: 500000, spent: 400000, impressions: 16000000, cpm: 25, reach: 5300000, conversions: 32000, status: 'healthy', grp: 16.6, reachPercentage: 16.6, targetReachPercentage: 53.0 },
+      'Paramount+': { budget: 400000, spent: 320000, impressions: 12800000, cpm: 25, reach: 4300000, conversions: 25600, status: 'healthy', grp: 13.4, reachPercentage: 13.4, targetReachPercentage: 43.0 },
+      'ABC': { budget: 400000, spent: 320000, impressions: 11500000, cpm: 28, reach: 3800000, conversions: 23000, status: 'attention', grp: 11.9, reachPercentage: 11.9, targetReachPercentage: 38.0 },
+      'MadHive': { budget: 1000000, spent: 800000, impressions: 36000000, cpm: 22, reach: 12000000, conversions: 72000, status: 'healthy', grp: 37.5, reachPercentage: 37.5, targetReachPercentage: 120.0 }
     },
     insights: [
       {
