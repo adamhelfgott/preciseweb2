@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Icon from '@/components/Icon';
 
 export default function Footer() {
   const footerSections = [
@@ -48,9 +49,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 group mb-4">
-              <div className="w-8 h-8 bg-brand-green rounded-full flex items-center justify-center transition-transform group-hover:scale-110">
-                <span className="text-white font-bold text-lg">P</span>
-              </div>
+              <Icon size={32} className="transition-transform group-hover:scale-110" />
               <span className="font-semibold text-xl text-dark-gray">Precise</span>
             </Link>
             <p className="text-medium-gray text-sm">

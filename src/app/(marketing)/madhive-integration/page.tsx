@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import Icon from '@/components/Icon'
 
 export default function MadHiveIntegrationPage() {
   return (
@@ -10,9 +11,7 @@ export default function MadHiveIntegrationPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold">P</span>
-              </div>
+              <Icon size={32} />
               <span className="font-semibold text-xl">Precise</span>
             </Link>
           </div>
@@ -329,9 +328,7 @@ export default function MadHiveIntegrationPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">P</span>
-              </div>
+              <Icon size={24} />
               <span className="font-semibold">Precise</span>
             </div>
             <p className="text-sm text-gray-600">© {new Date().getFullYear()} Precise. All rights reserved.</p>

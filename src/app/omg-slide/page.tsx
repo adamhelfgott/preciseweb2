@@ -6,6 +6,7 @@ import {
   ArrowRight,
   Play
 } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 export default function OMGSlidePage() {
   return (
@@ -26,7 +27,7 @@ export default function OMGSlidePage() {
             </div>
             <span className="text-white/60 text-2xl">×</span>
             <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-green-400 rounded-full"></div>
+              <Icon size={40} className="brightness-0 invert" />
               <span className="text-white text-2xl font-bold">Precise</span>
             </div>
           </div>
