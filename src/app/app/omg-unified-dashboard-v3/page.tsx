@@ -54,21 +54,21 @@ import {
 // Real platforms OMG works with
 const platforms = {
   streaming: [
-    { name: 'Hulu', logo: '🟢', color: 'green' },
-    { name: 'Disney+', logo: '🔵', color: 'blue' },
-    { name: 'Paramount+', logo: '⭐', color: 'yellow' },
-    { name: 'Peacock', logo: '🦚', color: 'purple' },
-    { name: 'Discovery+', logo: '🔍', color: 'orange' }
+    { name: 'Hulu', logo: 'H', color: 'green' },
+    { name: 'Disney+', logo: 'D+', color: 'blue' },
+    { name: 'Paramount+', logo: 'P+', color: 'yellow' },
+    { name: 'Peacock', logo: 'P', color: 'purple' },
+    { name: 'Discovery+', logo: 'D', color: 'orange' }
   ],
   broadcast: [
-    { name: 'Fox', logo: '🦊', color: 'red' },
-    { name: 'NBC', logo: '🏛️', color: 'blue' },
-    { name: 'CBS', logo: '👁️', color: 'blue' },
-    { name: 'ABC', logo: '🔴', color: 'red' }
+    { name: 'Fox', logo: 'F', color: 'red' },
+    { name: 'NBC', logo: 'N', color: 'blue' },
+    { name: 'CBS', logo: 'C', color: 'blue' },
+    { name: 'ABC', logo: 'A', color: 'red' }
   ],
   integrated: [
-    { name: 'MadHive', logo: '🟣', color: 'purple' },
-    { name: 'MediaOcean', logo: '🌊', color: 'blue' }
+    { name: 'MadHive', logo: 'M', color: 'purple' },
+    { name: 'MediaOcean', logo: 'MO', color: 'blue' }
   ]
 };
 
@@ -129,21 +129,21 @@ const advertisers: Record<string, Advertiser> = {
     id: 'genesis-motors',
     name: 'Genesis Motors',
     industry: 'Automotive',
-    logo: '🚗',
+    logo: 'GM',
     campaigns: ['genesis-q1-launch', 'genesis-ev-push', 'genesis-holiday']
   },
   'burger-king': {
     id: 'burger-king',
     name: 'Burger King',
     industry: 'Fast Food',
-    logo: '🍔',
+    logo: 'BK',
     campaigns: ['bk-breakfast-battle', 'bk-summer-value', 'bk-app-downloads']
   },
   'target': {
     id: 'target',
     name: 'Target',
     industry: 'Retail',
-    logo: '🎯',
+    logo: 'TG',
     campaigns: ['target-back-to-school', 'target-black-friday', 'target-circle-week']
   }
 };
@@ -476,16 +476,60 @@ export default function OMGUnifiedDashboardV3() {
   const getStatusBadge = (status?: string) => {
     switch(status) {
       case 'healthy':
-        return <span className="text-green-500">🟢</span>;
+        return (
+          <div className="w-3 h-3 bg-green-500 rounded-full ring-2 ring-green-200" />
+        );
       case 'attention':
-        return <span className="text-yellow-500">🟡</span>;
+        return (
+          <div className="w-3 h-3 bg-yellow-500 rounded-full ring-2 ring-yellow-200" />
+        );
       case 'action':
-        return <span className="text-red-500">🔴</span>;
+        return (
+          <div className="w-3 h-3 bg-red-500 rounded-full ring-2 ring-red-200" />
+        );
       case 'optimizing':
-        return <span className="text-blue-500 animate-pulse">⚡</span>;
+        return (
+          <div className="relative">
+            <div className="w-3 h-3 bg-blue-500 rounded-full animate-ping absolute" />
+            <div className="w-3 h-3 bg-blue-500 rounded-full" />
+          </div>
+        );
       default:
-        return <span className="text-green-500">🟢</span>;
+        return (
+          <div className="w-3 h-3 bg-gray-300 rounded-full ring-2 ring-gray-200" />
+        );
     }
+  };
+
+  const renderPlatformLogo = (platform: any) => {
+    const colorMap: Record<string, string> = {
+      green: 'bg-green-500',
+      blue: 'bg-blue-500',
+      yellow: 'bg-yellow-500',
+      purple: 'bg-purple-500',
+      orange: 'bg-orange-500',
+      red: 'bg-red-500'
+    };
+
+    return (
+      <div className={`w-10 h-10 ${colorMap[platform.color]} rounded-lg flex items-center justify-center text-white font-bold text-sm`}>
+        {platform.logo}
+      </div>
+    );
+  };
+
+  const renderAdvertiserLogo = (advertiser: Advertiser) => {
+    const colorMap: Record<string, string> = {
+      'genesis-motors': 'bg-gradient-to-br from-gray-700 to-black',
+      'burger-king': 'bg-gradient-to-br from-orange-500 to-red-600',
+      'target': 'bg-gradient-to-br from-red-500 to-red-700'
+    };
+
+    return (
+      <div className={`w-8 h-8 ${colorMap[advertiser.id]} rounded-lg flex items-center justify-center text-white font-bold text-xs`}>
+        {advertiser.logo}
+      </div>
+    );
   };
 
   const handleQuickAction = (action: string, platform?: string) => {
@@ -967,9 +1011,7 @@ export default function OMGUnifiedDashboardV3() {
                         <div className="p-6">
                           <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
-                              <span className="text-3xl">
-                                {platformInfo?.logo}
-                              </span>
+                              {platformInfo && renderPlatformLogo(platformInfo)}
                               <div>
                                 <div className="flex items-center gap-2">
                                   <h3 className="text-xl font-bold">{platform}</h3>
@@ -1097,11 +1139,11 @@ export default function OMGUnifiedDashboardV3() {
                         <div className="p-6">
                           <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
-                              <span className="text-3xl">
-                                {platforms.streaming.find(p => p.name === platform)?.logo ||
-                                 platforms.broadcast.find(p => p.name === platform)?.logo ||
-                                 platforms.integrated.find(p => p.name === platform)?.logo}
-                              </span>
+                              {(() => {
+                                const platformInfo = [...platforms.streaming, ...platforms.broadcast, ...platforms.integrated]
+                                  .find(p => p.name === platform);
+                                return platformInfo ? renderPlatformLogo(platformInfo) : null;
+                              })()}
                               <div>
                                 <h3 className="text-xl font-bold">{platform}</h3>
                                 <p className="text-sm text-gray-600">
