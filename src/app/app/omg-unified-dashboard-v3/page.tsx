@@ -50,7 +50,8 @@ import {
   Minus,
   Command,
   MapPin,
-  Map
+  Map,
+  ZoomIn
 } from 'lucide-react';
 import { 
   ComposableMap, 
@@ -75,7 +76,7 @@ const platforms = {
     { name: 'ABC', logo: 'A', color: 'red' }
   ],
   integrated: [
-    { name: 'MadHive', logo: 'M', color: 'purple' },
+    { name: 'Madhive', logo: 'M', color: 'purple' },
     { name: 'MediaOcean', logo: 'MO', color: 'blue' }
   ]
 };
@@ -132,6 +133,48 @@ interface CollaboratorCursor {
   color: string;
 }
 
+// ZipAI Types
+type MicroCulture = {
+  id: string;
+  name: string;
+  icon: string;
+  percentage: number;
+  indexScore: number; // How much more likely vs general population
+  description: string;
+};
+
+type ZipData = {
+  zipCode: string;
+  city: string;
+  state: string;
+  coordinates: [number, number];
+  population: number;
+  targetMatch: number; // % match to campaign target audience
+  microCultures: MicroCulture[];
+  performance: {
+    reach: number;
+    engagement: number;
+    roas: number;
+    liftVsDMA: number;
+  };
+  avgHHIncome: number;
+  primaryLanguage: string;
+  languagePercent: number;
+};
+
+type ZipSegment = {
+  id: string;
+  name: string;
+  icon: string;
+  zipCount: number;
+  totalReach: number;
+  avgEngagement: number;
+  avgROAS: number;
+  liftVsDMA: number;
+  description: string;
+  topZips: string[];
+};
+
 const advertisers: Record<string, Advertiser> = {
   'genesis-motors': {
     id: 'genesis-motors',
@@ -172,6 +215,164 @@ const dmaMarkets: DMAData[] = [
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
 
+// Mock ZipAI Segments
+const zipSegments: ZipSegment[] = [
+  {
+    id: 'eco-urban-renters',
+    name: 'Eco-Conscious Urban Renters',
+    icon: '🌱',
+    zipCount: 1247,
+    totalReach: 2300000,
+    avgEngagement: 5.2,
+    avgROAS: 4.2,
+    liftVsDMA: 42,
+    description: 'Young professionals who prioritize sustainability and urban living',
+    topZips: ['10013', '10011', '11201', '94110', '90024']
+  },
+  {
+    id: 'latinx-family-streamers',
+    name: 'Latinx Family Streamers',
+    icon: '👨‍👩‍👧‍👦',
+    zipCount: 892,
+    totalReach: 1800000,
+    avgEngagement: 4.8,
+    avgROAS: 3.8,
+    liftVsDMA: 38,
+    description: 'Multi-generational households with high streaming consumption',
+    topZips: ['90011', '77036', '33125', '11368', '92336']
+  },
+  {
+    id: 'retired-bargain-hunters',
+    name: 'Retired Bargain Hunters',
+    icon: '👴',
+    zipCount: 2104,
+    totalReach: 3100000,
+    avgEngagement: 6.1,
+    avgROAS: 3.5,
+    liftVsDMA: 25,
+    description: 'Price-conscious retirees who respond to value messaging',
+    topZips: ['33139', '85234', '32162', '34236', '89119']
+  },
+  {
+    id: 'urban-fitness-enthusiasts',
+    name: 'Urban Fitness Enthusiasts',
+    icon: '🏃',
+    zipCount: 1532,
+    totalReach: 2700000,
+    avgEngagement: 4.5,
+    avgROAS: 4.1,
+    liftVsDMA: 35,
+    description: 'Health-conscious urban dwellers with active lifestyles',
+    topZips: ['10016', '60614', '90403', '94107', '02116']
+  },
+  {
+    id: 'luxury-experience-seekers',
+    name: 'Luxury Experience Seekers',
+    icon: '🍷',
+    zipCount: 673,
+    totalReach: 1200000,
+    avgEngagement: 3.9,
+    avgROAS: 5.2,
+    liftVsDMA: 48,
+    description: 'High-income consumers who value premium experiences',
+    topZips: ['10021', '90210', '33109', '94027', '60611']
+  }
+];
+
+// Mock ZIP code data
+const mockZipData: ZipData[] = [
+  {
+    zipCode: '10013',
+    city: 'New York (TriBeCa)',
+    state: 'NY',
+    coordinates: [-74.0060, 40.7205],
+    population: 27415,
+    targetMatch: 84,
+    microCultures: [
+      { id: 'urban-fitness', name: 'Urban Fitness Enthusiasts', icon: '🏃', percentage: 42, indexScore: 3.2, description: 'Active lifestyle focused' },
+      { id: 'luxury-seekers', name: 'Luxury Experience Seekers', icon: '🍷', percentage: 28, indexScore: 2.8, description: 'Premium brand affinity' },
+      { id: 'young-families', name: 'Young Professional Families', icon: '👨‍👩‍👧', percentage: 18, indexScore: 1.5, description: 'Family-oriented professionals' },
+      { id: 'eco-millennials', name: 'Eco-Conscious Millennials', icon: '🌱', percentage: 12, indexScore: 2.1, description: 'Sustainability focused' }
+    ],
+    performance: {
+      reach: 18420,
+      engagement: 4.8,
+      roas: 4.2,
+      liftVsDMA: 34
+    },
+    avgHHIncome: 125000,
+    primaryLanguage: 'EN',
+    languagePercent: 92
+  },
+  {
+    zipCode: '90210',
+    city: 'Beverly Hills',
+    state: 'CA',
+    coordinates: [-118.4065, 34.0901],
+    population: 21741,
+    targetMatch: 91,
+    microCultures: [
+      { id: 'luxury-seekers', name: 'Luxury Experience Seekers', icon: '🍷', percentage: 67, indexScore: 5.2, description: 'Ultra-premium focused' },
+      { id: 'eco-conscious', name: 'Eco-Conscious Elite', icon: '🌱', percentage: 23, indexScore: 3.1, description: 'Sustainable luxury' },
+      { id: 'fitness', name: 'Wellness Enthusiasts', icon: '🧘', percentage: 10, indexScore: 2.4, description: 'Health & wellness priority' }
+    ],
+    performance: {
+      reach: 15234,
+      engagement: 3.2,
+      roas: 5.8,
+      liftVsDMA: 52
+    },
+    avgHHIncome: 195000,
+    primaryLanguage: 'EN',
+    languagePercent: 88
+  },
+  {
+    zipCode: '60614',
+    city: 'Chicago (Lincoln Park)',
+    state: 'IL',
+    coordinates: [-87.6485, 41.9214],
+    population: 35619,
+    targetMatch: 76,
+    microCultures: [
+      { id: 'young-pros', name: 'Young Professionals', icon: '💼', percentage: 38, indexScore: 2.9, description: 'Career-focused millennials' },
+      { id: 'urban-fitness', name: 'Urban Fitness Enthusiasts', icon: '🏃', percentage: 31, indexScore: 2.7, description: 'Active lifestyle' },
+      { id: 'food-culture', name: 'Culinary Explorers', icon: '🍽️', percentage: 21, indexScore: 2.3, description: 'Food & dining focused' },
+      { id: 'pet-parents', name: 'Urban Pet Parents', icon: '🐕', percentage: 10, indexScore: 1.8, description: 'Pet-centric households' }
+    ],
+    performance: {
+      reach: 22890,
+      engagement: 5.1,
+      roas: 3.9,
+      liftVsDMA: 28
+    },
+    avgHHIncome: 89000,
+    primaryLanguage: 'EN',
+    languagePercent: 85
+  },
+  {
+    zipCode: '77036',
+    city: 'Houston (Sharpstown)',
+    state: 'TX',
+    coordinates: [-95.5424, 29.6977],
+    population: 43821,
+    targetMatch: 71,
+    microCultures: [
+      { id: 'latinx-families', name: 'Latinx Family Streamers', icon: '👨‍👩‍👧‍👦', percentage: 54, indexScore: 4.1, description: 'Multi-gen households' },
+      { id: 'value-seekers', name: 'Value-Conscious Shoppers', icon: '💰', percentage: 28, indexScore: 2.3, description: 'Deal seekers' },
+      { id: 'sports-fans', name: 'Sports Enthusiasts', icon: '⚽', percentage: 18, indexScore: 1.9, description: 'Sports-centric viewing' }
+    ],
+    performance: {
+      reach: 28654,
+      engagement: 4.6,
+      roas: 3.4,
+      liftVsDMA: 31
+    },
+    avgHHIncome: 52000,
+    primaryLanguage: 'ES',
+    languagePercent: 68
+  }
+];
+
 // Mock campaign data with platform-specific performance
 const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
   // Genesis Motors Campaigns
@@ -187,7 +388,7 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     },
     dmaData: dmaMarkets,
     platforms: {
-      'Hulu': { budget: 800000, spent: 480000, impressions: 24000000, cpm: 20, reach: 8000000, conversions: 4800, status: 'healthy', grp: 28.6, reachPercentage: 28.6, targetReachPercentage: 71.4 },
+      'Hulu': { budget: 800000, spent: 480000, impressions: 24000000, cpm: 23, reach: 8000000, conversions: 4800, status: 'healthy', grp: 28.6, reachPercentage: 28.6, targetReachPercentage: 71.4 },
       'Disney+': { budget: 700000, spent: 420000, impressions: 19000000, cpm: 22, reach: 6500000, conversions: 3900, status: 'attention', grp: 23.2, reachPercentage: 23.2, targetReachPercentage: 68.7 },
       'Fox': { budget: 600000, spent: 360000, impressions: 15000000, cpm: 24, reach: 5000000, conversions: 3000, status: 'healthy', grp: 17.9, reachPercentage: 17.9, targetReachPercentage: 65.2 },
       'NBC': { budget: 500000, spent: 300000, impressions: 12000000, cpm: 25, reach: 4000000, conversions: 2400, status: 'optimizing', grp: 14.3, reachPercentage: 14.3, targetReachPercentage: 63.1 },
@@ -196,7 +397,7 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
       'CBS': { budget: 300000, spent: 180000, impressions: 7000000, cpm: 26, reach: 2300000, conversions: 1400, status: 'healthy', grp: 8.2, reachPercentage: 8.2, targetReachPercentage: 55.4 },
       'ABC': { budget: 250000, spent: 150000, impressions: 5500000, cpm: 27, reach: 1800000, conversions: 1100, status: 'action', grp: 6.4, reachPercentage: 6.4, targetReachPercentage: 52.1 },
       'Discovery+': { budget: 200000, spent: 120000, impressions: 4500000, cpm: 27, reach: 1500000, conversions: 900, status: 'healthy', grp: 5.4, reachPercentage: 5.4, targetReachPercentage: 49.3 },
-      'MadHive': { budget: 1100000, spent: 660000, impressions: 30000000, cpm: 22, reach: 10000000, conversions: 6000, status: 'healthy', grp: 35.7, reachPercentage: 35.7, targetReachPercentage: 78.6 }
+      'Madhive': { budget: 1100000, spent: 660000, impressions: 30000000, cpm: 19, reach: 10000000, conversions: 6000, status: 'healthy', grp: 35.7, reachPercentage: 35.7, targetReachPercentage: 78.6 }
     },
     insights: [
       {
@@ -241,11 +442,11 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     totalBudget: 3800000,
     spent: 1900000,
     platforms: {
-      'Hulu': { budget: 900000, spent: 450000, impressions: 18000000, cpm: 25, reach: 6000000, conversions: 3600, status: 'healthy' },
+      'Hulu': { budget: 900000, spent: 450000, impressions: 18000000, cpm: 23, reach: 6000000, conversions: 3600, status: 'healthy' },
       'Disney+': { budget: 600000, spent: 300000, impressions: 12000000, cpm: 25, reach: 4000000, conversions: 2400, status: 'healthy' },
       'NBC': { budget: 700000, spent: 350000, impressions: 13000000, cpm: 27, reach: 4300000, conversions: 2600, status: 'healthy' },
       'Peacock': { budget: 500000, spent: 250000, impressions: 9000000, cpm: 28, reach: 3000000, conversions: 1800, status: 'attention' },
-      'MadHive': { budget: 1100000, spent: 550000, impressions: 20000000, cpm: 28, reach: 7000000, conversions: 4200, status: 'healthy' }
+      'Madhive': { budget: 1100000, spent: 550000, impressions: 20000000, cpm: 19, reach: 7000000, conversions: 4200, status: 'healthy' }
     },
     insights: [
       {
@@ -284,11 +485,11 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     },
     dmaData: dmaMarkets,
     platforms: {
-      'Hulu': { budget: 500000, spent: 375000, impressions: 18750000, cpm: 20, reach: 6250000, conversions: 37500, status: 'healthy', grp: 13.9, reachPercentage: 13.9, targetReachPercentage: 44.6 },
+      'Hulu': { budget: 500000, spent: 375000, impressions: 18750000, cpm: 23, reach: 6250000, conversions: 37500, status: 'healthy', grp: 13.9, reachPercentage: 13.9, targetReachPercentage: 44.6 },
       'Fox': { budget: 600000, spent: 450000, impressions: 20000000, cpm: 23, reach: 6700000, conversions: 40000, status: 'healthy', grp: 14.9, reachPercentage: 14.9, targetReachPercentage: 47.7 },
       'NBC': { budget: 500000, spent: 375000, impressions: 15000000, cpm: 25, reach: 5000000, conversions: 30000, status: 'healthy', grp: 11.1, reachPercentage: 11.1, targetReachPercentage: 35.6 },
       'Peacock': { budget: 400000, spent: 300000, impressions: 13000000, cpm: 23, reach: 4300000, conversions: 26000, status: 'healthy', grp: 9.6, reachPercentage: 9.6, targetReachPercentage: 30.7 },
-      'MadHive': { budget: 800000, spent: 600000, impressions: 30000000, cpm: 20, reach: 10000000, conversions: 60000, status: 'healthy', grp: 22.2, reachPercentage: 22.2, targetReachPercentage: 71.1 }
+      'Madhive': { budget: 800000, spent: 600000, impressions: 30000000, cpm: 19, reach: 10000000, conversions: 60000, status: 'healthy', grp: 22.2, reachPercentage: 22.2, targetReachPercentage: 71.1 }
     },
     insights: [
       {
@@ -299,7 +500,7 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
         reachGain: 4100000
       },
       {
-        source: 'MadHive',
+        source: 'Madhive',
         insight: 'Cross-platform breakfast seekers respond to mobile app incentives',
         application: 'Peacock',
         impact: '+2.8M app downloads',
@@ -313,11 +514,11 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     totalBudget: 1800000,
     spent: 1350000,
     platforms: {
-      'Hulu': { budget: 400000, spent: 300000, impressions: 15000000, cpm: 20, reach: 5000000, conversions: 30000, status: 'healthy' },
+      'Hulu': { budget: 400000, spent: 300000, impressions: 15000000, cpm: 23, reach: 5000000, conversions: 30000, status: 'healthy' },
       'Disney+': { budget: 300000, spent: 225000, impressions: 9000000, cpm: 25, reach: 3000000, conversions: 18000, status: 'healthy' },
       'Paramount+': { budget: 350000, spent: 262500, impressions: 10500000, cpm: 25, reach: 3500000, conversions: 21000, status: 'healthy' },
       'Discovery+': { budget: 250000, spent: 187500, impressions: 7000000, cpm: 27, reach: 2300000, conversions: 14000, status: 'attention' },
-      'MadHive': { budget: 500000, spent: 375000, impressions: 17000000, cpm: 22, reach: 5700000, conversions: 34000, status: 'healthy' }
+      'Madhive': { budget: 500000, spent: 375000, impressions: 17000000, cpm: 19, reach: 5700000, conversions: 34000, status: 'healthy' }
     },
     insights: [
       {
@@ -335,9 +536,9 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     totalBudget: 1200000,
     spent: 960000,
     platforms: {
-      'Hulu': { budget: 400000, spent: 320000, impressions: 13000000, cpm: 25, reach: 4300000, conversions: 86000, status: 'healthy' },
+      'Hulu': { budget: 400000, spent: 320000, impressions: 13000000, cpm: 23, reach: 4300000, conversions: 86000, status: 'healthy' },
       'Peacock': { budget: 300000, spent: 240000, impressions: 9000000, cpm: 27, reach: 3000000, conversions: 60000, status: 'healthy' },
-      'MadHive': { budget: 500000, spent: 400000, impressions: 16000000, cpm: 25, reach: 5300000, conversions: 106000, status: 'healthy' }
+      'Madhive': { budget: 500000, spent: 400000, impressions: 16000000, cpm: 19, reach: 5300000, conversions: 106000, status: 'healthy' }
     },
     insights: []
   },
@@ -355,13 +556,13 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     },
     dmaData: dmaMarkets,
     platforms: {
-      'Hulu': { budget: 700000, spent: 560000, impressions: 28000000, cpm: 20, reach: 9300000, conversions: 56000, status: 'healthy', grp: 29.1, reachPercentage: 29.1, targetReachPercentage: 93.0 },
+      'Hulu': { budget: 700000, spent: 560000, impressions: 28000000, cpm: 23, reach: 9300000, conversions: 56000, status: 'healthy', grp: 29.1, reachPercentage: 29.1, targetReachPercentage: 93.0 },
       'Disney+': { budget: 900000, spent: 720000, impressions: 32000000, cpm: 23, reach: 10700000, conversions: 64000, status: 'healthy', grp: 33.4, reachPercentage: 33.4, targetReachPercentage: 107.0 },
       'NBC': { budget: 600000, spent: 480000, impressions: 19200000, cpm: 25, reach: 6400000, conversions: 38400, status: 'healthy', grp: 20.0, reachPercentage: 20.0, targetReachPercentage: 64.0 },
       'Peacock': { budget: 500000, spent: 400000, impressions: 16000000, cpm: 25, reach: 5300000, conversions: 32000, status: 'healthy', grp: 16.6, reachPercentage: 16.6, targetReachPercentage: 53.0 },
       'Paramount+': { budget: 400000, spent: 320000, impressions: 12800000, cpm: 25, reach: 4300000, conversions: 25600, status: 'healthy', grp: 13.4, reachPercentage: 13.4, targetReachPercentage: 43.0 },
       'ABC': { budget: 400000, spent: 320000, impressions: 11500000, cpm: 28, reach: 3800000, conversions: 23000, status: 'attention', grp: 11.9, reachPercentage: 11.9, targetReachPercentage: 38.0 },
-      'MadHive': { budget: 1000000, spent: 800000, impressions: 36000000, cpm: 22, reach: 12000000, conversions: 72000, status: 'healthy', grp: 37.5, reachPercentage: 37.5, targetReachPercentage: 120.0 }
+      'Madhive': { budget: 1000000, spent: 800000, impressions: 36000000, cpm: 19, reach: 12000000, conversions: 72000, status: 'healthy', grp: 37.5, reachPercentage: 37.5, targetReachPercentage: 120.0 }
     },
     insights: [
       {
@@ -386,12 +587,12 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     totalBudget: 6000000,
     spent: 1200000,
     platforms: {
-      'Hulu': { budget: 1000000, spent: 200000, impressions: 8000000, cpm: 25, reach: 2700000, conversions: 16000, status: 'healthy' },
+      'Hulu': { budget: 1000000, spent: 200000, impressions: 8000000, cpm: 23, reach: 2700000, conversions: 16000, status: 'healthy' },
       'Fox': { budget: 1200000, spent: 240000, impressions: 9000000, cpm: 27, reach: 3000000, conversions: 18000, status: 'healthy' },
       'NBC': { budget: 1000000, spent: 200000, impressions: 7400000, cpm: 27, reach: 2500000, conversions: 14800, status: 'healthy' },
       'CBS': { budget: 800000, spent: 160000, impressions: 5600000, cpm: 29, reach: 1900000, conversions: 11200, status: 'healthy' },
       'ABC': { budget: 600000, spent: 120000, impressions: 4000000, cpm: 30, reach: 1300000, conversions: 8000, status: 'healthy' },
-      'MadHive': { budget: 1400000, spent: 280000, impressions: 11200000, cpm: 25, reach: 3700000, conversions: 22400, status: 'healthy' }
+      'Madhive': { budget: 1400000, spent: 280000, impressions: 11200000, cpm: 19, reach: 3700000, conversions: 22400, status: 'healthy' }
     },
     insights: []
   },
@@ -401,11 +602,11 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
     totalBudget: 3200000,
     spent: 2560000,
     platforms: {
-      'Hulu': { budget: 800000, spent: 640000, impressions: 32000000, cpm: 20, reach: 10700000, conversions: 128000, status: 'healthy' },
+      'Hulu': { budget: 800000, spent: 640000, impressions: 32000000, cpm: 23, reach: 10700000, conversions: 128000, status: 'healthy' },
       'Peacock': { budget: 600000, spent: 480000, impressions: 20000000, cpm: 24, reach: 6700000, conversions: 80000, status: 'healthy' },
       'Paramount+': { budget: 500000, spent: 400000, impressions: 16000000, cpm: 25, reach: 5300000, conversions: 64000, status: 'healthy' },
       'Discovery+': { budget: 400000, spent: 320000, impressions: 11500000, cpm: 28, reach: 3800000, conversions: 46000, status: 'healthy' },
-      'MadHive': { budget: 900000, spent: 720000, impressions: 30000000, cpm: 24, reach: 10000000, conversions: 120000, status: 'healthy' }
+      'Madhive': { budget: 900000, spent: 720000, impressions: 30000000, cpm: 19, reach: 10000000, conversions: 120000, status: 'healthy' }
     },
     insights: [
       {
@@ -421,7 +622,7 @@ const campaignData: Record<string, CampaignData & { advertiserId: string }> = {
 
 export default function OMGUnifiedDashboardV3() {
   // State management
-  const [selectedView, setSelectedView] = useState<'unified' | 'platforms' | 'insights' | 'optimization' | 'internal' | 'dma'>('unified');
+  const [selectedView, setSelectedView] = useState<'unified' | 'platforms' | 'insights' | 'optimization' | 'internal' | 'zipai'>('unified');
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['all']);
   const [selectedAdvertiser, setSelectedAdvertiser] = useState<string>('all');
   const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
@@ -632,8 +833,8 @@ export default function OMGUnifiedDashboardV3() {
         case 'i':
           setSelectedView('insights');
           break;
-        case 'd':
-          setSelectedView('dma');
+        case 'z':
+          setSelectedView('zipai');
           break;
         case ' ':
           e.preventDefault();
@@ -692,7 +893,7 @@ export default function OMGUnifiedDashboardV3() {
                 <span className="font-bold text-xl">OMG</span>
                 <span className="text-gray-400">×</span>
                 <div className="w-6 h-6 bg-purple-600 rounded"></div>
-                <span className="font-semibold">MadHive Unified System</span>
+                <span className="font-semibold">Madhive Unified System</span>
                 <span className="text-gray-400">×</span>
                 <Icon size={24} />
               </div>
@@ -932,15 +1133,15 @@ export default function OMGUnifiedDashboardV3() {
             <span className="ml-2 text-xs text-gray-500">(OMG Only)</span>
           </button>
           <button
-            onClick={() => setSelectedView('dma')}
+            onClick={() => setSelectedView('zipai')}
             className={`px-4 py-3 border-b-2 font-medium text-sm transition-colors ${
-              selectedView === 'dma'
+              selectedView === 'zipai'
                 ? 'border-purple-600 text-purple-600'
                 : 'border-transparent text-gray-600 hover:text-gray-900'
             }`}
           >
             <Map className="w-4 h-4 inline-block mr-2" />
-            DMA Performance
+            ZipAI Intelligence
           </button>
         </div>
       </div>
@@ -1084,7 +1285,7 @@ export default function OMGUnifiedDashboardV3() {
                                   {getStatusBadge(data.status)}
                                 </div>
                                 <p className="text-sm text-gray-600">
-                                  {platform === 'MadHive' ? 'Unified Execution Platform' : 
+                                  {platform === 'Madhive' ? 'Unified Execution Platform' : 
                                    platform === 'MediaOcean' ? 'Workflow Integration' : 
                                    'Premium Inventory'}
                                 </p>
@@ -1213,7 +1414,7 @@ export default function OMGUnifiedDashboardV3() {
                               <div>
                                 <h3 className="text-xl font-bold">{platform}</h3>
                                 <p className="text-sm text-gray-600">
-                                  {platform === 'MadHive' ? 'Unified Execution Platform' : 
+                                  {platform === 'Madhive' ? 'Unified Execution Platform' : 
                                    platform === 'MediaOcean' ? 'Workflow Integration' : 
                                    'Premium Inventory'}
                                 </p>
@@ -1264,11 +1465,11 @@ export default function OMGUnifiedDashboardV3() {
         {/* Platform Control View */}
         {selectedView === 'platforms' && (
           <div className="space-y-6">
-            {/* MadHive Integration Highlight */}
+            {/* Madhive Integration Highlight */}
             <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold mb-2">MadHive Unified Platform</h2>
+                  <h2 className="text-2xl font-bold mb-2">Madhive Unified Platform</h2>
                   <p className="text-purple-100">
                     Execute across all premium streaming and broadcast inventory from one platform
                   </p>
@@ -1390,10 +1591,10 @@ export default function OMGUnifiedDashboardV3() {
                         </div>
                         <h4 className="font-semibold mb-1">{platform.name}</h4>
                         <p className="text-xs text-gray-600 mb-2">
-                          {platform.name === 'MadHive' ? 'Unified execution layer' : 'Workflow automation'}
+                          {platform.name === 'Madhive' ? 'Unified execution layer' : 'Workflow automation'}
                         </p>
                         <div className="text-sm font-medium text-purple-600">
-                          {platform.name === 'MadHive' ? `${(data.spent / 1000000).toFixed(1)}M processed` : 'Active'}
+                          {platform.name === 'Madhive' ? `${(data.spent / 1000000).toFixed(1)}M processed` : 'Active'}
                         </div>
                       </div>
                     );
@@ -1494,7 +1695,7 @@ export default function OMGUnifiedDashboardV3() {
             <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold mb-2">MadHive AI + Precise Intelligence</h2>
+                  <h2 className="text-2xl font-bold mb-2">Madhive AI + Precise Intelligence</h2>
                   <p className="text-purple-100">
                     Unified AI system optimizing across all platforms in real-time, powered by cross-platform learning
                   </p>
@@ -1607,7 +1808,7 @@ export default function OMGUnifiedDashboardV3() {
                   <div className="flex items-center gap-3">
                     <CheckCircle className="w-5 h-5 text-green-500" />
                     <div>
-                      <p className="font-medium">MadHive Platform Bid Optimization</p>
+                      <p className="font-medium">Madhive Platform Bid Optimization</p>
                       <p className="text-sm text-gray-600">Adjusted bids based on Precise attribution data</p>
                     </div>
                   </div>
@@ -1628,10 +1829,10 @@ export default function OMGUnifiedDashboardV3() {
               </div>
             </div>
 
-            {/* MadHive Unified Intelligence */}
+            {/* Madhive Unified Intelligence */}
             <div className="bg-white rounded-xl shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">MadHive Unified Intelligence</h3>
+                <h3 className="text-lg font-semibold">Madhive Unified Intelligence</h3>
                 <span className="text-sm text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
                   Powered by Precise Attribution
                 </span>
@@ -1657,9 +1858,9 @@ export default function OMGUnifiedDashboardV3() {
                   </div>
                 </div>
                 
-                {/* MadHive as Platform */}
+                {/* Madhive as Platform */}
                 <div>
-                  <h4 className="font-medium mb-3">MadHive Platform Performance</h4>
+                  <h4 className="font-medium mb-3">Madhive Platform Performance</h4>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
                       <span className="text-sm">Direct Inventory Value</span>
@@ -1737,7 +1938,7 @@ export default function OMGUnifiedDashboardV3() {
 
             {/* ML Credits Section */}
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold mb-6">MadHive ML Credits</h3>
+              <h3 className="text-lg font-semibold mb-6">Madhive ML Credits</h3>
               
               <div className="grid grid-cols-3 gap-6 mb-8">
                 <div className="text-center">
@@ -1865,186 +2066,276 @@ export default function OMGUnifiedDashboardV3() {
           </div>
         )}
 
-        {/* DMA Performance View */}
-        {selectedView === 'dma' && (
+        {/* ZipAI Intelligence View */}
+        {selectedView === 'zipai' && (
           <div className="space-y-6">
-            {/* DMA Overview Header */}
-            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-200">
+            {/* ZipAI Overview Header */}
+            <div className="bg-gradient-to-r from-purple-900 to-indigo-900 rounded-xl p-6 text-white">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-blue-900 mb-1">DMA Performance Analysis</h3>
-                  <p className="text-blue-700">Blended streaming and linear reach by market</p>
+                  <h3 className="text-2xl font-bold mb-2">ZipAI Intelligence</h3>
+                  <p className="text-purple-100">Privacy-safe, AI-enhanced audience intelligence at ZIP code level</p>
+                  <div className="flex items-center gap-4 mt-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                      <span className="text-sm">Live Optimization</span>
+                    </div>
+                    <div className="text-sm bg-purple-800 px-3 py-1 rounded-full">
+                      {zipSegments.reduce((sum, seg) => sum + seg.zipCount, 0).toLocaleString()} ZIP Codes Active
+                    </div>
+                  </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-900">
-                    {campaign?.targetAudience ? 
-                      `${((campaign.dmaData?.reduce((sum, dma) => sum + dma.blendedReach, 0) || 0) / campaign.targetAudience.totalSize * 100).toFixed(1)}%` : 
-                      '-'}
+                  <div className="text-3xl font-bold">
+                    {zipSegments.reduce((sum, seg) => sum + seg.liftVsDMA, 0) / zipSegments.length}%
                   </div>
-                  <div className="text-blue-600">National Target Coverage</div>
+                  <div className="text-purple-200">Avg Lift vs DMA Targeting</div>
+                  <div className="text-sm text-purple-300 mt-2">
+                    ${((campaign?.spent || 0) * 0.15 / 1000).toFixed(0)}K Saved
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* DMA Heat Map */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Market Coverage Heat Map</h3>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-4 h-4 bg-green-500 rounded"></div>
-                    <span>High Coverage (70%+)</span>
+            {/* Micro-Cultural Segments Discovery */}
+            <div className="grid grid-cols-12 gap-6">
+              <div className="col-span-8">
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">ZIP Code Intelligence Map</h3>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <button className="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-lg text-sm font-medium hover:bg-purple-100 transition-colors">
+                          <ZoomIn className="w-4 h-4 inline mr-1" />
+                          Zoom to Market
+                        </button>
+                        <button className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors">
+                          Show DMA Overlay
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-                    <span>Medium (50-70%)</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-4 h-4 bg-red-500 rounded"></div>
-                    <span>Low (&lt;50%)</span>
+                  <div className="h-[500px] relative bg-gray-100 rounded-lg overflow-hidden">
+                    <ComposableMap projection="geoAlbersUsa" className="w-full h-full">
+                      <Geographies geography={geoUrl}>
+                        {({ geographies }) =>
+                          geographies.map((geo) => (
+                            <Geography
+                              key={geo.rsmKey}
+                              geography={geo}
+                              fill="#E5E7EB"
+                              stroke="#D1D5DB"
+                              strokeWidth={0.5}
+                            />
+                          ))
+                        }
+                      </Geographies>
+                      {/* ZIP Code clusters visualization */}
+                      {mockZipData.map((zip) => {
+                        const color = zip.targetMatch >= 80 ? '#8B5CF6' : zip.targetMatch >= 60 ? '#3B82F6' : '#64748B';
+                        const radius = Math.log(zip.population) * 0.5;
+                        
+                        return (
+                          <Marker key={zip.zipCode} coordinates={zip.coordinates}>
+                            <motion.g
+                              whileHover={{ scale: 1.5 }}
+                              style={{ cursor: 'pointer' }}
+                            >
+                              <circle
+                                r={radius}
+                                fill={color}
+                                fillOpacity={0.6}
+                                stroke="#fff"
+                                strokeWidth={0.5}
+                              />
+                            </motion.g>
+                          </Marker>
+                        );
+                      })}
+                    </ComposableMap>
+                    {/* Zoom controls */}
+                    <div className="absolute bottom-4 right-4 flex flex-col gap-2">
+                      <button className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50">
+                        <Plus className="w-5 h-5" />
+                      </button>
+                      <button className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50">
+                        <Minus className="w-5 h-5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="h-[500px] relative">
-                <ComposableMap projection="geoAlbersUsa" className="w-full h-full">
-                  <Geographies geography={geoUrl}>
-                    {({ geographies }) =>
-                      geographies.map((geo) => (
-                        <Geography
-                          key={geo.rsmKey}
-                          geography={geo}
-                          fill="#E5E7EB"
-                          stroke="#D1D5DB"
-                          strokeWidth={0.5}
-                        />
-                      ))
-                    }
-                  </Geographies>
-                  {dmaMarkets.map((dma) => {
-                    const targetDelivery = dma.targetDelivery;
-                    const color = targetDelivery >= 70 ? '#10B981' : targetDelivery >= 50 ? '#F59E0B' : '#EF4444';
-                    const radius = Math.sqrt(dma.blendedReach) / 400;
-                    
-                    return (
-                      <Marker key={dma.id} coordinates={dma.coordinates}>
-                        <motion.g
-                          whileHover={{ scale: 1.2 }}
-                          style={{ cursor: 'pointer' }}
-                        >
-                          <circle
-                            r={radius}
-                            fill={color}
-                            fillOpacity={0.7}
-                            stroke="#fff"
-                            strokeWidth={2}
-                          />
-                          <text
-                            textAnchor="middle"
-                            y={-radius - 10}
-                            className="text-xs font-medium fill-gray-700"
-                          >
-                            {dma.name}
-                          </text>
-                          <text
-                            textAnchor="middle"
-                            y={-radius - 25}
-                            className="text-xs font-bold fill-gray-900"
-                          >
-                            {targetDelivery.toFixed(0)}%
-                          </text>
-                        </motion.g>
-                      </Marker>
-                    );
-                  })}
-                </ComposableMap>
+              
+              {/* Segment Discovery Panel */}
+              <div className="col-span-4">
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                  <h3 className="text-lg font-semibold mb-4">Micro-Cultural Segments</h3>
+                  <div className="space-y-3">
+                    {zipSegments.map((segment) => (
+                      <motion.div
+                        key={segment.id}
+                        whileHover={{ scale: 1.02 }}
+                        className="p-4 bg-gray-50 rounded-lg hover:bg-purple-50 cursor-pointer transition-all"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-2xl">{segment.icon}</span>
+                              <h4 className="font-semibold text-gray-900">{segment.name}</h4>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-2">{segment.description}</p>
+                            <div className="flex items-center gap-4 text-xs">
+                              <span className="text-gray-500">{segment.zipCount.toLocaleString()} ZIPs</span>
+                              <span className="text-gray-500">{(segment.totalReach / 1000000).toFixed(1)}M reach</span>
+                              <span className="text-green-600 font-medium">+{segment.liftVsDMA}% lift</span>
+                            </div>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-gray-400" />
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                  <button className="w-full mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                    Discover More Segments
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* DMA Performance Table */}
+            {/* ZipAI vs DMA Performance Comparison */}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <h3 className="text-lg font-semibold mb-4">ZipAI vs DMA Performance</h3>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <h4 className="text-sm font-medium text-gray-600 mb-2">Traditional DMA</h4>
+                      <div className="text-2xl font-bold text-gray-900">62.5%</div>
+                      <div className="text-sm text-gray-500">Target Audience Reach</div>
+                      <div className="text-xs text-red-600 mt-1">37.5% wasted impressions</div>
+                    </div>
+                    <div className="p-4 bg-purple-50 rounded-lg">
+                      <h4 className="text-sm font-medium text-purple-600 mb-2">ZipAI Intelligence</h4>
+                      <div className="text-2xl font-bold text-purple-900">84.3%</div>
+                      <div className="text-sm text-purple-700">Target Audience Reach</div>
+                      <div className="text-xs text-green-600 mt-1">+35% efficiency gain</div>
+                    </div>
+                  </div>
+                  
+                  {/* Performance Chart */}
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={[
+                        { method: 'DMA Targeting', reach: 62.5, waste: 37.5, cost: 125 },
+                        { method: 'ZipAI Intelligence', reach: 84.3, waste: 15.7, cost: 92 }
+                      ]}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="method" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="reach" fill="#8B5CF6" name="Effective Reach %" />
+                        <Bar dataKey="waste" fill="#E5E7EB" name="Wasted Reach %" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Live Optimization Feed */}
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-purple-600" />
+                  Live ZipAI Optimizations
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
+                    <TrendingUp className="w-5 h-5 text-green-600 mt-0.5" />
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-gray-900">Budget shifted to high-performing ZIPs</div>
+                      <div className="text-xs text-gray-600">ZIP 10013, 10011, 11201 showing 2.3x engagement</div>
+                      <div className="text-xs text-green-600 mt-1">+$12K reallocated • 2 mins ago</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
+                    <Zap className="w-5 h-5 text-blue-600 mt-0.5" />
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-gray-900">New micro-culture discovered</div>
+                      <div className="text-xs text-gray-600">"Suburban Tech Parents" in ZIPs 07030, 07042</div>
+                      <div className="text-xs text-blue-600 mt-1">1.2K households • 5 mins ago</div>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
+                    <Brain className="w-5 h-5 text-purple-600 mt-0.5" />
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-gray-900">Cross-segment pattern detected</div>
+                      <div className="text-xs text-gray-600">Spanish language creative performing +45% in 127 ZIPs</div>
+                      <div className="text-xs text-purple-600 mt-1">Recommendation: Expand creative • 8 mins ago</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Segment Performance Table */}
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
               <div className="p-6">
-                <h3 className="text-lg font-semibold mb-4">DMA Performance Breakdown</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Top Performing ZIP Segments</h3>
+                  <button className="text-sm text-purple-600 hover:text-purple-700 font-medium">
+                    Export Analysis →
+                  </button>
+                </div>
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DMA</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Streaming Reach</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Linear Reach</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Blended Reach</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Target Delivery %</th>
-                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Population</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Segment</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ZIP Count</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total Reach</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Engagement</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ROAS</th>
+                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Lift vs DMA</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {dmaMarkets.sort((a, b) => b.blendedReach - a.blendedReach).map(dma => (
-                        <tr key={dma.id} className="hover:bg-gray-50">
+                      {zipSegments.map(segment => (
+                        <tr key={segment.id} className="hover:bg-gray-50">
                           <td className="px-4 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4 text-gray-400" />
+                            <div className="flex items-center gap-3">
+                              <span className="text-2xl">{segment.icon}</span>
                               <div>
-                                <div className="font-medium text-gray-900">{dma.name}</div>
-                                <div className="text-sm text-gray-500">{dma.state}</div>
+                                <div className="font-medium text-gray-900">{segment.name}</div>
+                                <div className="text-sm text-gray-500">{segment.topZips.slice(0, 3).join(', ')} +more</div>
                               </div>
                             </div>
                           </td>
                           <td className="px-4 py-4 text-right whitespace-nowrap">
-                            {(dma.streamingReach / 1000000).toFixed(1)}M
+                            {segment.zipCount.toLocaleString()}
                           </td>
                           <td className="px-4 py-4 text-right whitespace-nowrap">
-                            {(dma.linearReach / 1000000).toFixed(1)}M
-                          </td>
-                          <td className="px-4 py-4 text-right whitespace-nowrap font-semibold">
-                            {(dma.blendedReach / 1000000).toFixed(1)}M
+                            {(segment.totalReach / 1000000).toFixed(1)}M
                           </td>
                           <td className="px-4 py-4 text-right whitespace-nowrap">
                             <div className="flex items-center justify-end gap-2">
-                              <span className={`font-medium ${
-                                dma.targetDelivery >= 70 ? 'text-green-600' : 
-                                dma.targetDelivery >= 50 ? 'text-yellow-600' : 
-                                'text-red-600'
-                              }`}>
-                                {dma.targetDelivery.toFixed(1)}%
-                              </span>
-                              <div className="w-20 bg-gray-200 rounded-full h-2">
+                              <span className="font-medium">{segment.avgEngagement}%</span>
+                              <div className="w-16 bg-gray-200 rounded-full h-2">
                                 <div 
-                                  className={`h-2 rounded-full ${
-                                    dma.targetDelivery >= 70 ? 'bg-green-500' : 
-                                    dma.targetDelivery >= 50 ? 'bg-yellow-500' : 
-                                    'bg-red-500'
-                                  }`}
-                                  style={{ width: `${Math.min(dma.targetDelivery, 100)}%` }}
+                                  className="h-2 rounded-full bg-purple-500"
+                                  style={{ width: `${segment.avgEngagement * 10}%` }}
                                 />
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-4 text-right whitespace-nowrap text-gray-500">
-                            {(dma.population / 1000000).toFixed(1)}M
+                          <td className="px-4 py-4 text-right whitespace-nowrap font-semibold">
+                            {segment.avgROAS}x
+                          </td>
+                          <td className="px-4 py-4 text-right whitespace-nowrap">
+                            <span className="text-green-600 font-medium">+{segment.liftVsDMA}%</span>
                           </td>
                         </tr>
                       ))}
                     </tbody>
-                    <tfoot className="bg-gray-50">
-                      <tr>
-                        <td className="px-4 py-3 font-semibold">Total</td>
-                        <td className="px-4 py-3 text-right font-semibold">
-                          {(dmaMarkets.reduce((sum, dma) => sum + dma.streamingReach, 0) / 1000000).toFixed(1)}M
-                        </td>
-                        <td className="px-4 py-3 text-right font-semibold">
-                          {(dmaMarkets.reduce((sum, dma) => sum + dma.linearReach, 0) / 1000000).toFixed(1)}M
-                        </td>
-                        <td className="px-4 py-3 text-right font-semibold">
-                          {(dmaMarkets.reduce((sum, dma) => sum + dma.blendedReach, 0) / 1000000).toFixed(1)}M
-                        </td>
-                        <td className="px-4 py-3 text-right font-semibold">
-                          {(dmaMarkets.reduce((sum, dma) => sum + dma.targetDelivery * dma.population, 0) / 
-                            dmaMarkets.reduce((sum, dma) => sum + dma.population, 0)).toFixed(1)}%
-                        </td>
-                        <td className="px-4 py-3 text-right font-semibold">
-                          {(dmaMarkets.reduce((sum, dma) => sum + dma.population, 0) / 1000000).toFixed(1)}M
-                        </td>
-                      </tr>
-                    </tfoot>
                   </table>
                 </div>
               </div>
@@ -2091,7 +2382,7 @@ export default function OMGUnifiedDashboardV3() {
               <div className="p-6">
                 <h3 className="font-semibold mb-4">Campaigns Running on {selectedPlatformDetail}</h3>
                 <div className="space-y-4">
-                  {selectedPlatformDetail === 'MadHive' ? (
+                  {selectedPlatformDetail === 'Madhive' ? (
                     <div className="space-y-6">
                       <div className="grid grid-cols-3 gap-4">
                         <div className="text-center p-4 bg-gray-50 rounded-lg">
