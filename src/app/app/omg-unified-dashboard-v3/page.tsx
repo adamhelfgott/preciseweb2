@@ -484,7 +484,7 @@ export default function OMGUnifiedDashboardV3() {
     let totalImpressions = 0;
     let totalReach = 0;
     let totalConversions = 0;
-    const platformTotals: Record<string, { budget: number; spent: number; impressions: number; reach: number; conversions: number }> = {};
+    const platformTotals: Record<string, { budget: number; spent: number; impressions: number; reach: number; conversions: number; grp?: number; reachPercentage?: number }> = {};
 
     campaigns.forEach(campaignId => {
       const camp = campaignData[campaignId];
@@ -493,13 +493,21 @@ export default function OMGUnifiedDashboardV3() {
       
       Object.entries(camp.platforms).forEach(([platform, data]) => {
         if (!platformTotals[platform]) {
-          platformTotals[platform] = { budget: 0, spent: 0, impressions: 0, reach: 0, conversions: 0 };
+          platformTotals[platform] = { budget: 0, spent: 0, impressions: 0, reach: 0, conversions: 0, grp: 0, reachPercentage: 0 };
         }
         platformTotals[platform].budget += data.budget;
         platformTotals[platform].spent += data.spent;
         platformTotals[platform].impressions += data.impressions;
         platformTotals[platform].reach += data.reach;
         platformTotals[platform].conversions += data.conversions;
+        
+        // Aggregate GRP if available
+        if (data.grp) {
+          platformTotals[platform].grp = (platformTotals[platform].grp || 0) + data.grp;
+        }
+        if (data.reachPercentage) {
+          platformTotals[platform].reachPercentage = (platformTotals[platform].reachPercentage || 0) + data.reachPercentage;
+        }
         
         totalImpressions += data.impressions;
         totalReach += data.reach;
@@ -1301,11 +1309,11 @@ export default function OMGUnifiedDashboardV3() {
                         <div className="space-y-1">
                           <div className="flex justify-between text-xs">
                             <span className="text-gray-600">GRP</span>
-                            <span className="font-medium">{(data.grp || ((data.reach / (campaign?.targetAudience?.totalSize || 1)) * 100 * 3.2)).toFixed(1)}</span>
+                            <span className="font-medium">{data.grp ? data.grp.toFixed(1) : (campaign?.targetAudience ? ((data.reach / campaign.targetAudience.totalSize) * 100 * 3.2).toFixed(1) : '-')}</span>
                           </div>
                           <div className="flex justify-between text-xs">
                             <span className="text-gray-600">Reach</span>
-                            <span className="font-medium">{campaign?.targetAudience ? ((data.reach / campaign.targetAudience.totalSize) * 100).toFixed(1) : '-'}%</span>
+                            <span className="font-medium">{data.reachPercentage ? data.reachPercentage.toFixed(1) : (campaign?.targetAudience ? ((data.reach / campaign.targetAudience.totalSize) * 100).toFixed(1) : '-')}%</span>
                           </div>
                           <div className="flex justify-between text-xs">
                             <span className="text-gray-600">Spend</span>
@@ -1343,11 +1351,11 @@ export default function OMGUnifiedDashboardV3() {
                         <div className="space-y-1">
                           <div className="flex justify-between text-xs">
                             <span className="text-gray-600">GRP</span>
-                            <span className="font-medium">{(data.grp || ((data.reach / (campaign?.targetAudience?.totalSize || 1)) * 100 * 3.2)).toFixed(1)}</span>
+                            <span className="font-medium">{data.grp ? data.grp.toFixed(1) : (campaign?.targetAudience ? ((data.reach / campaign.targetAudience.totalSize) * 100 * 3.2).toFixed(1) : '-')}</span>
                           </div>
                           <div className="flex justify-between text-xs">
                             <span className="text-gray-600">Reach</span>
-                            <span className="font-medium">{campaign?.targetAudience ? ((data.reach / campaign.targetAudience.totalSize) * 100).toFixed(1) : '-'}%</span>
+                            <span className="font-medium">{data.reachPercentage ? data.reachPercentage.toFixed(1) : (campaign?.targetAudience ? ((data.reach / campaign.targetAudience.totalSize) * 100).toFixed(1) : '-')}%</span>
                           </div>
                           <div className="flex justify-between text-xs">
                             <span className="text-gray-600">Spend</span>
