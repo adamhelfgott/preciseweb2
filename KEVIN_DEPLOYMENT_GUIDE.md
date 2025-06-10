@@ -198,10 +198,33 @@ vercel --prod
    - All marketing pages
    - OMG dashboard with mock data
    - All animations and interactions
+   - Contact form (saves to console logs)
+   - Email capture in footer (saves to console logs)
    
 5. **What's password protected (not your concern):**
    - `/app/*` routes - These are for the actual application
    - If you accidentally go there, it will ask for auth (you don't need it)
+
+## Backend Services (FYI Only)
+
+### Sanity CMS
+- **Status**: NOT CONFIGURED (and that's OK!)
+- **What it's for**: Eventually will manage marketing content
+- **Current approach**: All content is hardcoded in components
+- **Console errors**: You'll see "Dataset not found" errors - IGNORE THEM
+- **Future**: Someone will set up Sanity later if needed
+
+### Convex (Real-time Database)
+- **Status**: PARTIALLY CONFIGURED
+- **What it does**: Handles chat messages and will handle lead capture
+- **Current approach**: Contact forms log to console
+- **Future**: When configured, leads will save to database
+
+### Lead Capture
+- **Contact form**: Currently logs submissions to browser console
+- **Email signup**: Also logs to console
+- **To see submissions**: Open browser DevTools → Console tab
+- **Future**: Will connect to CRM (HubSpot, Salesforce, etc.)
 
 ## Quick Commands Reference
 

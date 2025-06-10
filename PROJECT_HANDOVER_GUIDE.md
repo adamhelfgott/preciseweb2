@@ -37,8 +37,10 @@ Strategic Documents (created by Claude):
 ## Tech Stack
 
 - **Frontend**: Next.js 15 with App Router, TypeScript, Tailwind CSS
-- **Backend**: Convex (real-time), Supabase (auth/data)
-- **CMS**: Sanity (content management)
+- **Backend**: 
+  - Convex (real-time data, chat, lead capture) - PARTIALLY IMPLEMENTED
+  - Supabase (auth/data) - NOT YET CONFIGURED
+- **CMS**: Sanity (content management) - SCHEMAS DEFINED, NOT POPULATED
 - **Deployment**: Vercel
 - **AI**: OpenAI API for chat features
 
@@ -218,12 +220,49 @@ This keeps the application dashboard private while marketing pages remain public
 - Some Sanity CMS content needs seeding
 - Production Supabase not fully configured
 
+### Sanity CMS Status
+- **Current State**: Schemas are fully defined but content is NOT populated
+- **Project ID**: Currently using "dummy" ID which causes console errors (harmless)
+- **Purpose**: Eventually will manage all marketing content (hero sections, team info, etc.)
+- **Files**:
+  - `/sanity/schemas/` - All content schemas defined
+  - `/scripts/seed-*.ts` - Seeding scripts ready but not run
+  - Components with `WithCMS` suffix are ready for Sanity data
+- **To Enable**: Need to create Sanity project and run seed scripts
+
+### Convex Backend Status
+- **Current State**: Partially implemented for real-time features
+- **What's Working**:
+  - Chat persistence in AI Assistant
+  - Lead capture (contacts table added)
+  - Real-time activity feeds (mocked)
+- **What's NOT Working**:
+  - User authentication (using mock auth)
+  - Actual data storage (using mock data)
+  - Real campaign/earnings data
+- **Files**:
+  - `/convex/` - All backend functions
+  - `/convex/schema.ts` - Database schema
+  - `/convex/contacts.ts` - NEW: Lead capture functions
+- **To Enable**: Set `NEXT_PUBLIC_CONVEX_URL` and `CONVEX_DEPLOY_KEY`
+
+### Lead Capture Implementation
+- **Contact Form**: `/api/contact` endpoint saves to Convex (if configured) or logs
+- **Email Capture**: Footer newsletter signup also uses same endpoint
+- **Data Flow**:
+  1. Form submission → `/api/contact` API route
+  2. API attempts to save to Convex
+  3. Falls back to console logging if Convex not configured
+  4. Ready for CRM integration (HubSpot, Salesforce, etc.)
+
 ### Next Steps Suggested
 1. Resolve GitHub authentication for pushing commits
-2. Complete Sanity CMS content population
-3. Set up production Supabase instance
-4. Implement actual DSP integrations (currently mocked)
-5. Add real payment processing for data controllers
+2. **OPTIONAL**: Set up Sanity CMS (can wait - site works without it)
+3. **OPTIONAL**: Configure Convex for lead capture (currently logs to console)
+4. Set up production Supabase instance (for actual user auth)
+5. Implement actual DSP integrations (currently mocked)
+6. Add real payment processing for data controllers
+7. Connect lead capture to CRM/email service
 
 ## Contact Points
 

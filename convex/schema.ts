@@ -167,4 +167,20 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index("by_page", ["page"]),
+
+  // Contact form submissions and leads
+  contacts: defineTable({
+    name: v.string(),
+    email: v.string(),
+    company: v.optional(v.string()),
+    role: v.optional(v.string()),
+    message: v.string(),
+    source: v.optional(v.string()), // "contact-form", "newsletter", etc.
+    status: v.union(v.literal("new"), v.literal("contacted"), v.literal("qualified"), v.literal("converted")),
+    createdAt: v.number(),
+    updatedAt: v.optional(v.number()),
+  })
+    .index("by_email", ["email"])
+    .index("by_status", ["status"])
+    .index("by_created", ["createdAt"]),
 });

@@ -94,7 +94,10 @@ The app is configured for easy deployment on Vercel:
 
 - **Frontend**: Next.js 15, React, TypeScript
 - **Styling**: Tailwind CSS, Framer Motion
-- **Backend**: Convex (real-time database)
+- **Backend**: 
+  - Convex (real-time) - Partially configured for chat/leads
+  - Supabase - Not yet configured
+  - Sanity CMS - Schemas defined, not populated
 - **AI**: OpenAI GPT-4 (via Vercel AI SDK)
 - **Charts**: Recharts
 - **Deployment**: Vercel

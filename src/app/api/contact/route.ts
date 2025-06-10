@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server';
+import { ConvexHttpClient } from "convex/browser";
+import { api } from "../../../../convex/_generated/api";
+
+// Initialize Convex client
+const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, company, role, message } = body;
+    const { name, email, company, role, message, source = 'contact-form' } = body;
 
     // Validate required fields
     if (!name || !email || !message) {
@@ -13,28 +18,45 @@ export async function POST(request: Request) {
       );
     }
 
-    // In a real implementation, you would:
-    // 1. Save to database (Supabase, Convex, etc.)
-    // 2. Send to CRM (HubSpot, Salesforce, etc.)
-    // 3. Send notification email
-    // 4. Add to email marketing list
+    // Save to Convex if available
+    if (process.env.NEXT_PUBLIC_CONVEX_URL) {
+      try {
+        await convex.mutation(api.contacts.createContact, {
+          name,
+          email,
+          company: company || undefined,
+          role: role || undefined,
+          message,
+          source,
+        });
+      } catch (convexError) {
+        console.error('Convex error:', convexError);
+        // Continue even if Convex fails - don't lose the lead
+      }
+    }
 
-    // For now, we'll just log it and return success
+    // Log for backup (in case Convex is not configured)
     console.log('New contact form submission:', {
       name,
       email,
       company,
       role,
       message,
+      source,
       timestamp: new Date().toISOString()
     });
 
-    // Simple CSV append for demo (in production use a proper database)
+    // Simple CSV log for production backup
     if (process.env.NODE_ENV === 'production') {
-      // You could append to a CSV file or send to a webhook
-      const csvLine = `"${new Date().toISOString()}","${name}","${email}","${company || ''}","${role || ''}","${message.replace(/"/g, '""')}"\n`;
+      const csvLine = `"${new Date().toISOString()}","${name}","${email}","${company || ''}","${role || ''}","${source}","${message.replace(/"/g, '""')}"\n`;
       console.log('CSV:', csvLine);
     }
+
+    // Future integrations:
+    // - Send to CRM (HubSpot, Salesforce)
+    // - Send notification email (SendGrid, Postmark)
+    // - Add to email list (Mailchimp, ConvertKit)
+    // - Send Slack notification
 
     return NextResponse.json({
       success: true,
