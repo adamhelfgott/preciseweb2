@@ -203,11 +203,18 @@ When another Claude instance takes over:
 - All marketing pages functional
 - Demo dashboards with mock data
 - OMG V3 dashboard with ZipAI Intelligence
-- Real-time features via Convex
+- Real-time features via Convex (optional)
 - Responsive design
+- Password protection on `/app/*` routes
+
+### Password Protection
+All `/app/*` routes are protected with basic authentication:
+- **Username**: `precise`
+- **Password**: `demo2025`
+
+This keeps the application dashboard private while marketing pages remain public.
 
 ### Known Issues
-- Git push to remote failing (authentication issue)
 - Some Sanity CMS content needs seeding
 - Production Supabase not fully configured
 
