@@ -46,7 +46,6 @@ import {
   Keyboard,
   XCircle,
   Layers,
-  Plus,
   Minus,
   Command,
   MapPin,
@@ -2166,7 +2165,7 @@ export default function OMGUnifiedDashboardV3() {
                     {/* Zoom controls */}
                     <div className="absolute bottom-4 right-4 flex flex-col gap-2">
                       <button className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50">
-                        <Plus className="w-5 h-5" />
+                        <Icon size={20} className="opacity-70" />
                       </button>
                       <button className="w-10 h-10 bg-white rounded-lg shadow-md flex items-center justify-center hover:bg-gray-50">
                         <Minus className="w-5 h-5" />

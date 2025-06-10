@@ -24,10 +24,44 @@ export default function ContactPageWithCMS() {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement form submission
-    alert("Thank you for your inquiry. We'll be in touch within 24 hours.");
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        // Reset form
+        setFormData({
+          name: "",
+          email: "",
+          company: "",
+          role: "media-buyer",
+          message: "",
+        });
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!content) {
@@ -150,11 +184,33 @@ export default function ContactPageWithCMS() {
 
                   <button
                     type="submit"
-                    className="w-full bg-brand-green text-white font-semibold py-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                    disabled={isSubmitting}
+                    className="w-full bg-brand-green text-white font-semibold py-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
-                    {content.form.submitButton}
-                    <Send size={20} />
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        {content.form.submitButton}
+                        <Send size={20} />
+                      </>
+                    )}
                   </button>
+
+                  {/* Success/Error Messages */}
+                  {submitStatus === 'success' && (
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
+                      Thank you for your inquiry! We'll be in touch within 24 hours.
+                    </div>
+                  )}
+                  {submitStatus === 'error' && (
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
+                      Something went wrong. Please try again or email us directly at hello@precise.ai
+                    </div>
+                  )}
                 </form>
               </div>
             </motion.div>

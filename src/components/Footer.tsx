@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Icon from '@/components/Icon';
+import EmailCapture from '@/components/home/EmailCapture';
 
 export default function Footer() {
   const footerSections = [
@@ -16,17 +17,17 @@ export default function Footer() {
       title: "Developers",
       links: [
         { href: "/developers", label: "Documentation" },
-        { href: "/developers/api", label: "API Reference" },
-        { href: "/developers/sdks", label: "SDKs" },
-        { href: "/developers/examples", label: "Examples" },
+        { href: "/contact", label: "API Reference" },
+        { href: "/contact", label: "SDKs" },
+        { href: "/contact", label: "Examples" },
       ],
     },
     {
       title: "Company",
       links: [
         { href: "/about", label: "About" },
-        { href: "/blog", label: "Blog" },
-        { href: "/careers", label: "Careers" },
+        { href: "/contact", label: "Blog" },
+        { href: "/contact", label: "Careers" },
         { href: "/contact", label: "Contact" },
       ],
     },
@@ -35,7 +36,7 @@ export default function Footer() {
       links: [
         { href: "/privacy", label: "Privacy Policy" },
         { href: "/terms", label: "Terms of Service" },
-        { href: "/security", label: "Security" },
+        { href: "/contact", label: "Security" },
         { href: "/compliance", label: "Compliance" },
       ],
     },
@@ -44,16 +45,17 @@ export default function Footer() {
   return (
     <footer className="bg-soft-white border-t border-silk-gray">
       <div className="container py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Brand */}
-          <div className="lg:col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
+          {/* Brand & Newsletter */}
+          <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 group mb-4">
               <Icon size={32} className="transition-transform group-hover:scale-110" />
               <span className="font-semibold text-xl text-dark-gray">Precise</span>
             </Link>
-            <p className="text-medium-gray text-sm">
+            <p className="text-medium-gray text-sm mb-6">
               Infrastructure for the AI Data Economy
             </p>
+            <EmailCapture />
           </div>
 
           {/* Links */}
