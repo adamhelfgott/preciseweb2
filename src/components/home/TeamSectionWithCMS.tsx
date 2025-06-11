@@ -64,7 +64,7 @@ const DEFAULT_TEAM_MEMBERS = [
     name: "Seth Redniss",
     role: "General Counsel",
     bio: "Redniss Law",
-    imageUrl: "/team/seth_redniss.jpg",
+    imageUrl: "/team/seth-redniss.jpg",
     linkedin: "https://www.linkedin.com/in/seth-redniss-005b7b14",
   },
   {
@@ -73,12 +73,6 @@ const DEFAULT_TEAM_MEMBERS = [
     bio: "NBCU, Qonsent",
     imageUrl: "/team/greg-couture.jpg",
     linkedin: "https://www.linkedin.com/in/greg-couture-785551",
-  },
-  {
-    name: "Greg Pier",
-    role: "Implementation & Solutions Design",
-    bio: "Qonsent",
-    imageUrl: "/team/greg-pier.jpg",
   },
   {
     name: "Angelica Haase",
@@ -161,11 +155,7 @@ export default function TeamSectionWithCMS() {
               <div className="relative w-40 h-40 mx-auto mb-4">
                 {member.imageUrl ? (
                   <img 
-                    src={
-                      member.imageUrl.startsWith('http') 
-                        ? member.imageUrl 
-                        : `https://precise.ai/static/img/photo/${member.imageUrl.includes('/') ? member.imageUrl.split('/').pop() : member.imageUrl}`
-                    }
+                    src={member.imageUrl}
                     alt={member.name || 'Team member'} 
                     className="w-full h-full object-cover rounded-lg"
                   />
@@ -226,17 +216,6 @@ export default function TeamSectionWithCMS() {
           )) : null}
         </div>
 
-        {/* Additional team note */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mt-16 pt-16 border-t border-light-gray"
-        >
-          <p className="text-medium-gray mb-6">
-            Backed by world-class investors and advisors
-          </p>
-        </motion.div>
       </div>
     </section>
   );
