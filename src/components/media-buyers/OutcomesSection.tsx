@@ -74,7 +74,7 @@ export default function OutcomesSection() {
   ];
 
   return (
-    <section id="outcomes" className="section-padding bg-soft-white">
+    <section id="outcomes" className="py-20 bg-soft-white">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -82,10 +82,10 @@ export default function OutcomesSection() {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-display-medium font-bold text-dark-gray mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-dark-gray mb-4">
             Proven outcomes across the entire funnel
           </h2>
-          <p className="text-body-large text-medium-gray max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-medium-gray max-w-3xl mx-auto">
             From awareness to retention, drive measurable improvements with verified data
           </p>
         </motion.div>

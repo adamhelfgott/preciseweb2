@@ -56,9 +56,9 @@ function OutcomesAnimation() {
   const metrics = [
     { name: "CAC", value: "↓34%", color: "text-brand-green" },
     { name: "ROAS", value: "4.2x", color: "text-electric-blue" },
-    { name: "LTV", value: "↑52%", color: "text-golden-amber" },
+    { name: "LTV", value: "↑52%", color: "text-bright-purple" },
     { name: "Churn", value: "↓18%", color: "text-warm-coral" },
-    { name: "Brand Lift", value: "+27%", color: "text-soft-lavender" },
+    { name: "Brand Lift", value: "+27%", color: "text-brand-green" },
   ];
 
   return (
