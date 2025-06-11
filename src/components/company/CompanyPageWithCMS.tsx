@@ -57,11 +57,11 @@ export default function CompanyPageWithCMS() {
             >
               {/* Image container with LinkedIn overlay */}
               <div className="relative w-40 h-40 mx-auto mb-4">
-                <img 
-                  src={`https://precise.ai/static/img/photo/${member.image.split('/').pop()}`}
-                  alt={member.name} 
-                  className="w-full h-full object-cover rounded-lg"
-                />
+                <div className="w-full h-full bg-gradient-to-br from-primary-orange/10 to-primary-teal/10 rounded-lg flex items-center justify-center">
+                  <span className="text-3xl font-bold text-dark-gray">
+                    {member.name.split(' ').map(n => n[0]).join('')}
+                  </span>
+                </div>
                 
                 {/* LinkedIn overlay */}
                 {member.linkedin && (

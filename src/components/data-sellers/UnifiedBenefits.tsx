@@ -27,13 +27,13 @@ export default function UnifiedBenefits() {
       icon: Zap,
       title: "Instant Activation",
       description: "Go from data to activation in minutes, not weeks. Pre-integrated with major DSPs and platforms.",
-      gradient: "from-golden-amber to-golden-amber/70",
+      gradient: "from-bright-purple to-bright-purple/70",
     },
     {
       icon: Users,
       title: "Ecosystem Access",
       description: "Reach thousands of buyers through our network. No more one-off integrations.",
-      gradient: "from-soft-lavender to-soft-lavender/70",
+      gradient: "from-champagne to-deep-bronze/70",
     },
     {
       icon: Award,
