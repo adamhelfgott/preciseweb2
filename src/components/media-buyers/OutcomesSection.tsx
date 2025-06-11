@@ -41,7 +41,7 @@ export default function OutcomesSection() {
     {
       category: "Brand Marketing",
       icon: Heart,
-      color: "from-soft-lavender to-soft-lavender/70",
+      color: "from-bright-purple to-bright-purple/70",
       metrics: [
         { name: "Brand Awareness", impact: "+27% unaided recall", proven: true },
         { name: "Consideration Lift", impact: "+34% consideration", proven: true },
@@ -52,7 +52,7 @@ export default function OutcomesSection() {
     {
       category: "Media Efficiency",
       icon: Eye,
-      color: "from-golden-amber to-golden-amber/70",
+      color: "from-electric-blue to-warm-coral",
       metrics: [
         { name: "Viewability Rate", impact: "94% average viewability", proven: true },
         { name: "Audience Overlap", impact: "↓67% waste reduction", proven: true },
@@ -100,31 +100,31 @@ export default function OutcomesSection() {
               transition={{ delay: index * 0.1 }}
               className="group"
             >
-              <div className="h-full bg-white rounded-2xl border border-silk-gray hover:shadow-lg transition-all">
+              <div className="h-full bg-white rounded-2xl border border-silk-gray hover:shadow-lg transition-all overflow-hidden">
                 {/* Header */}
-                <div className="p-6 border-b border-silk-gray">
+                <div className="p-6 border-b border-silk-gray bg-light-gray/30">
                   <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${outcome.color} p-2`}>
+                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${outcome.color} p-2 flex-shrink-0`}>
                       <outcome.icon className="w-full h-full text-white" />
                     </div>
-                    <h3 className="font-semibold text-dark-gray">{outcome.category}</h3>
+                    <h3 className="font-semibold text-dark-gray text-lg">{outcome.category}</h3>
                   </div>
                 </div>
 
                 {/* Metrics */}
                 <div className="p-6 space-y-4">
-                  {outcome.metrics.map((metric) => (
+                  {outcome.metrics.map((metric, idx) => (
                     <div key={metric.name} className="group/metric">
                       <div className="flex justify-between items-start gap-2">
-                        <span className="text-sm text-medium-gray">{metric.name}</span>
-                        <span className="text-sm font-medium text-dark-gray whitespace-nowrap">
+                        <span className="text-sm text-medium-gray leading-tight">{metric.name}</span>
+                        <span className="text-sm font-semibold text-dark-gray whitespace-nowrap">
                           {metric.impact}
                         </span>
                       </div>
                       {metric.proven && (
                         <div className="mt-1 flex items-center gap-1">
-                          <div className="w-3 h-3 bg-brand-green rounded-full" />
-                          <span className="text-xs text-brand-green">Verified</span>
+                          <div className="w-2 h-2 bg-brand-green rounded-full" />
+                          <span className="text-xs text-brand-green font-medium">Verified</span>
                         </div>
                       )}
                     </div>
