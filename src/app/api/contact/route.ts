@@ -2,9 +2,6 @@ import { NextResponse } from 'next/server';
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../convex/_generated/api";
 
-// Initialize Convex client
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
-
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -21,6 +18,8 @@ export async function POST(request: Request) {
     // Save to Convex if available
     if (process.env.NEXT_PUBLIC_CONVEX_URL) {
       try {
+        // Only initialize Convex client if URL is provided
+        const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL);
         await convex.mutation(api.contacts.createContact, {
           name,
           email,
