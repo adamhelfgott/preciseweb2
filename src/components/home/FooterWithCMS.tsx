@@ -156,22 +156,25 @@ const getSecurityBadgeIcon = (label: string) => {
 export default async function FooterWithCMS() {
   let footerData: FooterData = defaultFooterData;
   
-  try {
-    const data = await client.fetch<FooterData>(footerQuery);
-    if (data) {
-      // Merge fetched data with defaults to ensure all fields have values
-      footerData = {
-        brandName: data.brandName || defaultFooterData.brandName,
-        brandTagline: data.brandTagline || defaultFooterData.brandTagline,
-        copyrightText: data.copyrightText,
-        sections: data.sections?.length ? data.sections : defaultFooterData.sections,
-        socialLinks: data.socialLinks?.length ? data.socialLinks : defaultFooterData.socialLinks,
-        securityBadges: data.securityBadges?.length ? data.securityBadges : defaultFooterData.securityBadges,
-      };
+  // Skip Sanity fetch in mock mode
+  if (process.env.NEXT_PUBLIC_MOCK_MODE !== 'true') {
+    try {
+      const data = await client.fetch<FooterData>(footerQuery);
+      if (data) {
+        // Merge fetched data with defaults to ensure all fields have values
+        footerData = {
+          brandName: data.brandName || defaultFooterData.brandName,
+          brandTagline: data.brandTagline || defaultFooterData.brandTagline,
+          copyrightText: data.copyrightText,
+          sections: data.sections?.length ? data.sections : defaultFooterData.sections,
+          socialLinks: data.socialLinks?.length ? data.socialLinks : defaultFooterData.socialLinks,
+          securityBadges: data.securityBadges?.length ? data.securityBadges : defaultFooterData.securityBadges,
+        };
+      }
+    } catch (error) {
+      console.error('Error fetching footer data:', error);
+      // Use default data on error
     }
-  } catch (error) {
-    console.error('Error fetching footer data:', error);
-    // Use default data on error
   }
 
   const currentYear = new Date().getFullYear();

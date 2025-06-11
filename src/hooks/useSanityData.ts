@@ -13,6 +13,13 @@ export function useSanityData<T>(
 
   useEffect(() => {
     const fetchData = async () => {
+      // In mock mode, immediately return null data to use fallbacks
+      if (process.env.NEXT_PUBLIC_MOCK_MODE === 'true') {
+        setData(null);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         console.log('[useSanityData] Fetching with query:', query);
