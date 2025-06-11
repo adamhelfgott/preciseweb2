@@ -33,7 +33,7 @@ export default function UnifiedBenefits() {
       icon: Users,
       title: "Ecosystem Access",
       description: "Reach thousands of buyers through our network. No more one-off integrations.",
-      gradient: "from-champagne to-deep-bronze/70",
+      gradient: "from-electric-blue to-electric-blue/70",
     },
     {
       icon: Award,
