@@ -21,13 +21,13 @@ export default function ValuePropsSection() {
       title: "Cross-Channel Optimization",
       description: "Unified performance across DSPs, social, CTV, and more. One source of truth.",
       icon: Shuffle,
-      gradient: "from-soft-lavender to-soft-lavender/70",
+      gradient: "from-bright-purple to-bright-purple/70",
     },
     {
       title: "Real-Time Intelligence",
       description: "Act on insights immediately, not weeks later. AI-powered recommendations 24/7.",
       icon: Target,
-      gradient: "from-golden-amber to-golden-amber/70",
+      gradient: "from-brand-green to-electric-blue",
     },
   ];
 
@@ -48,7 +48,7 @@ export default function ValuePropsSection() {
       title: "Quality Drives Price",
       description: "Build reputation through verified performance. Higher quality scores unlock premium rates.",
       icon: Calculator,
-      gradient: "from-soft-lavender to-soft-lavender/70",
+      gradient: "from-bright-purple to-bright-purple/70",
     },
     {
       title: "Real-Time Analytics",
