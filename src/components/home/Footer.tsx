@@ -112,22 +112,6 @@ export default function Footer() {
           </p>
           <div className="flex items-center gap-6">
             <Link
-              href="https://twitter.com/precise"
-              className="text-medium-gray hover:text-dark-gray transition-colors duration-200"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Twitter
-            </Link>
-            <Link
-              href="https://github.com/precise"
-              className="text-medium-gray hover:text-dark-gray transition-colors duration-200"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              GitHub
-            </Link>
-            <Link
               href="https://linkedin.com/company/precise"
               className="text-medium-gray hover:text-dark-gray transition-colors duration-200"
               target="_blank"

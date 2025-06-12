@@ -103,8 +103,6 @@ const defaultFooterData: FooterData = {
     },
   ],
   socialLinks: [
-    { platform: "Twitter", url: "https://twitter.com/precise", label: "Twitter" },
-    { platform: "GitHub", url: "https://github.com/precise", label: "GitHub" },
     { platform: "LinkedIn", url: "https://linkedin.com/company/precise", label: "LinkedIn" },
   ],
   securityBadges: [

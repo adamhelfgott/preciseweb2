@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Linkedin, Twitter } from "lucide-react";
+import { Linkedin } from "lucide-react";
 import { useSanityData } from "@/hooks/useSanityData";
 import { teamSectionQuery } from "@/sanity/lib/queries";
 import Image from "next/image";
@@ -12,7 +12,6 @@ type TeamMember = {
   bio: string;
   imageUrl?: string;
   linkedin?: string;
-  twitter?: string;
 };
 
 type TeamData = TeamMember[];
@@ -170,28 +169,16 @@ export default function TeamSectionWithCMS() {
                 )}
                 
                 {/* Social overlay */}
-                {(member.linkedin || member.twitter) && (
-                  <div className="absolute inset-0 bg-black/0 hover:bg-black/70 transition-all duration-300 rounded-lg flex items-center justify-center opacity-0 hover:opacity-100 gap-2">
-                    {member.linkedin && (
-                      <a
-                        href={member.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-white p-2 rounded-full hover:scale-110 transition-transform"
-                      >
-                        <Linkedin className="w-5 h-5 text-[#0077B5]" fill="#0077B5" />
-                      </a>
-                    )}
-                    {member.twitter && (
-                      <a
-                        href={member.twitter}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-white p-2 rounded-full hover:scale-110 transition-transform"
-                      >
-                        <Twitter className="w-5 h-5 text-[#1DA1F2]" fill="#1DA1F2" />
-                      </a>
-                    )}
+                {member.linkedin && (
+                  <div className="absolute inset-0 bg-black/0 hover:bg-black/70 transition-all duration-300 rounded-lg flex items-center justify-center opacity-0 hover:opacity-100">
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-white p-2 rounded-full hover:scale-110 transition-transform"
+                    >
+                      <Linkedin className="w-5 h-5 text-[#0077B5]" fill="#0077B5" />
+                    </a>
                   </div>
                 )}
               </div>
