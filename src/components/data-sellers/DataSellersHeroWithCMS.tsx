@@ -55,13 +55,10 @@ export default function DataSellersHeroWithCMS() {
               {hero.subheadline}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex justify-center">
               <Link href={hero.primaryButtonHref} className="btn-primary">
                 {hero.primaryButtonText}
                 <ArrowRight size={20} />
-              </Link>
-              <Link href={hero.secondaryButtonHref} className="btn-secondary">
-                {hero.secondaryButtonText}
               </Link>
             </div>
           </motion.div>
