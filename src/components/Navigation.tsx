@@ -21,7 +21,7 @@ export default function Navigation() {
 
   const navLinks = [
     { href: "/how-it-works", label: "How it works" },
-    { href: "/data-sellers", label: "For data sellers" },
+    { href: "/data-controllers", label: "For data controllers" },
     { href: "/media-buyers", label: "For media buyers" },
     { href: "/measurement-partners", label: "For measurement" },
     { href: "/platforms", label: "For platforms" },

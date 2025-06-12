@@ -267,8 +267,8 @@ export const platformFeaturesQuery = groq`
 `;
 
 // Data Sellers Page Queries
-export const dataSellersHeroQuery = groq`
-  *[_type == "pageContent" && page == "data-sellers" && section == "hero"][0] {
+export const dataControllersHeroQuery = groq`
+  *[_type == "pageContent" && page == "data-controllers" && section == "hero"][0] {
     "headline": content.headline,
     "subheadline": content.subheadline,
     "primaryButtonText": content.primaryCTA.text,

@@ -23,7 +23,7 @@ export default function HeroSectionWithCMS() {
   // Fallback to hardcoded content
   const hero = heroData || {
     headline: "Verified Activation for Modern Marketing",
-    subheadline: "Where trusted data meets exceptional performance. Precise enables secure data collaboration that drives real results — with cryptographic validation of every action, from source to outcome.",
+    subheadline: "Powered by patented proof infrastructure that turns trust into verification. Every signal, activation, and outcome is cryptographically proven — delivering data you can trust, proof you can show, and privacy you don't have to trade away.",
     primaryButtonText: "Activate Campaigns",
     primaryButtonHref: "/get-started",
     secondaryButtonText: "Prove Value",
@@ -31,7 +31,7 @@ export default function HeroSectionWithCMS() {
   };
 
   return (
-    <section className="section-padding bg-gradient-to-b from-white to-soft-white overflow-hidden">
+    <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-white to-soft-white overflow-hidden">
       <div className="container">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
@@ -49,7 +49,7 @@ export default function HeroSectionWithCMS() {
               {hero.subheadline}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Link href={hero.primaryButtonHref} className="btn-primary">
                 {hero.primaryButtonText}
                 <ArrowRight size={20} />
@@ -57,12 +57,6 @@ export default function HeroSectionWithCMS() {
               <Link href={hero.secondaryButtonHref} className="btn-secondary">
                 {hero.secondaryButtonText}
               </Link>
-            </div>
-
-            <div className="grid grid-cols-3 gap-6">
-              <TrustItem label="Lower CAC with verified data" />
-              <TrustItem label="Premium pricing with proof" />
-              <TrustItem label="Cryptographic validation" />
             </div>
           </motion.div>
 
@@ -80,14 +74,6 @@ export default function HeroSectionWithCMS() {
         </div>
       </div>
     </section>
-  );
-}
-
-function TrustItem({ label }: { label: string }) {
-  return (
-    <div className="text-center">
-      <p className="text-caption text-medium-gray">{label}</p>
-    </div>
   );
 }
 

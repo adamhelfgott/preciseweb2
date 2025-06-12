@@ -55,7 +55,7 @@ export default function HowItWorksSectionWithCMS() {
   };
 
   return (
-    <section className="section-padding">
+    <section className="py-12 sm:py-16 md:py-20">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

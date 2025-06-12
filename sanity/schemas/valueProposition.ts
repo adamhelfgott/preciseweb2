@@ -12,9 +12,9 @@ export default defineType({
       options: {
         list: [
           { title: 'Media Buyers', value: 'mediaBuyers' },
-          { title: 'Data Sellers', value: 'dataSellers' },
+          { title: 'Data Controllers', value: 'dataControllers' },
           { title: 'Media Buyer', value: 'media-buyer' },
-          { title: 'Data Seller', value: 'data-seller' },
+          { title: 'Data Controller', value: 'data-controller' },
         ],
       },
       validation: (Rule) => Rule.required(),

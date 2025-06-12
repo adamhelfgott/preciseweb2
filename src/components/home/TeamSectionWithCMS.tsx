@@ -124,7 +124,7 @@ export default function TeamSectionWithCMS() {
   const subheadline = "Building the infrastructure for the AI data economy with decades of experience from the world's leading media and technology companies.";
 
   return (
-    <section className="section-padding bg-soft-white" id="team">
+    <section className="py-12 sm:py-16 md:py-20 bg-soft-white" id="team">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

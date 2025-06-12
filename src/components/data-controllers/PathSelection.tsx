@@ -30,7 +30,7 @@ export default function PathSelection() {
         "Multi-buyer management",
         "Quality scoring advantage"
       ],
-      examples: "Data Brokers, Identity Providers, Segment Sellers, DMPs",
+      examples: "Data Brokers, Identity Providers, Segment Providers, DMPs",
       color: "from-warm-coral to-golden-amber",
     },
   ];

@@ -29,7 +29,7 @@ export default function LogoBarWithCMS() {
   }
 
   return (
-    <section className="py-16 bg-light-gray">
+    <section className="py-10 sm:py-12 bg-light-gray">
       <div className="container">
         <motion.p
           initial={{ opacity: 0 }}

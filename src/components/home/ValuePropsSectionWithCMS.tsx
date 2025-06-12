@@ -37,9 +37,9 @@ export default function ValuePropsSectionWithCMS() {
     { section: 'mediaBuyers' }
   );
   
-  const { data: dataSellerData } = useSanityData<ValuePropsData>(
+  const { data: dataControllerData } = useSanityData<ValuePropsData>(
     valuePropsQuery,
-    { section: 'dataSellers' }
+    { section: 'dataControllers' }
   );
 
   // Fallback data with all props
@@ -74,8 +74,8 @@ export default function ValuePropsSectionWithCMS() {
     ],
   };
 
-  const defaultDataSellerProps = {
-    headline: "For Data Sellers: Monetize with Performance Proof",
+  const defaultDataControllerProps = {
+    headline: "For Data Controllers: Monetize with Performance Proof",
     subheadline: "Whether you're a brand with first-party data or a broker with third-party segments, command premium prices through verified performance.",
     props: [
       {
@@ -106,10 +106,10 @@ export default function ValuePropsSectionWithCMS() {
   };
 
   const mediaBuyer = mediaBuyerData || defaultMediaBuyerProps;
-  const dataSeller = dataSellerData || defaultDataSellerProps;
+  const dataController = dataControllerData || defaultDataControllerProps;
 
   return (
-    <section className="py-20 bg-soft-white">
+    <section className="py-12 sm:py-16 md:py-20 bg-soft-white">
       <div className="container">
         {/* Media Buyer Section */}
         <motion.div
@@ -169,7 +169,7 @@ export default function ValuePropsSectionWithCMS() {
           </div>
         </motion.div>
 
-        {/* Data Seller Section */}
+        {/* Data Controller Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -177,15 +177,15 @@ export default function ValuePropsSectionWithCMS() {
         >
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-dark-gray mb-4">
-              {dataSeller.headline}
+              {dataController.headline}
             </h2>
             <p className="text-lg md:text-xl text-medium-gray max-w-3xl mx-auto">
-              {dataSeller.subheadline}
+              {dataController.subheadline}
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {dataSeller.props.map((prop, index) => {
+            {dataController.props.map((prop, index) => {
               const Icon = iconMap[prop.icon] || Shield;
               
               return (

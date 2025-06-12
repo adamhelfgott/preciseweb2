@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useSanityData } from "@/hooks/useSanityData";
-import { dataSellersHeroQuery } from "@/sanity/lib/queries";
+import { dataControllersHeroQuery } from "@/sanity/lib/queries";
 
 type HeroData = {
   headline: string;
@@ -15,9 +15,9 @@ type HeroData = {
   secondaryButtonHref: string;
 };
 
-export default function DataSellersHeroWithCMS() {
+export default function DataControllersHeroWithCMS() {
   // Fetch hero data from Sanity
-  const { data: heroData } = useSanityData<HeroData>(dataSellersHeroQuery);
+  const { data: heroData } = useSanityData<HeroData>(dataControllersHeroQuery);
 
   // Fallback to hardcoded content
   const hero = heroData || {
@@ -38,7 +38,7 @@ export default function DataSellersHeroWithCMS() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <p className="text-brand-green font-medium mb-4">For Data Sellers</p>
+            <p className="text-brand-green font-medium mb-4">For Data Controllers</p>
             
             <h1 className="text-display-hero font-bold text-dark-gray mb-6">
               {hero.headline.includes('with') ? (

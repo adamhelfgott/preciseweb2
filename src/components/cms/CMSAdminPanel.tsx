@@ -16,7 +16,7 @@ export default function CMSAdminPanel() {
     { id: "pricing", name: "Pricing" },
     { id: "contact", name: "Contact" },
     { id: "agent-intelligence", name: "Agent Intelligence" },
-    { id: "data-sellers", name: "Data Sellers" },
+    { id: "data-controllers", name: "Data Controllers" },
     { id: "media-buyers", name: "Media Buyers" },
   ];
 

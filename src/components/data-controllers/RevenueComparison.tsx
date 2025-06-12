@@ -42,7 +42,7 @@ export default function RevenueComparison() {
           className="text-center mb-16"
         >
           <h2 className="text-display-medium font-bold text-dark-gray mb-4">
-            Why data sellers choose Precise
+            Why data controllers choose Precise
           </h2>
           <p className="text-body-large text-medium-gray max-w-3xl mx-auto">
             Move from commodity pricing to value-based monetization

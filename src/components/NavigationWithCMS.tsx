@@ -32,7 +32,7 @@ export default function NavigationWithCMS() {
   // Fallback to hardcoded links if CMS is not set up
   const links = navLinks || [
     { href: "/how-it-works", label: "How it works" },
-    { href: "/data-sellers", label: "For data sellers" },
+    { href: "/data-controllers", label: "For data controllers" },
     { href: "/media-buyers", label: "For media buyers" },
     { href: "/measurement-partners", label: "For measurement" },
     { href: "/platforms", label: "For platforms" },
@@ -56,7 +56,7 @@ export default function NavigationWithCMS() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden xl:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-6">
             {links.map((link) => (
               <Link
                 key={link.href}

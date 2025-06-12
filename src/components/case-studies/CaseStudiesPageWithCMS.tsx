@@ -59,34 +59,34 @@ export default function CaseStudiesPageWithCMS() {
   // Fallback data
   const fallbackCaseStudies: CaseStudy[] = [
     {
-      _id: "chicago-cubs",
-      title: "Transforming Fan Data into Revenue",
-      slug: { current: "chicago-cubs" },
-      client: "Chicago Cubs",
+      _id: "mlb-team",
+      title: "How a Major League Baseball Team Drove 312% ROI",
+      slug: { current: "mlb-team" },
+      client: "Major League Baseball Team",
       industry: "Sports & Entertainment",
-      challenge: "The Chicago Cubs wanted to monetize their valuable fan data while maintaining strict privacy standards and fan trust.",
-      solution: "Implemented Precise's privacy-preserving infrastructure to create verified fan segments for advertisers, enabling targeted campaigns without exposing individual fan data.",
+      challenge: "Traditional sports marketing relied on broadcast and email, with only 15-20% match rates when uploading CRM data to platforms.",
+      solution: "Implemented Precise's verified credential system to achieve 89% match rates and multi-touch attribution across digital channels.",
       results: [
         {
-          metric: "Revenue Increase",
+          metric: "ROI",
+          value: "312%",
+          description: "Return on investment for ticket sales campaigns"
+        },
+        {
+          metric: "New Season Tickets",
           value: "+47%",
-          description: "New data revenue stream from verified fan segments"
+          description: "Increase in new season ticket holders"
         },
         {
-          metric: "Privacy Compliance",
-          value: "100%",
-          description: "Full CCPA and GDPR compliance maintained"
-        },
-        {
-          metric: "Advertiser ROI",
-          value: "3.2x",
-          description: "Average return on investment for campaigns using verified data"
+          metric: "Match Rate",
+          value: "89%",
+          description: "Up from 18% before using verified credentials"
         }
       ],
       testimonial: {
-        quote: "Precise allowed us to unlock the value of our fan data while maintaining the highest privacy standards. It's a game-changer for sports franchises.",
-        author: "Colin Faulkner",
-        title: "VP of Sales & Marketing, Chicago Cubs"
+        quote: "Precise didn't just improve our match rates—they fundamentally changed how we think about fan data. For the first time, we can see exactly which digital touchpoints drive ticket sales.",
+        author: "VP of Marketing",
+        title: "Major League Baseball Team"
       },
     },
     {

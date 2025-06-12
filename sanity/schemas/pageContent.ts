@@ -10,7 +10,7 @@ export default defineType({
       title: 'Page Identifier',
       type: 'string',
       validation: (Rule) => Rule.required(),
-      description: 'Unique identifier for the page (e.g., "data-sellers", "media-buyers")',
+      description: 'Unique identifier for the page (e.g., "data-controllers", "media-buyers")',
     }),
     defineField({
       name: 'title',

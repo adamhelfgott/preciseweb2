@@ -31,7 +31,7 @@ export default function ValuePropsSection() {
     },
   ];
 
-  const dataSellerProps = [
+  const dataControllerProps = [
     {
       title: "3-5x Revenue Uplift",
       description: "Command premium prices when you can prove performance. Move from CPM to value-based pricing.",
@@ -115,7 +115,7 @@ export default function ValuePropsSection() {
           </div>
         </motion.div>
 
-        {/* Data Seller Section */}
+        {/* Data Controller Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -123,7 +123,7 @@ export default function ValuePropsSection() {
         >
           <div className="text-center mb-12">
             <h2 className="text-display-medium font-bold text-dark-gray mb-4">
-              For Data Sellers: Monetize with Performance Proof
+              For Data Controllers: Monetize with Performance Proof
             </h2>
             <p className="text-body-large text-medium-gray max-w-3xl mx-auto">
               Whether you're a brand with first-party data or a broker with third-party segments, command premium prices through verified performance.
@@ -131,7 +131,7 @@ export default function ValuePropsSection() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {dataSellerProps.map((prop, index) => (
+            {dataControllerProps.map((prop, index) => (
               <motion.div
                 key={prop.title}
                 initial={{ opacity: 0, y: 20 }}

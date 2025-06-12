@@ -26,7 +26,7 @@ export default function CTASectionWithCMS() {
   };
 
   return (
-    <section className="section-padding bg-gradient-to-br from-brand-green/10 to-bright-purple/10">
+    <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-brand-green/10 to-bright-purple/10">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}

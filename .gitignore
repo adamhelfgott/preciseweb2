@@ -48,3 +48,6 @@ next-env.d.ts
 precise/
 precise_images.zip
 .env.uxonly
+.env.local.backup
+deploy-safe.sh
+fix-local.sh

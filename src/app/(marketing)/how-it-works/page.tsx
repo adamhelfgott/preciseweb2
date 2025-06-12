@@ -22,6 +22,7 @@ import {
   RefreshCcw,
   Sparkles
 } from "lucide-react";
+import ProofInfrastructureSection from "@/components/marketing/ProofInfrastructureSection";
 
 export default function HowItWorksPage() {
   const [activeTab, setActiveTab] = useState<"data-controller" | "media-buyer">("media-buyer");
@@ -43,8 +44,12 @@ export default function HowItWorksPage() {
               Precise combines federated learning, predictive analytics, and privacy-preserving computation to revolutionize how brands collaborate with data
             </p>
           </motion.div>
+        </div>
+      </section>
 
-          {/* Tab Selection */}
+      {/* Tab Selection */}
+      <section className="py-8">
+        <div className="container max-w-6xl">
           <div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
             <button
               onClick={() => setActiveTab("media-buyer")}
@@ -359,24 +364,6 @@ export default function HowItWorksPage() {
             </div>
           </section>
 
-          {/* CTA */}
-          <section className="py-16 bg-dark-gray">
-            <div className="container max-w-4xl text-center">
-              <h2 className="text-3xl font-bold text-white mb-4">
-                Join the AI-Powered Future of Media Buying
-              </h2>
-              <p className="text-xl text-gray-300 mb-8">
-                Leading brands use Precise to outperform their competition
-              </p>
-              <a
-                href="/get-started"
-                className="inline-flex items-center gap-2 bg-brand-green text-white font-semibold px-8 py-4 rounded-lg hover:bg-green-700 transition-colors"
-              >
-                See Live Demo
-                <ArrowRight size={20} />
-              </a>
-            </div>
-          </section>
         </motion.div>
       )}
 
@@ -694,26 +681,36 @@ precise.governance({
             </div>
           </section>
 
-          {/* CTA */}
-          <section className="py-16 bg-dark-gray">
-            <div className="container max-w-4xl text-center">
-              <h2 className="text-3xl font-bold text-white mb-4">
-                Enable Intelligence Without Sharing Data
-              </h2>
-              <p className="text-xl text-gray-300 mb-8">
-                Join leading brands already using federated intelligence
-              </p>
-              <a
-                href="/get-started"
-                className="inline-flex items-center gap-2 bg-brand-green text-white font-semibold px-8 py-4 rounded-lg hover:bg-green-700 transition-colors"
-              >
-                Schedule Demo
-                <ArrowRight size={20} />
-              </a>
-            </div>
-          </section>
         </motion.div>
       )}
+
+      {/* Proof Infrastructure Section - Always visible */}
+      <ProofInfrastructureSection />
+
+      {/* Dynamic CTA Footer */}
+      <section className="py-16 bg-dark-gray">
+        <div className="container max-w-4xl text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            {activeTab === "media-buyer" 
+              ? "Join the AI-Powered Future of Media Buying"
+              : "Enable Intelligence Without Sharing Data"
+            }
+          </h2>
+          <p className="text-xl text-gray-300 mb-8">
+            {activeTab === "media-buyer"
+              ? "Leading brands use Precise to outperform their competition"
+              : "Join leading brands already using federated intelligence"
+            }
+          </p>
+          <a
+            href="/get-started"
+            className="inline-flex items-center gap-2 bg-brand-green text-white font-semibold px-8 py-4 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            {activeTab === "media-buyer" ? "See Live Demo" : "Schedule Demo"}
+            <ArrowRight size={20} />
+          </a>
+        </div>
+      </section>
     </div>
   );
 }
