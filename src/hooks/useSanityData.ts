@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { client } from '@/sanity/lib/client';
+import { isDemoMode } from '@/sanity/env';
 
 export function useSanityData<T>(
   query: string,
@@ -13,8 +14,8 @@ export function useSanityData<T>(
 
   useEffect(() => {
     const fetchData = async () => {
-      // In mock mode, immediately return null data to use fallbacks
-      if (process.env.NEXT_PUBLIC_MOCK_MODE === 'true') {
+      // In mock mode or if using dummy Sanity config, immediately return null data to use fallbacks
+      if (process.env.NEXT_PUBLIC_MOCK_MODE === 'true' || isDemoMode) {
         setData(null);
         setLoading(false);
         return;
@@ -28,7 +29,12 @@ export function useSanityData<T>(
         setData(result);
       } catch (err) {
         console.error('[useSanityData] Error:', err);
-        setError(err instanceof Error ? err : new Error('Failed to fetch data'));
+        // Don't set error for dummy project ID, just return null data
+        if (err instanceof Error && err.message.includes('dummy.apicdn.sanity.io')) {
+          setData(null);
+        } else {
+          setError(err instanceof Error ? err : new Error('Failed to fetch data'));
+        }
       } finally {
         setLoading(false);
       }

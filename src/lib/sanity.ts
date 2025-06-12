@@ -1,9 +1,18 @@
 import { createClient } from '@sanity/client';
 import imageUrlBuilder from '@sanity/image-url';
 
-export const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'dummy';
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
+const isDemoMode = projectId === 'dummy' || !process.env.NEXT_PUBLIC_SANITY_PROJECT_ID;
+
+// In demo mode, create a mock client that won't make real requests
+export const client = isDemoMode ? {
+  fetch: async () => null,
+  config: () => ({ projectId, dataset }),
+  withConfig: () => client,
+} as any : createClient({
+  projectId,
+  dataset,
   apiVersion: '2024-01-01',
   useCdn: process.env.NODE_ENV === 'production',
 });

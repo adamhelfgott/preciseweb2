@@ -1,8 +1,13 @@
 import { createClient } from 'next-sanity'
 
-import { apiVersion, dataset, projectId } from '../env'
+import { apiVersion, dataset, projectId, isDemoMode } from '../env'
 
-export const client = createClient({
+// In demo mode, create a client that won't make real requests
+export const client = isDemoMode ? {
+  fetch: async () => null,
+  config: () => ({ projectId, dataset, apiVersion }),
+  withConfig: () => client,
+} as any : createClient({
   projectId,
   dataset,
   apiVersion,
