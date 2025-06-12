@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Check, Zap, Shield, BarChart3, Users } from "lucide-react";
-import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
 
 const iconMap = {
   Zap: Zap,
@@ -13,8 +11,93 @@ const iconMap = {
   Users: Users,
 };
 
+// Hardcoded content for pricing page
+const DEFAULT_CONTENT = {
+  hero: {
+    title: "Enterprise Pricing",
+    description: "Transparent pricing designed for scale, with custom solutions for your specific needs"
+  },
+  valueProps: [
+    {
+      icon: "Zap",
+      title: "Real-time Attribution",
+      description: "Instant Shapley calculations"
+    },
+    {
+      icon: "Shield",
+      title: "Privacy-First",
+      description: "Data never leaves your control"
+    },
+    {
+      icon: "BarChart3",
+      title: "Usage-Based",
+      description: "Pay only for what you use"
+    },
+    {
+      icon: "Users",
+      title: "White-Glove Support",
+      description: "Dedicated success team"
+    }
+  ],
+  features: [
+    "Unlimited data connections",
+    "Real-time Shapley value calculations",
+    "Custom attribution models",
+    "Dedicated account manager",
+    "24/7 technical support",
+    "SLA guarantees",
+    "Custom integrations",
+    "Compliance documentation"
+  ],
+  roi: {
+    title: "Expected ROI",
+    description: "Based on current customer data",
+    metrics: [
+      { label: "Average revenue increase", value: "+47%" },
+      { label: "Data utilization improvement", value: "+3.2x" },
+      { label: "Time to insights", value: "-85%" }
+    ]
+  },
+  form: {
+    title: "Get Enterprise Pricing",
+    submitButton: "Get Pricing",
+    disclaimer: "We'll respond within 24 hours with custom pricing based on your needs.",
+    fields: {
+      name: { label: "Full Name" },
+      email: { label: "Work Email" },
+      company: { label: "Company" },
+      role: {
+        label: "Role",
+        options: [
+          { value: "cto", label: "CTO / Technical" },
+          { value: "cmo", label: "CMO / Marketing" },
+          { value: "cdo", label: "CDO / Data" },
+          { value: "other", label: "Other" }
+        ]
+      },
+      dataVolume: {
+        label: "Monthly Data Volume",
+        options: [
+          { value: "small", label: "< 10M records" },
+          { value: "medium", label: "10M - 100M records" },
+          { value: "large", label: "100M - 1B records" },
+          { value: "enterprise", label: "> 1B records" }
+        ]
+      },
+      message: {
+        label: "Additional Information",
+        placeholder: "Tell us about your use case and specific requirements..."
+      }
+    }
+  },
+  trustedBy: {
+    title: "Trusted by industry leaders",
+    companies: ["Fortune 500 Retailer", "Top 10 CPG Brand", "Leading Ad Platform", "Global Media Company"]
+  }
+};
+
 export default function PricingPageWithCMS() {
-  const content = useQuery(api.cms.getPricingContent);
+  const content = DEFAULT_CONTENT;
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -38,18 +121,6 @@ export default function PricingPageWithCMS() {
     });
   };
 
-  if (!content) {
-    return (
-      <div className="pt-16 md:pt-20 min-h-screen bg-gradient-to-b from-soft-white to-white">
-        <div className="container max-w-4xl">
-          <div className="animate-pulse">
-            <div className="h-12 w-3/4 bg-gray-200 rounded mx-auto mb-4" />
-            <div className="h-6 w-1/2 bg-gray-200 rounded mx-auto mb-12" />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="pt-16 md:pt-20 min-h-screen bg-gradient-to-b from-soft-white to-white">

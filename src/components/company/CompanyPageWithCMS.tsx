@@ -2,33 +2,112 @@
 
 import { motion } from "framer-motion";
 import { Linkedin } from "lucide-react";
-import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
+
+// Hardcoded content for company page
+const DEFAULT_CONTENT = {
+  hero: {
+    title: "Our Team",
+    description: "Building the infrastructure for the AI data economy with decades of experience from the world's leading media and technology companies."
+  },
+  teamMembers: [
+    {
+      name: "Jesse Redniss",
+      role: "CEO",
+      bio: "Qonsent, WarnerMedia",
+      linkedin: "https://www.linkedin.com/in/jesse-redniss-8a49691/",
+      imageUrl: "/team/jesse.jpg"
+    },
+    {
+      name: "Adam Helfgott",
+      role: "Co-Founder",
+      bio: "MadHive",
+      linkedin: "https://www.linkedin.com/in/adamhelfgott",
+      imageUrl: "/team/adam-helfgott.jpg"
+    },
+    {
+      name: "Kevin O'Neill",
+      role: "Chief Product Officer",
+      bio: "DNAStack, Splash",
+      linkedin: "https://www.linkedin.com/in/kevoneill",
+      imageUrl: "/team/kevin-oneill.jpg"
+    },
+    {
+      name: "Ed Laws",
+      role: "Chief Operations Officer",
+      bio: "InMobi, Yahoo",
+      linkedin: "https://www.linkedin.com/in/edwardlaws",
+      imageUrl: "/team/ed.jpg"
+    },
+    {
+      name: "Justin Gutschmidt",
+      role: "Chief Revenue Officer",
+      bio: "Premion",
+      linkedin: "https://www.linkedin.com/in/jgutschmidt",
+      imageUrl: "/team/justin.jpg"
+    },
+    {
+      name: "Matt Barlin",
+      role: "Chief Science Officer",
+      bio: "Valence",
+      linkedin: "https://www.linkedin.com/in/matthew-barlin",
+      imageUrl: "/team/matt-barlin.jpg"
+    },
+    {
+      name: "Seth Redniss",
+      role: "General Counsel",
+      bio: "Redniss Law",
+      linkedin: "https://www.linkedin.com/in/seth-redniss-005b7b14",
+      imageUrl: "/team/seth-redniss.jpg"
+    },
+    {
+      name: "Greg Couture",
+      role: "Technology",
+      bio: "NBCU, Qonsent",
+      linkedin: "https://www.linkedin.com/in/greg-couture-785551",
+      imageUrl: "/team/greg-couture.jpg"
+    },
+    {
+      name: "Angelica Haase",
+      role: "Client Operations",
+      bio: "Qonsent",
+      linkedin: "https://www.linkedin.com/in/angelica-haase-mba-815a93143/",
+      imageUrl: "/team/angelica-haase.jpg"
+    },
+    {
+      name: "Mary Sculley",
+      role: "Sales & Impact",
+      bio: "NBCU, WarnerMedia",
+      linkedin: "https://www.linkedin.com/in/mary-sculley-48a18b17",
+      imageUrl: "/team/mary-sculley.jpg"
+    }
+  ],
+  culture: {
+    title: "Our Culture",
+    description: "We believe in building technology that empowers both data owners and advertisers to collaborate fairly and transparently.",
+    values: [
+      {
+        title: "Privacy First",
+        description: "Every product decision starts with privacy and user control at its core."
+      },
+      {
+        title: "Fair Value Exchange",
+        description: "Using mathematical models to ensure everyone gets their fair share."
+      },
+      {
+        title: "Radical Transparency",
+        description: "Open about our methods, metrics, and attribution models."
+      },
+      {
+        title: "Continuous Innovation",
+        description: "Pushing the boundaries of what's possible in privacy-preserving tech."
+      }
+    ]
+  }
+};
 
 export default function CompanyPageWithCMS() {
-  const content = useQuery(api.cms.getCompanyContent);
+  const content = DEFAULT_CONTENT;
 
-  if (!content) {
-    return (
-      <div className="pt-16 md:pt-20 min-h-screen bg-soft-white">
-        <div className="container section-padding">
-          <div className="animate-pulse">
-            <div className="h-12 w-3/4 bg-gray-200 rounded mx-auto mb-4" />
-            <div className="h-6 w-1/2 bg-gray-200 rounded mx-auto mb-12" />
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="text-center">
-                  <div className="w-40 h-40 bg-gray-200 rounded-lg mx-auto mb-4" />
-                  <div className="h-4 w-3/4 bg-gray-200 rounded mx-auto mb-2" />
-                  <div className="h-3 w-1/2 bg-gray-200 rounded mx-auto" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="pt-16 md:pt-20 min-h-screen bg-soft-white">

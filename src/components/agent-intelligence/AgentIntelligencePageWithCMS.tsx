@@ -5,8 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Brain, TrendingUp, Users, Shield, ArrowRight, CheckCircle, Zap } from "lucide-react";
 import InteractiveA2ADiagram from "@/components/marketing/InteractiveA2ADiagram";
 import CodeTabs from "@/components/marketing/CodeTabs";
-import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
 
 const iconMap = {
   Brain: Brain,
@@ -17,23 +15,72 @@ const iconMap = {
   CheckCircle: CheckCircle,
 };
 
-export default function AgentIntelligencePageWithCMS() {
-  const content = useQuery(api.cms.getAgentIntelligenceContent);
-
-  if (!content) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        <div className="pt-32 pb-16 px-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="animate-pulse">
-              <div className="h-12 w-3/4 bg-gray-200 rounded mx-auto mb-4" />
-              <div className="h-6 w-1/2 bg-gray-200 rounded mx-auto mb-12" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+// Hardcoded content for agent intelligence page
+const DEFAULT_CONTENT = {
+  hero: {
+    badge: {
+      icon: "Zap",
+      text: "AI-Powered Infrastructure"
+    },
+    title: "Agent Intelligence for Modern Advertising",
+    description: "Enable AI agents to discover, negotiate, and transact with verified data in real-time. Built for the autonomous future of advertising.",
+    cta: {
+      primary: { text: "Start Building", href: "/get-started" },
+      secondary: { text: "View Documentation", href: "/developers" }
+    }
+  },
+  features: [
+    {
+      icon: "Brain",
+      title: "Autonomous Discovery",
+      description: "AI agents automatically discover relevant data sources based on campaign objectives and performance goals."
+    },
+    {
+      icon: "TrendingUp",
+      title: "Real-time Optimization",
+      description: "Continuous learning and adjustment based on Shapley value attribution and campaign performance metrics."
+    },
+    {
+      icon: "Users",
+      title: "Multi-Agent Coordination",
+      description: "Enable multiple AI agents to collaborate and share insights while maintaining data privacy and ownership."
+    },
+    {
+      icon: "Shield",
+      title: "Verified Transactions",
+      description: "Every data exchange is cryptographically verified with clear attribution and automatic royalty distribution."
+    }
+  ],
+  capabilities: {
+    title: "Built for AI-First Workflows",
+    items: [
+      "Natural language campaign brief processing",
+      "Automated audience discovery and sizing",
+      "Dynamic budget allocation across data sources",
+      "Predictive performance modeling",
+      "Autonomous negotiation protocols",
+      "Real-time compliance monitoring"
+    ]
+  },
+  integration: {
+    title: "Simple Integration, Powerful Results",
+    description: "Connect your AI agents to Precise's infrastructure with just a few lines of code.",
+    metrics: [
+      { value: "<100ms", label: "Query Response Time" },
+      { value: "10M+", label: "Data Points Processed/sec" },
+      { value: "99.99%", label: "Uptime SLA" }
+    ]
+  },
+  cta: {
+    title: "Ready to Build the Future?",
+    description: "Join leading platforms already using Precise to power their AI advertising agents.",
+    button: { text: "Get API Access", href: "/get-started" }
   }
+};
+
+export default function AgentIntelligencePageWithCMS() {
+  const content = DEFAULT_CONTENT;
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">

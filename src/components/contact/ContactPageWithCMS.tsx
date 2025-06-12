@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, MessageSquare, Calendar, MapPin, Send } from "lucide-react";
-import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
 
 const iconMap = {
   Mail: Mail,
@@ -14,8 +12,71 @@ const iconMap = {
   Send: Send,
 };
 
+// Hardcoded content for contact page
+const DEFAULT_CONTENT = {
+  hero: {
+    title: "Let's Start a Conversation",
+    description: "Whether you're a data owner looking to monetize your assets or an advertiser seeking better attribution, we're here to help."
+  },
+  contactMethods: [
+    {
+      icon: "Mail",
+      title: "Email Us",
+      description: "Get in touch with our team",
+      action: "hello@precise.ai",
+      link: "mailto:hello@precise.ai"
+    },
+    {
+      icon: "Calendar",
+      title: "Schedule a Demo",
+      description: "See Precise in action",
+      action: "Book a 30-min call",
+      link: "https://calendly.com/precise-demo"
+    },
+    {
+      icon: "MessageSquare",
+      title: "Live Chat",
+      description: "Chat with our team",
+      action: "Start conversation",
+      link: "#"
+    }
+  ],
+  form: {
+    title: "Send us a message",
+    subtitle: "We'll get back to you within 24 hours",
+    submitButton: "Send Message",
+    fields: {
+      name: { label: "Name", placeholder: "John Doe" },
+      email: { label: "Email", placeholder: "john@company.com" },
+      company: { label: "Company", placeholder: "Acme Inc." },
+      role: {
+        label: "I am a...",
+        options: [
+          { value: "media-buyer", label: "Media Buyer / Advertiser" },
+          { value: "data-owner", label: "Data Owner / Publisher" },
+          { value: "platform", label: "Platform / Technology Partner" },
+          { value: "other", label: "Other" }
+        ]
+      },
+      message: { label: "Message", placeholder: "Tell us about your needs..." }
+    }
+  },
+  locations: [
+    {
+      city: "New York",
+      address: "123 Broadway, Suite 100",
+      country: "USA"
+    },
+    {
+      city: "San Francisco",
+      address: "456 Market St, Floor 20",
+      country: "USA"
+    }
+  ]
+};
+
 export default function ContactPageWithCMS() {
-  const content = useQuery(api.cms.getContactContent);
+  const content = DEFAULT_CONTENT;
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -64,18 +125,6 @@ export default function ContactPageWithCMS() {
     }
   };
 
-  if (!content) {
-    return (
-      <div className="pt-16 md:pt-20 min-h-screen bg-gradient-to-b from-soft-white to-white">
-        <div className="container max-w-6xl">
-          <div className="animate-pulse">
-            <div className="h-12 w-3/4 bg-gray-200 rounded mx-auto mb-4" />
-            <div className="h-6 w-1/2 bg-gray-200 rounded mx-auto mb-12" />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="pt-16 md:pt-20 min-h-screen bg-gradient-to-b from-soft-white to-white">
