@@ -16,7 +16,8 @@ const iconMap = {
 const DEFAULT_CONTENT = {
   hero: {
     title: "Let's Start a Conversation",
-    description: "Whether you're a data owner looking to monetize your assets or an advertiser seeking better attribution, we're here to help."
+    titleHighlight: "",
+    subtitle: "Whether you're a data owner looking to monetize your assets or an advertiser seeking better attribution, we're here to help."
   },
   contactMethods: [
     {
@@ -46,11 +47,12 @@ const DEFAULT_CONTENT = {
     subtitle: "We'll get back to you within 24 hours",
     submitButton: "Send Message",
     fields: {
-      name: { label: "Name", placeholder: "John Doe" },
-      email: { label: "Email", placeholder: "john@company.com" },
-      company: { label: "Company", placeholder: "Acme Inc." },
+      name: { label: "Name", placeholder: "John Doe", required: true },
+      email: { label: "Email", placeholder: "john@company.com", required: true },
+      company: { label: "Company", placeholder: "Acme Inc.", required: true },
       role: {
         label: "I am a...",
+        required: true,
         options: [
           { value: "media-buyer", label: "Media Buyer / Advertiser" },
           { value: "data-owner", label: "Data Owner / Publisher" },
@@ -58,7 +60,7 @@ const DEFAULT_CONTENT = {
           { value: "other", label: "Other" }
         ]
       },
-      message: { label: "Message", placeholder: "Tell us about your needs..." }
+      message: { label: "Message", placeholder: "Tell us about your needs...", required: false }
     }
   },
   locations: [
@@ -72,7 +74,49 @@ const DEFAULT_CONTENT = {
       address: "456 Market St, Floor 20",
       country: "USA"
     }
-  ]
+  ],
+  quickContact: {
+    title: "Quick Contact",
+    items: [
+      {
+        icon: "Mail",
+        label: "Email us at",
+        value: "hello@precise.ai",
+        link: "mailto:hello@precise.ai"
+      },
+      {
+        icon: "MessageSquare",
+        label: "Live chat",
+        value: "Available 9am-6pm EST",
+        link: "#"
+      }
+    ]
+  },
+  office: {
+    title: "Main Office",
+    location: {
+      name: "New York Headquarters",
+      address: [
+        "123 Broadway, Suite 100",
+        "New York, NY 10004",
+        "United States"
+      ]
+    }
+  },
+  responseTime: {
+    title: "Fast Response Times",
+    description: "We're committed to getting back to you quickly with the information you need.",
+    metrics: [
+      { time: "< 1 hour", label: "Initial response" },
+      { time: "< 24 hours", label: "Full follow-up" }
+    ]
+  },
+  faqCta: {
+    title: "Have more questions?",
+    description: "Check out our comprehensive FAQ section for instant answers.",
+    primaryButton: { text: "View FAQ", href: "/faq" },
+    secondaryButton: { text: "Schedule a call", href: "https://calendly.com/precise-demo" }
+  }
 };
 
 export default function ContactPageWithCMS() {
