@@ -81,14 +81,8 @@ const DEFAULT_CONTENT = {
       {
         icon: "Mail",
         label: "Email us at",
-        value: "hello@precise.ai",
-        link: "mailto:hello@precise.ai"
-      },
-      {
-        icon: "MessageSquare",
-        label: "Live chat",
-        value: "Available 9am-6pm EST",
-        link: "#"
+        value: "info@precise.ai",
+        link: "mailto:info@precise.ai"
       }
     ]
   },
@@ -114,8 +108,7 @@ const DEFAULT_CONTENT = {
   faqCta: {
     title: "Have more questions?",
     description: "Check out our comprehensive FAQ section for instant answers.",
-    primaryButton: { text: "View FAQ", href: "/faq" },
-    secondaryButton: { text: "Schedule a call", href: "https://calendly.com/precise-demo" }
+    primaryButton: { text: "View FAQ", href: "/faq" }
   }
 };
 
@@ -267,7 +260,7 @@ export default function ContactPageWithCMS() {
                     </label>
                     <textarea
                       required={content.form.fields.message.required}
-                      rows={4}
+                      rows={6}
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full px-4 py-3 border border-silk-gray rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent transition-all resize-none"
@@ -301,7 +294,7 @@ export default function ContactPageWithCMS() {
                   )}
                   {submitStatus === 'error' && (
                     <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800">
-                      Something went wrong. Please try again or email us directly at hello@precise.ai
+                      Something went wrong. Please try again or email us directly at info@precise.ai
                     </div>
                   )}
                 </form>
@@ -391,18 +384,12 @@ export default function ContactPageWithCMS() {
             <p className="text-medium-gray mb-6">
               {content.faqCta.description}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex justify-center">
               <a
                 href={content.faqCta.primaryButton.href}
                 className="inline-flex items-center justify-center px-6 py-3 bg-dark-gray text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
               >
                 {content.faqCta.primaryButton.text}
-              </a>
-              <a
-                href={content.faqCta.secondaryButton.href}
-                className="inline-flex items-center justify-center px-6 py-3 border-2 border-dark-gray text-dark-gray font-semibold rounded-lg hover:bg-light-gray transition-colors"
-              >
-                {content.faqCta.secondaryButton.text}
               </a>
             </div>
           </motion.div>
