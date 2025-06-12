@@ -1,6 +1,18 @@
 import { NextResponse } from 'next/server';
 import { ConvexHttpClient } from "convex/browser";
 import { api } from "../../../../convex/_generated/api";
+import nodemailer from 'nodemailer';
+
+// Create reusable transporter object using SMTP transport
+const transporter = nodemailer.createTransporter({
+  host: process.env.SMTP_HOST, // e.g., "smtp.gmail.com"
+  port: parseInt(process.env.SMTP_PORT || "587"),
+  secure: process.env.SMTP_SECURE === "true", // true for 465, false for other ports
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 export async function POST(request: Request) {
   try {
@@ -13,6 +25,72 @@ export async function POST(request: Request) {
         { error: 'Missing required fields' },
         { status: 400 }
       );
+    }
+
+    // Send email notification
+    try {
+      const roleLabels: Record<string, string> = {
+        'media-buyer': 'Media Buyer / Advertiser',
+        'data-owner': 'Data Owner / Publisher',
+        'platform': 'Platform / Technology Partner',
+        'other': 'Other'
+      };
+
+      const mailOptions = {
+        from: `"Precise Contact Form" <${process.env.SMTP_USER}>`,
+        to: 'info@precise.ai',
+        subject: `New Contact Form Submission from ${name}`,
+        text: `
+New contact form submission:
+
+Name: ${name}
+Email: ${email}
+Company: ${company || 'Not provided'}
+Role: ${roleLabels[role] || role || 'Not provided'}
+
+Message:
+${message}
+
+---
+Submitted at: ${new Date().toLocaleString()}
+        `,
+        html: `
+          <h2>New Contact Form Submission</h2>
+          <table style="border-collapse: collapse; width: 100%;">
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd;"><strong>Name:</strong></td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd;"><strong>Email:</strong></td>
+              <td style="padding: 8px; border: 1px solid #ddd;"><a href="mailto:${email}">${email}</a></td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd;"><strong>Company:</strong></td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${company || 'Not provided'}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px; border: 1px solid #ddd;"><strong>Role:</strong></td>
+              <td style="padding: 8px; border: 1px solid #ddd;">${roleLabels[role] || role || 'Not provided'}</td>
+            </tr>
+          </table>
+          <h3>Message:</h3>
+          <p style="white-space: pre-wrap;">${message}</p>
+          <hr>
+          <p style="color: #666; font-size: 12px;">Submitted at: ${new Date().toLocaleString()}</p>
+        `,
+        replyTo: email, // This allows replying directly to the sender
+      };
+
+      if (process.env.SMTP_HOST && process.env.SMTP_USER) {
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully to info@precise.ai');
+      } else {
+        console.log('Email not sent - SMTP not configured');
+      }
+    } catch (emailError) {
+      console.error('Email sending error:', emailError);
+      // Don't fail the whole request if email fails
     }
 
     // Save to Convex if available
