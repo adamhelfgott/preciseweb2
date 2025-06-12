@@ -110,7 +110,7 @@ export default function IntegrationBenefitsWithCMS() {
               >
                 <div className="h-full bg-white rounded-2xl border border-silk-gray p-6 hover:shadow-lg transition-all">
                   {/* Icon */}
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-soft-lavender to-soft-lavender/70 p-2.5 mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-bright-purple to-electric-blue p-2.5 mb-4">
                     <IconComponent className="w-full h-full text-white" />
                   </div>
                   
@@ -125,7 +125,7 @@ export default function IntegrationBenefitsWithCMS() {
                   {/* Value metric */}
                   {benefit.features && benefit.features.length > 0 && (
                     <div className="pt-4 border-t border-silk-gray">
-                      <span className="text-soft-lavender font-semibold">
+                      <span className="text-bright-purple font-semibold">
                         {benefit.features[0]}
                       </span>
                     </div>
