@@ -45,6 +45,22 @@ const MOCK_USERS: Record<string, User> = {
     company: "Nike",
     onboardingCompleted: true,
   },
+  "luigi@demo.com": {
+    id: "k976xv9zsnasrrjbps9zj206297hryp2",
+    email: "luigi@demo.com",
+    name: "Luigi",
+    role: "MEDIA_BUYER",
+    company: "Professional Sports Team",
+    onboardingCompleted: true,
+  },
+  "mario@demo.com": {
+    id: "k976377vgwdebhknz6z4z9av4d7hrdaf",
+    email: "mario@demo.com",
+    name: "Mario",
+    role: "DATA_OWNER",
+    company: "Audience Acuity",
+    onboardingCompleted: true,
+  },
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {

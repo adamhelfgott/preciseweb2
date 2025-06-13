@@ -29,12 +29,18 @@ export default function SignInPage() {
     }
   };
 
-  const fillDemoCredentials = (role: "dataowner" | "mediabuyer") => {
+  const fillDemoCredentials = (role: "dataowner" | "mediabuyer" | "mario" | "luigi") => {
     if (role === "dataowner") {
       setEmail("dataowner@demo.com");
       setPassword("demo123");
-    } else {
+    } else if (role === "mediabuyer") {
       setEmail("mediabuyer@demo.com");
+      setPassword("demo123");
+    } else if (role === "mario") {
+      setEmail("mario@demo.com");
+      setPassword("demo123");
+    } else if (role === "luigi") {
+      setEmail("luigi@demo.com");
       setPassword("demo123");
     }
   };
@@ -78,10 +84,22 @@ export default function SignInPage() {
                 <strong>Data Controller:</strong> dataowner@demo.com / demo123
               </button>
               <button
+                onClick={() => fillDemoCredentials("mario")}
+                className="w-full text-left text-sm p-2 hover:bg-brand-green/10 rounded transition-colors"
+              >
+                <strong>Data Owner - Audience Acuity:</strong> mario@demo.com / demo123
+              </button>
+              <button
                 onClick={() => fillDemoCredentials("mediabuyer")}
                 className="w-full text-left text-sm p-2 hover:bg-brand-green/10 rounded transition-colors"
               >
                 <strong>Media Buyer:</strong> mediabuyer@demo.com / demo123
+              </button>
+              <button
+                onClick={() => fillDemoCredentials("luigi")}
+                className="w-full text-left text-sm p-2 hover:bg-brand-green/10 rounded transition-colors"
+              >
+                <strong>Media Buyer - Pro Sports Team:</strong> luigi@demo.com / demo123
               </button>
             </div>
           </div>

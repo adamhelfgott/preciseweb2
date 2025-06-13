@@ -392,9 +392,9 @@ export default function DataAssetsPage() {
                   Campaign Impact
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  {(asset.campaignImpact || asset.campaigns || []).map((campaign: any) => (
+                  {(asset.campaignImpact || asset.campaigns || []).map((campaign: any, idx: number) => (
                     <div 
-                      key={campaign.name}
+                      key={campaign.name || `campaign-${idx}`}
                       className="bg-light-gray rounded-lg p-3 flex items-center justify-between"
                     >
                       <span className="text-sm text-dark-gray font-medium">

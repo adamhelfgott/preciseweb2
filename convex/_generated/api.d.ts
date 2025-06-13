@@ -27,16 +27,20 @@ import type * as crossChannel from "../crossChannel.js";
 import type * as customAttribution from "../customAttribution.js";
 import type * as dataAssets from "../dataAssets.js";
 import type * as dataEnhancement from "../dataEnhancement.js";
+import type * as dataMapping_luigiSportsTeamCampaign from "../dataMapping/luigiSportsTeamCampaign.js";
 import type * as dspPerformance from "../dspPerformance.js";
 import type * as earnings from "../earnings.js";
 import type * as incrementality from "../incrementality.js";
 import type * as initializeMockUsers from "../initializeMockUsers.js";
 import type * as marketBenchmarking from "../marketBenchmarking.js";
 import type * as marketplace from "../marketplace.js";
+import type * as migrations_executeSportsCampaignMigration from "../migrations/executeSportsCampaignMigration.js";
 import type * as migrations_migrateMediaBuyerCampaigns from "../migrations/migrateMediaBuyerCampaigns.js";
+import type * as migrations_sportsCampaignMigrationPlan from "../migrations/sportsCampaignMigrationPlan.js";
 import type * as recommendations from "../recommendations.js";
 import type * as regional from "../regional.js";
 import type * as simulations from "../simulations.js";
+import type * as testMigration from "../testMigration.js";
 import type * as usageAnalytics from "../usageAnalytics.js";
 
 /**
@@ -62,16 +66,20 @@ declare const fullApi: ApiFromModules<{
   customAttribution: typeof customAttribution;
   dataAssets: typeof dataAssets;
   dataEnhancement: typeof dataEnhancement;
+  "dataMapping/luigiSportsTeamCampaign": typeof dataMapping_luigiSportsTeamCampaign;
   dspPerformance: typeof dspPerformance;
   earnings: typeof earnings;
   incrementality: typeof incrementality;
   initializeMockUsers: typeof initializeMockUsers;
   marketBenchmarking: typeof marketBenchmarking;
   marketplace: typeof marketplace;
+  "migrations/executeSportsCampaignMigration": typeof migrations_executeSportsCampaignMigration;
   "migrations/migrateMediaBuyerCampaigns": typeof migrations_migrateMediaBuyerCampaigns;
+  "migrations/sportsCampaignMigrationPlan": typeof migrations_sportsCampaignMigrationPlan;
   recommendations: typeof recommendations;
   regional: typeof regional;
   simulations: typeof simulations;
+  testMigration: typeof testMigration;
   usageAnalytics: typeof usageAnalytics;
 }>;
 export declare const api: FilterApi<

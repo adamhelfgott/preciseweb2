@@ -1,0 +1,84 @@
+Media Buyer View NOTE - for the app we can consider 10X actual Cubs integers whilst maintaining same ratios,percentages
+Ed
+Av CAC reduction Better ROAS
+46% 1.9
+Portfolio CAC Blended LTV: CAC Totla spend Av ROAS
+$5.36 28:1 $11,212 28x
+was $10.27 was 15:1 $112,120
+Ed
+Creative 1 Creative 2
+Creative Fatigue 62% Creative Fatigue 28%
+Impressions Click Rate Clicks Impressions Click Rate Clicks
+4,472,154 0.58% 25,938 1,456,537 0.27% 3,933
+22,360,770 0.58% 129,692 7,282,685 0.27% 19,663
+Conversions Spend CAC Conversions Spend CAC
+1,118 $8,050 $7.2 437 $2,913 $6.7
+11,180 $80,499 $7.2 4,370 $29,131 $6.7
+Precise Data Impact
+Without Precise $10.27
+With Precize $5.36
+Rename - Professional Sports Club
+Replace Social handles with Tablet, Web, App, CTV
+Ed
+Professional Sports team low risk
+Current $5.6 - Target $5
+Week 1 $6.9 (improving)
+
+Replace Nike with wiht profressional Sports Team 2025
+4-Week CAC Forecast
+Week 1 Week 2 Week 3 Week 4
+5.36 5.38 5.32 5.30
+Ed Week 1 $6.90 ($6.80-$8.87) Creative refresh
+Week 2 $6.24 ($6.15-$6.85) Creative / Publisher Mix optimization
+Week 3 $5.57 ($5.45-5.77) Data enhanced Creative
+Week 4 $5.36 ($5.31-$5.65) Potential Refresh needed
+REPLACE
+Barlin COLUMN 1 COLUMN 2
+ROAS allocation
+Cohorts ROAS Coefficient Value attribution to data providers $1,121 Data 10% Campaign
+C0 14.6 1P Data - Marketing 7% $81
+C1 34.7 1p Data - Sales 13% $150
+C2 40.8 3P Data - IDR - Audience Acuity 3% link to AA view in data controller dashbaord $34
+C3 80.9 3P Data - User Affinities- Audience Acuity 11% link to AA view in data controller dashbaord $127
+Precise AI Model 42% $470
+Return Path Data 23% $260
+100% $1,121
+Ed
+Attribtuon windows
+Industyr Standard Aggressive Concervative
+30 Day click, 7 Day View 7 Day Click
+ROAS 28x 40x 10x
+Revenue $313,000 $447,143 $111,786
+
+Conversion timing Distirbution
+Data Controller Dashboard View
+Barlin
+Proof Information
+Data ID = 0x3f261e2c687a7d3c941dcc31d7d5df56c187ae3a09f428e1d03185a193f2c757
+Timestamp = May 15 2025 11:17:15 AM (-04:00 UTC)
+Block Height = 810502
+VP IDs = 384484
+Campaign Details
+Sport Team Ticketing
+Contributing Data Assets
+3P Data - IDR - Audience Acuity
+3P Data - User Affinities- Audience Acuity
+Cryptographic Details
+Data Transaction Contract = 0xa61Aa9C70cD62c0Dc03C5338e1f99c8F0eB56982
+Transaction Hash = 0x408dedb0fca4c38e86a2ea1065f180a02abcb94dd24cf0f2db8d75978bd85a97
+View on Explorer = https://block-explorer.prod.alice.net/tx/0x408dedb0fca4c38e86a2ea1065f180a02abcb94dd24cf0f2db8d75978bd85a97?tab=index
+
+Suggest leave this as is but bridge to Cubs campaign in the next view by advertiser below
+Ed
+This is the bridge view that connects data controller to media buyer views
+Top Campaigns
+Ed
+Ad Campaign 12,340
+Ad Campaign 8230
+Professional sports Campaign $160 (note will 10X of we do same for Cubs campaign scale
+Ad Campaign 5670
+Ad Campaign 4510
+Identity Resolutiuon 23,400
+Live Sports Fan 11,200
+location Context 4,200
+

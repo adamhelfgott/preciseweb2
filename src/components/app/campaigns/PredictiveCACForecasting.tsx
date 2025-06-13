@@ -181,7 +181,7 @@ export default function PredictiveCACForecasting({ campaignId }: PredictiveCACFo
     } else if (!selectedCampaign && MOCK_PREDICTIONS.length > 0) {
       setSelectedCampaign(MOCK_PREDICTIONS[0]);
     }
-  }, [convexPrediction, selectedCampaign]);
+  }, [convexPrediction]); // Removed selectedCampaign from dependencies to prevent infinite loop
 
   // Simulate predictions
   useEffect(() => {
@@ -204,7 +204,7 @@ export default function PredictiveCACForecasting({ campaignId }: PredictiveCACFo
     const interval = setInterval(simulate, 30000); // Then every 30 seconds
 
     return () => clearInterval(interval);
-  }, [convexUser?._id, targetCampaignId, simulationActive, simulatePredictions]);
+  }, [convexUser?._id, targetCampaignId, simulationActive]); // Removed simulatePredictions - mutations are stable
 
   const getRiskColor = (risk: string) => {
     switch (risk) {
