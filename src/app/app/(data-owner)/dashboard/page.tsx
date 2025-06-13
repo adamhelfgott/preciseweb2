@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
 import LiveEarningsTicker from "@/components/app/dashboards/LiveEarningsTicker";
 import DataAssetsOverview from "@/components/app/dashboards/DataAssetsOverview";
 import RecommendationsPanel from "@/components/app/dashboards/RecommendationsPanel";
@@ -32,31 +34,57 @@ export default function DataOwnerDashboard() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>("overview");
 
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Fetch earnings stats from Convex
+  const earningsStats = useQuery(api.earnings.getEarningsStats,
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+
+  // Fetch data assets from Convex
+  const dataAssets = useQuery(api.dataAssets.getDataAssets,
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+
+  // Calculate stats from Convex data
+  const monthlyRevenue = earningsStats ? (earningsStats.total + earningsStats.pending) : 47230;
+  const activeAssets = dataAssets?.filter((a: any) => a.status === "active").length || 2;
+  const avgQuality = dataAssets && dataAssets.length > 0 
+    ? Math.round(dataAssets.reduce((sum: number, a: any) => sum + a.qualityScore, 0) / dataAssets.length)
+    : 94;
+  const totalUsageRate = dataAssets && dataAssets.length > 0
+    ? Math.round(dataAssets.reduce((sum: number, a: any) => sum + a.usageRate, 0) / dataAssets.length)
+    : 62;
+  const nextPayout = earningsStats?.pending || 8432;
+
   const stats = [
     {
       label: "Monthly Recurring Revenue",
-      value: "$47,230",
+      value: `$${monthlyRevenue.toLocaleString()}`,
       change: "+127%",
       trend: "up",
       icon: DollarSign,
     },
     {
       label: "Active Data Assets",
-      value: "2",
-      change: "94 avg quality",
+      value: activeAssets.toString(),
+      change: `${avgQuality} avg quality`,
       trend: "neutral",
       icon: Database,
     },
     {
       label: "Usage Rate",
-      value: "62%",
+      value: `${totalUsageRate}%`,
       change: "+18%",
       trend: "up",
       icon: TrendingUp,
     },
     {
       label: "Next Payout",
-      value: "$8,432",
+      value: `$${nextPayout.toLocaleString()}`,
       change: "In 2 days",
       trend: "neutral",
       icon: Zap,
@@ -80,7 +108,11 @@ export default function DataOwnerDashboard() {
           Welcome back, {user?.name?.split(" ")[0]}
         </h1>
         <p className="text-medium-gray">
-          Your data is creating value across 47 active campaigns
+          {dataAssets && dataAssets.length > 0 ? (
+            <>Your data is creating value across multiple active campaigns</>
+          ) : (
+            <>Loading your data insights...</>
+          )}
         </p>
       </div>
 
@@ -124,7 +156,7 @@ export default function DataOwnerDashboard() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                 activeTab === tab.id
-                  ? "bg-brand-purple text-white"
+                  ? "bg-bright-purple text-white"
                   : "text-medium-gray hover:bg-light-gray"
               }`}
             >
@@ -166,6 +198,8 @@ export default function DataOwnerDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
+              className="min-h-[600px]"
+              style={{ contain: "layout" }}
             >
               <RealtimeActivityFeed showStats={true} maxEvents={8} />
             </motion.div>
@@ -189,8 +223,8 @@ export default function DataOwnerDashboard() {
             onClick={() => setActiveTab("overview")}
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-brand-purple/10 rounded-lg flex items-center justify-center">
-                <Activity size={20} className="text-brand-purple" />
+              <div className="w-10 h-10 bg-bright-purple/10 rounded-lg flex items-center justify-center">
+                <Activity size={20} className="text-bright-purple" />
               </div>
               <span className="text-sm font-medium text-dark-gray">
                 Back to Overview
@@ -223,8 +257,8 @@ export default function DataOwnerDashboard() {
             className="flex items-center justify-between p-4 bg-white rounded-xl border border-silk-gray hover:shadow-md transition-all"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-brand-blue/10 rounded-lg flex items-center justify-center">
-                <DollarSign size={20} className="text-brand-blue" />
+              <div className="w-10 h-10 bg-electric-blue/10 rounded-lg flex items-center justify-center">
+                <DollarSign size={20} className="text-electric-blue" />
               </div>
               <span className="text-sm font-medium text-dark-gray">
                 View Earnings Report

@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { Database, TrendingUp, AlertCircle, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -83,7 +86,43 @@ const mockAssets: DataAsset[] = [
 ];
 
 export default function DataAssetsOverview() {
+  const { user } = useAuth();
   const [selectedAsset, setSelectedAsset] = useState<DataAsset | null>(null);
+
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Fetch data assets from Convex
+  const dataAssets = useQuery(api.dataAssets.getDataAssets,
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+
+  // Get recommendations from Convex
+  const recommendations = useQuery(api.recommendations.getRecommendations,
+    convexUser?._id ? { userId: convexUser._id, type: "data_optimization" } : "skip"
+  );
+
+  // Use Convex data if available, otherwise fall back to mock data
+  const assets = dataAssets || mockAssets;
+
+  // Map recommendations to assets
+  const assetsWithRecommendations = assets.map((asset: any) => {
+    const assetRecs = recommendations?.filter((rec: any) => 
+      rec.description?.includes(asset.name) || rec.title?.includes("data")
+    ).slice(0, 2).map((rec: any) => ({
+      id: rec._id,
+      icon: rec.priority === "high" ? "💰" : rec.priority === "medium" ? "⚡" : "✓",
+      text: rec.title,
+      value: rec.priority,
+    })) || [];
+
+    return {
+      ...asset,
+      recommendations: assetRecs.length > 0 ? assetRecs : asset.recommendations,
+    };
+  });
 
   const getQualityColor = (score: number) => {
     if (score >= 90) return "text-brand-green";
@@ -109,10 +148,19 @@ export default function DataAssetsOverview() {
         </button>
       </div>
 
-      <div className="grid gap-6">
-        {mockAssets.map((asset, index) => (
+      {/* Loading state */}
+      {!user || !convexUser ? (
+        <div className="flex items-center justify-center h-32">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-green mx-auto mb-2"></div>
+            <p className="text-sm text-medium-gray">Loading assets...</p>
+          </div>
+        </div>
+      ) : (
+        <div className="grid gap-6">
+          {assetsWithRecommendations.map((asset: any, index: number) => (
           <motion.div
-            key={asset.id}
+            key={asset._id || asset.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
@@ -206,8 +254,9 @@ export default function DataAssetsOverview() {
               </div>
             )}
           </motion.div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

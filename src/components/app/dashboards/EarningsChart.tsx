@@ -1,6 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useQuery } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   LineChart, 
   Line, 
@@ -42,8 +45,61 @@ const generateMockData = () => {
 const mockData = generateMockData();
 
 export default function EarningsChart() {
+  const { user } = useAuth();
   const [timeRange, setTimeRange] = useState("30d");
   const [chartType, setChartType] = useState<"earnings" | "impressions">("earnings");
+
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Fetch earnings from Convex (last 90 days)
+  const earnings = useQuery(api.earnings.getEarnings, 
+    convexUser?._id ? { ownerId: convexUser._id, limit: 500 } : "skip"
+  );
+
+  // Process earnings data into chart format
+  const chartData = useMemo(() => {
+    if (!earnings || earnings.length === 0) {
+      return generateMockData(); // Fallback to mock data
+    }
+
+    // Group earnings by date
+    const earningsByDate = new Map<string, { earnings: number; impressions: number }>();
+    
+    // Get date range
+    const now = new Date();
+    const daysToShow = timeRange === "7d" ? 7 : timeRange === "30d" ? 30 : 90;
+    
+    // Initialize all dates with 0
+    for (let i = daysToShow - 1; i >= 0; i--) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - i);
+      const dateKey = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      earningsByDate.set(dateKey, { earnings: 0, impressions: 0 });
+    }
+
+    // Aggregate earnings by date
+    earnings.forEach((earning: any) => {
+      const date = new Date(earning.timestamp || earning._creationTime);
+      const dateKey = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      
+      if (earningsByDate.has(dateKey)) {
+        const current = earningsByDate.get(dateKey)!;
+        current.earnings += earning.amount || 0;
+        current.impressions += earning.impressions || 0;
+        earningsByDate.set(dateKey, current);
+      }
+    });
+
+    // Convert to array format
+    return Array.from(earningsByDate.entries()).map(([date, data]) => ({
+      date,
+      earnings: Math.round(data.earnings * 100), // Convert to cents then back for cleaner numbers
+      impressions: data.impressions,
+    }));
+  }, [earnings, timeRange]);
 
   const timeRanges = [
     { value: "7d", label: "7 days" },
@@ -51,21 +107,7 @@ export default function EarningsChart() {
     { value: "90d", label: "90 days" },
   ];
 
-  const getDataForRange = () => {
-    switch (timeRange) {
-      case "7d":
-        return mockData.slice(-7);
-      case "30d":
-        return mockData;
-      case "90d":
-        // For 90 days, we'd generate more data
-        return mockData;
-      default:
-        return mockData;
-    }
-  };
-
-  const data = getDataForRange();
+  const data = chartData;
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -88,7 +130,9 @@ export default function EarningsChart() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-xl font-semibold text-dark-gray">Earnings Overview</h2>
-          <p className="text-sm text-medium-gray">Track your revenue growth over time</p>
+          <p className="text-sm text-medium-gray">
+            {earnings ? "Real-time revenue tracking" : "Track your revenue growth over time"}
+          </p>
         </div>
         
         <div className="flex items-center gap-4">
@@ -199,7 +243,9 @@ export default function EarningsChart() {
           <p className="text-2xl font-bold text-dark-gray">
             ${data.reduce((sum, d) => sum + d.earnings, 0).toLocaleString()}
           </p>
-          <p className="text-xs text-brand-green">+23.5% vs previous period</p>
+          <p className="text-xs text-brand-green">
+            {earnings && earnings.length > 0 ? "Live data" : "+23.5% vs previous period"}
+          </p>
         </div>
         <div>
           <p className="text-sm text-medium-gray mb-1">Avg Daily</p>

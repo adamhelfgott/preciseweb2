@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 export type UserRole = "DATA_OWNER" | "MEDIA_BUYER" | "SOLUTION_CREATOR";
 
@@ -49,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const saveUserToConvex = useMutation(api.auth.saveUser);
 
   useEffect(() => {
     // Check for saved session
@@ -71,65 +74,94 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Mock authentication
-    const mockUser = MOCK_USERS[email];
-    if (mockUser && password === "demo123") {
-      setUser(mockUser);
-      localStorage.setItem("precise_user", JSON.stringify(mockUser));
+    try {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Set auth cookie for API protection (base64 encoded user data)
-      const authToken = btoa(JSON.stringify({ 
-        email: mockUser.email, 
-        role: mockUser.role,
-        id: mockUser.id 
-      }));
-      document.cookie = `auth-token=${authToken}; path=/; max-age=86400; SameSite=Strict`;
-      
-      // Redirect based on role
-      if (mockUser.role === "DATA_OWNER") {
-        router.push("/app/dashboard");
-      } else if (mockUser.role === "MEDIA_BUYER") {
-        router.push("/app/campaigns");
+      // Mock authentication
+      const mockUser = MOCK_USERS[email];
+      if (mockUser && password === "demo123") {
+        // Sync mock user with Convex
+        await saveUserToConvex({
+          id: mockUser.id,
+          email: mockUser.email,
+          name: mockUser.name,
+          role: mockUser.role,
+          company: mockUser.company,
+          onboardingCompleted: mockUser.onboardingCompleted,
+        });
+        
+        setUser(mockUser);
+        localStorage.setItem("precise_user", JSON.stringify(mockUser));
+        
+        // Set auth cookie for API protection (base64 encoded user data)
+        const authToken = btoa(JSON.stringify({ 
+          email: mockUser.email, 
+          role: mockUser.role,
+          id: mockUser.id 
+        }));
+        document.cookie = `auth-token=${authToken}; path=/; max-age=86400; SameSite=Strict`;
+        
+        // Redirect based on role
+        if (mockUser.role === "DATA_OWNER") {
+          router.push("/app/dashboard");
+        } else if (mockUser.role === "MEDIA_BUYER") {
+          router.push("/app/campaigns");
+        }
+      } else {
+        throw new Error("Invalid credentials");
       }
-    } else {
-      throw new Error("Invalid credentials");
+    } catch (error) {
+      console.error("Sign in error:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   const signUp = async (email: string, password: string, name: string, role: UserRole) => {
     setIsLoading(true);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Create new user
-    const newUser: User = {
-      id: `user_${Date.now()}`,
-      email,
-      name,
-      role,
-      onboardingCompleted: false,
-    };
-    
-    setUser(newUser);
-    localStorage.setItem("precise_user", JSON.stringify(newUser));
-    
-    // Set auth cookie for API protection
-    const authToken = btoa(JSON.stringify({ 
-      email: newUser.email, 
-      role: newUser.role,
-      id: newUser.id 
-    }));
-    document.cookie = `auth-token=${authToken}; path=/; max-age=86400; SameSite=Strict`;
-    
-    router.push("/app/onboarding");
-    
-    setIsLoading(false);
+    try {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Create new user
+      const newUser: User = {
+        id: `user_${Date.now()}`,
+        email,
+        name,
+        role,
+        onboardingCompleted: false,
+      };
+      
+      // Sync new user with Convex
+      await saveUserToConvex({
+        id: newUser.id,
+        email: newUser.email,
+        name: newUser.name,
+        role: newUser.role,
+        onboardingCompleted: newUser.onboardingCompleted,
+      });
+      
+      setUser(newUser);
+      localStorage.setItem("precise_user", JSON.stringify(newUser));
+      
+      // Set auth cookie for API protection
+      const authToken = btoa(JSON.stringify({ 
+        email: newUser.email, 
+        role: newUser.role,
+        id: newUser.id 
+      }));
+      document.cookie = `auth-token=${authToken}; path=/; max-age=86400; SameSite=Strict`;
+      
+      router.push("/app/onboarding");
+    } catch (error) {
+      console.error("Sign up error:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const signOut = () => {

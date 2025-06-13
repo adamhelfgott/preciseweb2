@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { Clock, Settings, Save, RefreshCw, Info, CheckCircle, AlertCircle } from "lucide-react";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
@@ -72,11 +75,77 @@ const CONVERSION_DATA = [
 ];
 
 export default function CustomAttributionWindows() {
+  const { user } = useAuth();
   const [activeModel, setActiveModel] = useState<AttributionModel>(PRESET_MODELS[0]);
   const [customWindows, setCustomWindows] = useState<AttributionWindow[]>(activeModel.windows);
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [simulationActive, setSimulationActive] = useState(false);
+
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Get attribution models
+  const models = useQuery(api.customAttribution.getModels,
+    convexUser?._id ? { buyerId: convexUser._id } : "skip"
+  );
+
+  // Get conversion timing data
+  const conversionData = useQuery(api.customAttribution.getConversionTiming,
+    convexUser?._id ? { buyerId: convexUser._id } : "skip"
+  );
+
+  // Mutations
+  const saveModel = useMutation(api.customAttribution.saveModel);
+  const simulateTiming = useMutation(api.customAttribution.simulateConversionTiming);
+
+  // Use Convex data or fall back to mock
+  const modelsToUse = models?.length > 0 ? models.map((m: any) => ({
+    id: m._id,
+    name: m.name,
+    description: m.description,
+    windows: m.windows.map((w: any, index: number) => ({
+      id: w._id || `${index}`,
+      name: w.name,
+      duration: w.duration,
+      type: w.type,
+      weight: w.weight,
+      isActive: w.isActive,
+    })),
+    performance: m.performance,
+  })) : PRESET_MODELS;
+
+  const conversionDataToUse = conversionData?.length > 0 ? conversionData : CONVERSION_DATA;
+
+  // Update active model when Convex data loads
+  useEffect(() => {
+    if (modelsToUse.length > 0 && !isCustomMode) {
+      setActiveModel(modelsToUse[0]);
+      setCustomWindows(modelsToUse[0].windows);
+    }
+  }, [models, isCustomMode]);
+
+  // Simulate data on activation
+  useEffect(() => {
+    if (!convexUser?._id || !simulationActive) return;
+
+    const simulate = async () => {
+      try {
+        await simulateTiming({ buyerId: convexUser._id });
+      } catch (error) {
+        console.error("Failed to simulate timing data:", error);
+      }
+    };
+    
+    simulate(); // Run immediately
+    
+    const interval = setInterval(simulate, 60000); // Every minute
+
+    return () => clearInterval(interval);
+  }, [convexUser?._id, simulationActive, simulateTiming]);
 
   const handleWindowChange = (windowId: string, field: keyof AttributionWindow, value: any) => {
     setCustomWindows(prev => 
@@ -86,11 +155,22 @@ export default function CustomAttributionWindows() {
   };
 
   const handleSaveModel = async () => {
+    if (!convexUser?._id) return;
+    
     setIsSaving(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      await saveModel({
+        buyerId: convexUser._id,
+        name: isCustomMode ? "Custom Model" : activeModel.name,
+        description: isCustomMode ? "User-defined attribution windows" : activeModel.description,
+        isCustom: isCustomMode,
+        windows: customWindows,
+      });
+      setIsCustomMode(false);
+    } catch (error) {
+      console.error("Failed to save model:", error);
+    }
     setIsSaving(false);
-    setIsCustomMode(false);
   };
 
   const getTypeColor = (type: string) => {
@@ -118,18 +198,33 @@ export default function CustomAttributionWindows() {
             <p className="text-sm text-medium-gray">Define your own attribution logic</p>
           </div>
         </div>
-        <button
-          onClick={() => setShowComparison(!showComparison)}
-          className="text-sm text-bright-purple hover:text-purple-700 font-medium flex items-center gap-1"
-        >
-          <Settings className="w-4 h-4" />
-          {showComparison ? "Hide" : "Show"} Comparison
-        </button>
+        <div className="flex items-center gap-3">
+          {/* Simulation Toggle */}
+          {convexUser && (
+            <button
+              onClick={() => setSimulationActive(!simulationActive)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                simulationActive 
+                  ? "bg-bright-purple text-white" 
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {simulationActive ? "Simulation On" : "Simulation Off"}
+            </button>
+          )}
+          <button
+            onClick={() => setShowComparison(!showComparison)}
+            className="text-sm text-bright-purple hover:text-purple-700 font-medium flex items-center gap-1"
+          >
+            <Settings className="w-4 h-4" />
+            {showComparison ? "Hide" : "Show"} Comparison
+          </button>
+        </div>
       </div>
 
       {/* Preset Models */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {PRESET_MODELS.map((model) => (
+        {modelsToUse.map((model) => (
           <button
             key={model.id}
             onClick={() => {
@@ -148,7 +243,7 @@ export default function CustomAttributionWindows() {
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
                 <span className="text-medium-gray">ROAS</span>
-                <span className="font-medium text-dark-gray">{model.performance.roas}x</span>
+                <span className="font-medium text-dark-gray">{model.performance.roas.toFixed(1)}x</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-medium-gray">Revenue</span>
@@ -288,7 +383,7 @@ export default function CustomAttributionWindows() {
         <h3 className="font-medium text-dark-gray mb-4">Conversion Timing Distribution</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={CONVERSION_DATA}>
+            <BarChart data={conversionDataToUse}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E5E7" />
               <XAxis 
                 dataKey="day" 
@@ -303,7 +398,7 @@ export default function CustomAttributionWindows() {
                 ]}
               />
               <Bar dataKey="conversions" fill="#1DB954" name="conversions">
-                {CONVERSION_DATA.map((entry, index) => {
+                {conversionDataToUse.map((entry: any, index: number) => {
                   const relevantWindow = customWindows.find(w => 
                     w.isActive && entry.day <= w.duration
                   );
@@ -348,13 +443,13 @@ export default function CustomAttributionWindows() {
           >
             <h3 className="font-medium text-dark-gray mb-4">Model Performance Comparison</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {PRESET_MODELS.map((model) => (
+              {modelsToUse.map((model) => (
                 <div key={model.id} className="bg-light-gray rounded-lg p-4">
                   <h4 className="font-medium text-dark-gray mb-3">{model.name}</h4>
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-sm text-medium-gray">ROAS</span>
-                      <span className="text-sm font-medium text-dark-gray">{model.performance.roas}x</span>
+                      <span className="text-sm font-medium text-dark-gray">{model.performance.roas.toFixed(1)}x</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-medium-gray">Conversions</span>

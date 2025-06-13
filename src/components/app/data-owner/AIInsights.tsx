@@ -195,7 +195,7 @@ export default function AIInsights() {
       case "quality":
         return "text-brand-blue bg-brand-blue/10";
       case "partnership":
-        return "text-brand-purple bg-brand-purple/10";
+        return "text-bright-purple bg-bright-purple/10";
       case "market":
         return "text-brand-orange bg-brand-orange/10";
       default:
@@ -220,7 +220,7 @@ export default function AIInsights() {
     <div className="bg-white rounded-2xl shadow-sm border border-silk-gray p-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-brand-purple to-brand-blue rounded-xl flex items-center justify-center">
+          <div className="w-12 h-12 bg-gradient-to-br from-bright-purple to-brand-blue rounded-xl flex items-center justify-center">
             <Brain size={24} className="text-white" />
           </div>
           <div>
@@ -235,7 +235,7 @@ export default function AIInsights() {
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="px-3 py-2 text-sm border border-silk-gray rounded-lg focus:outline-none focus:border-brand-purple"
+          className="px-3 py-2 text-sm border border-silk-gray rounded-lg focus:outline-none focus:border-bright-purple"
         >
           <option value="all">All Categories</option>
           <option value="revenue">Revenue Optimization</option>
@@ -343,7 +343,7 @@ export default function AIInsights() {
                               </span>
                             </div>
                           </div>
-                          <button className="flex items-center gap-2 px-4 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-colors text-sm">
+                          <button className="flex items-center gap-2 px-4 py-2 bg-bright-purple text-white rounded-lg hover:bg-bright-purple/90 transition-colors text-sm">
                             <span>Get Started</span>
                             <ArrowRight size={14} />
                           </button>
@@ -393,7 +393,7 @@ export default function AIInsights() {
                 </span>
               </div>
               <p className="text-xs text-medium-gray mb-2">{trend.impact}</p>
-              <p className="text-xs text-brand-purple font-medium">
+              <p className="text-xs text-bright-purple font-medium">
                 {trend.recommendation}
               </p>
             </motion.div>
@@ -433,7 +433,7 @@ export default function AIInsights() {
                 <p className="text-xs text-medium-gray mb-1">
                   {tip.improvement}
                 </p>
-                <p className="text-xs text-brand-purple">{tip.impact}</p>
+                <p className="text-xs text-bright-purple">{tip.impact}</p>
               </div>
               <div className="ml-4">
                 <div className="w-12 h-12 relative">
@@ -457,7 +457,7 @@ export default function AIInsights() {
                       strokeDasharray={`${
                         (tip.currentScore / 100) * 126
                       } 126`}
-                      className="text-brand-purple"
+                      className="text-bright-purple"
                     />
                   </svg>
                   <span className="absolute inset-0 flex items-center justify-center text-xs font-medium text-dark-gray">
@@ -475,21 +475,21 @@ export default function AIInsights() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="p-4 bg-gradient-to-r from-brand-purple/10 to-brand-blue/10 rounded-lg"
+        className="p-4 bg-gradient-to-r from-bright-purple/10 to-brand-blue/10 rounded-lg"
       >
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-medium text-dark-gray">
               Total Optimization Potential
             </p>
-            <p className="text-2xl font-bold text-brand-purple mt-1">
+            <p className="text-2xl font-bold text-bright-purple mt-1">
               +$84,300/month
             </p>
             <p className="text-xs text-medium-gray mt-1">
               Based on implementing top 5 recommendations
             </p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-brand-purple text-brand-purple rounded-lg hover:bg-brand-purple hover:text-white transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-bright-purple text-bright-purple rounded-lg hover:bg-bright-purple hover:text-white transition-colors">
             <span className="text-sm">View Full Report</span>
             <ArrowRight size={16} />
           </button>

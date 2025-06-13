@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { TrendingUp, Users, DollarSign, Zap, AlertCircle, Eye, ArrowUp, ArrowDown } from "lucide-react";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
 
@@ -21,43 +24,104 @@ interface CompetitorInsight {
 }
 
 export default function CompetitiveIntelligence() {
+  const { user } = useAuth();
   const [timeRange, setTimeRange] = useState<"7d" | "30d" | "90d">("30d");
   const [showDetails, setShowDetails] = useState(false);
+  const [simulationActive, setSimulationActive] = useState(false);
+
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Fetch competitive intelligence data from Convex
+  const metricsData = useQuery(api.competitive.getMetrics,
+    convexUser?._id ? { buyerId: convexUser._id, timeRange } : "skip"
+  );
+
+  const benchmarksData = useQuery(api.competitive.getBenchmarks,
+    convexUser?._id ? { buyerId: convexUser._id } : "skip"
+  );
+
+  const creativeTrendsData = useQuery(api.competitive.getCreativeTrends, {
+    limit: 5
+  });
+
+  const dataSourceRankingsData = useQuery(api.competitive.getDataSourceRankings, {
+    limit: 5
+  });
+
+  // Mutation for simulating data
+  const simulateData = useMutation(api.competitive.simulateCompetitiveData);
+
+  // Simulate competitive data
+  useEffect(() => {
+    if (!convexUser?._id || !simulationActive) return;
+
+    // Simulate immediately on activation
+    const simulate = async () => {
+      try {
+        await simulateData({ 
+          buyerId: convexUser._id,
+          timeRange
+        });
+      } catch (error) {
+        console.error("Failed to simulate competitive data:", error);
+      }
+    };
+    
+    simulate(); // Run immediately
+    
+    const interval = setInterval(simulate, 60000); // Every 60 seconds
+
+    return () => clearInterval(interval);
+  }, [convexUser?._id, timeRange, simulationActive, simulateData]);
+
+  // Map Convex metrics to MetricCard format
+  const getMetricValue = (metricName: string) => {
+    const metric = metricsData?.find(m => m.metric === metricName);
+    return metric;
+  };
+
+  const industryCAC = getMetricValue("industryAvgCAC");
+  const marketCTR = getMetricValue("marketCTR");
+  const avgROAS = getMetricValue("avgROAS");
+  const refreshRate = getMetricValue("creativeRefreshRate");
 
   // Market Overview Metrics
   const marketMetrics: MetricCard[] = [
     {
       title: "Industry Avg CAC",
-      value: "$47.23",
-      change: -12.5,
+      value: industryCAC ? `$${industryCAC.value.toFixed(2)}` : "$47.23",
+      change: industryCAC?.change || -12.5,
       icon: DollarSign,
       description: "You're 23% below industry average"
     },
     {
       title: "Market CTR",
-      value: "2.34%",
-      change: 8.3,
+      value: marketCTR ? `${marketCTR.value.toFixed(2)}%` : "2.34%",
+      change: marketCTR?.change || 8.3,
       icon: Eye,
       description: "Your CTR: 2.89% (+23%)"
     },
     {
       title: "Avg ROAS",
-      value: "3.2x",
-      change: 15.2,
+      value: avgROAS ? `${avgROAS.value.toFixed(1)}x` : "3.2x",
+      change: avgROAS?.change || 15.2,
       icon: TrendingUp,
       description: "Your ROAS: 4.1x (+28%)"
     },
     {
       title: "Creative Refresh Rate",
-      value: "14 days",
-      change: -5.0,
+      value: refreshRate ? `${Math.round(refreshRate.value)} days` : "14 days",
+      change: refreshRate?.change || -5.0,
       icon: Zap,
       description: "Industry refreshes 3 days faster"
     }
   ];
 
   // Performance Comparison Data
-  const performanceData = [
+  const defaultPerformanceData = [
     { metric: "Targeting Precision", you: 85, industry: 72, top10: 92 },
     { metric: "Creative Quality", you: 78, industry: 68, top10: 88 },
     { metric: "Data Utilization", you: 92, industry: 61, top10: 95 },
@@ -65,6 +129,15 @@ export default function CompetitiveIntelligence() {
     { metric: "Budget Efficiency", you: 81, industry: 69, top10: 87 },
     { metric: "Campaign Velocity", you: 75, industry: 71, top10: 93 }
   ];
+
+  const performanceData = benchmarksData?.length > 0 
+    ? benchmarksData.map(b => ({
+        metric: b.metric,
+        you: b.yourScore,
+        industry: b.industryAvg,
+        top10: b.top10Percentile
+      }))
+    : defaultPerformanceData;
 
   // Trend Analysis Data
   const trendData = [
@@ -78,22 +151,40 @@ export default function CompetitiveIntelligence() {
   ];
 
   // Creative Trends
-  const creativeTrends = [
-    { format: "Video 15s", adoption: 78, performance: "+23% CTR", momentum: "rising" },
-    { format: "Interactive Cards", adoption: 45, performance: "+31% engagement", momentum: "rising" },
-    { format: "Static Banner", adoption: 92, performance: "-12% CTR", momentum: "declining" },
-    { format: "Carousel Ads", adoption: 67, performance: "+18% conversion", momentum: "stable" },
-    { format: "AR Try-On", adoption: 23, performance: "+45% conversion", momentum: "emerging" }
+  const defaultCreativeTrends = [
+    { format: "Video 15s", adoption: 78, performance: "+23% CTR", momentum: "rising" as const },
+    { format: "Interactive Cards", adoption: 45, performance: "+31% engagement", momentum: "rising" as const },
+    { format: "Static Banner", adoption: 92, performance: "-12% CTR", momentum: "declining" as const },
+    { format: "Carousel Ads", adoption: 67, performance: "+18% conversion", momentum: "stable" as const },
+    { format: "AR Try-On", adoption: 23, performance: "+45% conversion", momentum: "emerging" as const }
   ];
 
+  const creativeTrends = creativeTrendsData?.length > 0 
+    ? creativeTrendsData.map(t => ({
+        format: t.format,
+        adoption: t.adoption,
+        performance: t.performance,
+        momentum: t.momentum
+      }))
+    : defaultCreativeTrends;
+
   // Data Source Rankings
-  const dataSourceRankings = [
-    { provider: "Behavioral Signals Co", marketShare: 23, avgROAS: 4.2, trend: "up" },
-    { provider: "Demographic Plus", marketShare: 19, avgROAS: 3.8, trend: "stable" },
-    { provider: "Intent Stream", marketShare: 17, avgROAS: 4.5, trend: "up" },
-    { provider: "Location Intel", marketShare: 15, avgROAS: 3.5, trend: "down" },
-    { provider: "Premium Audiences", marketShare: 12, avgROAS: 4.1, trend: "up" }
+  const defaultDataSourceRankings = [
+    { provider: "Behavioral Signals Co", marketShare: 23, avgROAS: 4.2, trend: "up" as const },
+    { provider: "Demographic Plus", marketShare: 19, avgROAS: 3.8, trend: "stable" as const },
+    { provider: "Intent Stream", marketShare: 17, avgROAS: 4.5, trend: "up" as const },
+    { provider: "Location Intel", marketShare: 15, avgROAS: 3.5, trend: "down" as const },
+    { provider: "Premium Audiences", marketShare: 12, avgROAS: 4.1, trend: "up" as const }
   ];
+
+  const dataSourceRankings = dataSourceRankingsData?.length > 0
+    ? dataSourceRankingsData.map(r => ({
+        provider: r.provider,
+        marketShare: r.marketShare,
+        avgROAS: r.avgROAS,
+        trend: r.trend
+      }))
+    : defaultDataSourceRankings;
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-6">
@@ -106,6 +197,19 @@ export default function CompetitiveIntelligence() {
         </div>
         
         <div className="flex items-center gap-4">
+          {/* Simulation Toggle */}
+          {convexUser && (
+            <button
+              onClick={() => setSimulationActive(!simulationActive)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                simulationActive 
+                  ? "bg-electric-blue text-white" 
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {simulationActive ? "Simulation On" : "Simulation Off"}
+            </button>
+          )}
           <div className="flex items-center gap-2 bg-light-gray rounded-lg p-1">
             {(["7d", "30d", "90d"] as const).map((range) => (
               <button

@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Brain, TrendingDown, TrendingUp, AlertCircle, Zap, Calendar, ChevronRight } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Area } from "recharts";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Prediction {
   week: string;
@@ -21,6 +24,7 @@ interface CampaignPrediction {
   predictions: Prediction[];
   recommendations: string[];
   riskLevel: "low" | "medium" | "high";
+  modelAccuracy?: number;
 }
 
 const MOCK_PREDICTIONS: CampaignPrediction[] = [
@@ -110,9 +114,97 @@ const MOCK_PREDICTIONS: CampaignPrediction[] = [
   }
 ];
 
-export default function PredictiveCACForecasting() {
-  const [selectedCampaign, setSelectedCampaign] = useState<CampaignPrediction>(MOCK_PREDICTIONS[0]);
+interface PredictiveCACForecastingProps {
+  campaignId?: string;
+}
+
+export default function PredictiveCACForecasting({ campaignId }: PredictiveCACForecastingProps) {
+  const { user } = useAuth();
+  const [selectedCampaign, setSelectedCampaign] = useState<CampaignPrediction | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [simulationActive, setSimulationActive] = useState(false);
+
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Get campaigns
+  const campaigns = useQuery(api.campaigns.getCampaigns,
+    convexUser?._id ? { buyerId: convexUser._id } : "skip"
+  );
+
+  // Use provided campaign or first campaign
+  const isValidConvexId = campaignId?.startsWith('j');
+  const targetCampaignId = (campaignId && isValidConvexId) ? campaignId : campaigns?.[0]?._id;
+
+  // Get the campaign details
+  const campaign = campaigns?.find((c: any) => c._id === targetCampaignId);
+
+  // Fetch CAC predictions from Convex
+  const cacPredictions = useQuery(api.attribution.getCACPredictions,
+    targetCampaignId ? { campaignId: targetCampaignId as any } : "skip"
+  );
+
+  // Mutation for simulating predictions
+  const simulatePredictions = useMutation(api.attribution.simulateCACPredictions);
+
+  // Build campaign prediction from Convex data
+  const convexPrediction: CampaignPrediction | null = cacPredictions && campaign ? {
+    campaignId: campaign._id,
+    campaignName: campaign.name,
+    currentCAC: cacPredictions.currentCAC,
+    targetCAC: campaign.targetCAC || 28.00,
+    predictions: cacPredictions.predictions.map((p: any) => ({
+      week: `Week ${p.week}`,
+      predicted: p.predictedCAC,
+      confidence: { min: p.confidenceLow, max: p.confidenceHigh },
+      trend: p.predictedCAC < cacPredictions.currentCAC ? "improving" : 
+             p.predictedCAC === cacPredictions.currentCAC ? "stable" : "declining",
+      factors: p.factors.filter((f: any) => f.direction === "positive").map((f: any) => f.name).slice(0, 2),
+    })),
+    recommendations: [
+      cacPredictions.predictions[0]?.factors.find((f: any) => f.direction === "negative")?.name 
+        ? `Address ${cacPredictions.predictions[0].factors.find((f: any) => f.direction === "negative").name}`
+        : "Maintain current optimization strategy",
+      "Monitor creative performance closely",
+      "Consider audience expansion if CAC improves"
+    ],
+    riskLevel: cacPredictions.modelAccuracy > 90 ? "low" : cacPredictions.modelAccuracy > 80 ? "medium" : "high",
+    modelAccuracy: cacPredictions.modelAccuracy,
+  } : null;
+
+  // Use Convex data or fall back to mock
+  useEffect(() => {
+    if (convexPrediction) {
+      setSelectedCampaign(convexPrediction);
+    } else if (!selectedCampaign && MOCK_PREDICTIONS.length > 0) {
+      setSelectedCampaign(MOCK_PREDICTIONS[0]);
+    }
+  }, [convexPrediction, selectedCampaign]);
+
+  // Simulate predictions
+  useEffect(() => {
+    if (!convexUser?._id || !targetCampaignId || !simulationActive) return;
+
+    // Simulate immediately on activation
+    const simulate = async () => {
+      try {
+        await simulatePredictions({ 
+          campaignId: targetCampaignId as any,
+          buyerId: convexUser._id 
+        });
+      } catch (error) {
+        console.error("Failed to simulate predictions:", error);
+      }
+    };
+    
+    simulate(); // Run immediately
+    
+    const interval = setInterval(simulate, 30000); // Then every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [convexUser?._id, targetCampaignId, simulationActive, simulatePredictions]);
 
   const getRiskColor = (risk: string) => {
     switch (risk) {
@@ -131,14 +223,14 @@ export default function PredictiveCACForecasting() {
     }
   };
 
-  const chartData = selectedCampaign.predictions.map((pred, index) => ({
+  const chartData = selectedCampaign?.predictions.map((pred, index) => ({
     week: pred.week,
     current: index === 0 ? selectedCampaign.currentCAC : null,
     predicted: pred.predicted,
     min: pred.confidence.min,
     max: pred.confidence.max,
     target: selectedCampaign.targetCAC,
-  }));
+  })) || [];
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-6">
@@ -153,12 +245,27 @@ export default function PredictiveCACForecasting() {
             <p className="text-sm text-medium-gray">AI-powered 4-week predictions</p>
           </div>
         </div>
-        <button
-          onClick={() => setShowDetails(!showDetails)}
-          className="text-sm text-electric-blue hover:text-blue-700 font-medium"
-        >
-          {showDetails ? "Hide" : "Show"} Analysis
-        </button>
+        <div className="flex items-center gap-3">
+          {/* Simulation Toggle */}
+          {convexUser && (
+            <button
+              onClick={() => setSimulationActive(!simulationActive)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                simulationActive 
+                  ? "bg-electric-blue text-white" 
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {simulationActive ? "Simulation On" : "Simulation Off"}
+            </button>
+          )}
+          <button
+            onClick={() => setShowDetails(!showDetails)}
+            className="text-sm text-electric-blue hover:text-blue-700 font-medium"
+          >
+            {showDetails ? "Hide" : "Show"} Analysis
+          </button>
+        </div>
       </div>
 
       {/* Campaign Selector */}
@@ -168,7 +275,7 @@ export default function PredictiveCACForecasting() {
             key={campaign.campaignId}
             onClick={() => setSelectedCampaign(campaign)}
             className={`p-4 rounded-lg border transition-all text-left ${
-              selectedCampaign.campaignId === campaign.campaignId
+              selectedCampaign?.campaignId === campaign.campaignId
                 ? "border-electric-blue bg-electric-blue/5"
                 : "border-silk-gray hover:border-medium-gray"
             }`}
@@ -196,6 +303,7 @@ export default function PredictiveCACForecasting() {
       </div>
 
       {/* Prediction Chart */}
+      {selectedCampaign && (
       <div className="bg-light-gray rounded-lg p-4 mb-6">
         <h3 className="font-medium text-dark-gray mb-4">4-Week CAC Forecast</h3>
         <div className="h-64">
@@ -230,7 +338,7 @@ export default function PredictiveCACForecasting() {
               
               {/* Target Line */}
               <ReferenceLine 
-                y={selectedCampaign.targetCAC} 
+                y={selectedCampaign?.targetCAC} 
                 stroke="#1DB954" 
                 strokeDasharray="5 5"
                 label={{ value: "Target CAC", position: "right" }}
@@ -259,11 +367,12 @@ export default function PredictiveCACForecasting() {
           </ResponsiveContainer>
         </div>
       </div>
+      )}
 
       {/* Weekly Predictions */}
       <div className="space-y-3 mb-6">
         <h3 className="font-medium text-dark-gray">Weekly Breakdown</h3>
-        {selectedCampaign.predictions.map((prediction, index) => (
+        {selectedCampaign?.predictions.map((prediction, index) => (
           <motion.div
             key={prediction.week}
             initial={{ opacity: 0, x: -20 }}
@@ -301,7 +410,7 @@ export default function PredictiveCACForecasting() {
           <div>
             <h3 className="font-medium text-dark-gray mb-2">AI Recommendations</h3>
             <ul className="space-y-2">
-              {selectedCampaign.recommendations.map((rec, index) => (
+              {selectedCampaign?.recommendations.map((rec, index) => (
                 <li key={index} className="flex items-start gap-2 text-sm text-medium-gray">
                   <ChevronRight className="w-4 h-4 flex-shrink-0 mt-0.5" />
                   <span>{rec}</span>
@@ -333,6 +442,14 @@ export default function PredictiveCACForecasting() {
             <p>• Seasonal trend adjustments</p>
             <p>• DSP-specific optimization curves</p>
           </div>
+          {selectedCampaign?.modelAccuracy && (
+            <div className="mt-3 p-3 bg-electric-blue/10 rounded-lg">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-dark-gray">Model Accuracy</span>
+                <span className="text-sm font-bold text-electric-blue">{selectedCampaign.modelAccuracy}%</span>
+              </div>
+            </div>
+          )}
         </motion.div>
       )}
     </div>

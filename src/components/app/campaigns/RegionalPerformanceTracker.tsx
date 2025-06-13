@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   MapPin, 
   TrendingUp, 
@@ -138,16 +141,105 @@ const correlationData = Array.from({ length: 50 }, () => ({
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
 
-export default function RegionalPerformanceTracker() {
-  const [selectedDMA, setSelectedDMA] = useState(dmaData[0]);
+interface RegionalPerformanceTrackerProps {
+  campaignId?: string;
+}
+
+export default function RegionalPerformanceTracker({ campaignId }: RegionalPerformanceTrackerProps) {
+  const { user } = useAuth();
+  const [selectedDMA, setSelectedDMA] = useState<any>(null);
   const [timeRange, setTimeRange] = useState("30d");
   const [viewMode, setViewMode] = useState<"map" | "grid">("map");
+  const [simulationActive, setSimulationActive] = useState(false);
+
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Get campaigns if no specific campaign is provided
+  const campaigns = useQuery(api.campaigns.getCampaigns,
+    convexUser?._id && !campaignId ? { buyerId: convexUser._id } : "skip"
+  );
+
+  // Use provided campaign or first campaign
+  const isValidConvexId = campaignId?.startsWith('j');
+  const targetCampaignId = (campaignId && isValidConvexId) ? campaignId : campaigns?.[0]?._id;
+
+  // Fetch regional performance data from Convex
+  const regionalData = useQuery(api.regional.getRegionalPerformance,
+    targetCampaignId ? { campaignId: targetCampaignId as any } : "skip"
+  );
+
+  // Get time series for selected DMA
+  const timeSeries = useQuery(api.regional.getRegionalTimeSeries,
+    targetCampaignId && selectedDMA?.dmaId ? { 
+      campaignId: targetCampaignId as any, 
+      dmaId: selectedDMA.dmaId,
+      days: parseInt(timeRange)
+    } : "skip"
+  );
+
+  // Mutation for simulating regional data
+  const simulateRegional = useMutation(api.regional.simulateRegionalPerformance);
+
+  // Use Convex data or fall back to mock
+  const dmaDataToUse = regionalData?.length > 0 ? regionalData : dmaData;
 
   // Calculate total metrics
-  const totalViewership = dmaData.reduce((sum, dma) => sum + dma.tvViewership, 0);
-  const totalFootTraffic = dmaData.reduce((sum, dma) => sum + dma.footTraffic, 0);
-  const avgCorrelation = dmaData.reduce((sum, dma) => sum + dma.correlation, 0) / dmaData.length;
-  const avgROAS = dmaData.reduce((sum, dma) => sum + dma.roas, 0) / dmaData.length;
+  const totalViewership = dmaDataToUse.reduce((sum: number, dma: any) => sum + dma.tvViewership, 0);
+  const totalFootTraffic = dmaDataToUse.reduce((sum: number, dma: any) => sum + dma.footTraffic, 0);
+  const avgCorrelation = dmaDataToUse.reduce((sum: number, dma: any) => sum + dma.correlation, 0) / dmaDataToUse.length;
+  const avgROAS = dmaDataToUse.reduce((sum: number, dma: any) => sum + dma.roas, 0) / dmaDataToUse.length;
+
+  // Set initial selected DMA
+  useEffect(() => {
+    if (dmaDataToUse.length > 0 && !selectedDMA) {
+      setSelectedDMA(dmaDataToUse[0]);
+    }
+  }, [dmaDataToUse, selectedDMA]);
+
+  // Simulate regional data
+  useEffect(() => {
+    if (!convexUser?._id || !targetCampaignId || !simulationActive) return;
+
+    // Simulate immediately on activation
+    const simulate = async () => {
+      try {
+        await simulateRegional({ 
+          campaignId: targetCampaignId as any,
+          buyerId: convexUser._id 
+        });
+      } catch (error) {
+        console.error("Failed to simulate regional data:", error);
+      }
+    };
+    
+    simulate(); // Run immediately
+    
+    const interval = setInterval(simulate, 45000); // Every 45 seconds
+
+    return () => clearInterval(interval);
+  }, [convexUser?._id, targetCampaignId, simulationActive, simulateRegional]);
+
+  // Use time series data
+  const timeSeriesData = timeSeries?.length > 0 
+    ? timeSeries.map((d: any) => ({
+        date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        tvImpressions: d.tvImpressions,
+        storeVisits: d.storeVisits,
+        correlation: d.correlation,
+      }))
+    : Array.from({ length: 30 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (29 - i));
+        return {
+          date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          tvImpressions: 850000 + Math.random() * 200000,
+          storeVisits: 12000 + Math.random() * 3000,
+          correlation: 0.75 + Math.random() * 0.15
+        };
+      });
 
   return (
     <div className="space-y-6">
@@ -164,14 +256,27 @@ export default function RegionalPerformanceTracker() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            {/* Simulation Toggle */}
+            {convexUser && (
+              <button
+                onClick={() => setSimulationActive(!simulationActive)}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                  simulationActive 
+                    ? "bg-brand-green text-white" 
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {simulationActive ? "Simulation On" : "Simulation Off"}
+              </button>
+            )}
             <select
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
               className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm"
             >
-              <option value="7d">Last 7 days</option>
-              <option value="30d">Last 30 days</option>
-              <option value="90d">Last 90 days</option>
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 90 days</option>
             </select>
             <div className="flex bg-gray-100 rounded-lg p-1">
               <button
@@ -282,9 +387,9 @@ export default function RegionalPerformanceTracker() {
                       ))
                     }
                   </Geographies>
-                  {dmaData.map((dma) => (
+                  {dmaDataToUse.map((dma: any) => (
                     <Marker
-                      key={dma.id}
+                      key={dma.dmaId || dma.id}
                       coordinates={dma.coordinates}
                       onClick={() => setSelectedDMA(dma)}
                     >
@@ -305,7 +410,7 @@ export default function RegionalPerformanceTracker() {
                         y={-Math.sqrt(dma.footTraffic) / 20 - 10}
                         className="text-xs font-medium fill-gray-700"
                       >
-                        {dma.name}
+                        {dma.dmaName || dma.name}
                       </text>
                     </Marker>
                   ))}
@@ -325,15 +430,15 @@ export default function RegionalPerformanceTracker() {
                     </tr>
                   </thead>
                   <tbody>
-                    {dmaData.map((dma) => (
+                    {dmaDataToUse.map((dma: any) => (
                       <tr
-                        key={dma.id}
+                        key={dma.dmaId || dma.id}
                         onClick={() => setSelectedDMA(dma)}
                         className="border-b hover:bg-gray-50 cursor-pointer"
                       >
                         <td className="py-3 px-4">
                           <div>
-                            <div className="font-medium">{dma.name}</div>
+                            <div className="font-medium">{dma.dmaName || dma.name}</div>
                             <div className="text-sm text-gray-600">{dma.stores} stores</div>
                           </div>
                         </td>
@@ -368,10 +473,11 @@ export default function RegionalPerformanceTracker() {
         {/* DMA Details */}
         <div className="col-span-4 space-y-6">
           {/* Selected DMA Info */}
+          {selectedDMA && (
           <div className="bg-white rounded-xl p-6 border border-gray-200">
             <div className="flex items-center justify-between mb-4">
               <h4 className="text-lg font-semibold text-gray-900">
-                {selectedDMA.name} DMA
+                {selectedDMA.dmaName || selectedDMA.name} DMA
               </h4>
               <span className={`px-2 py-1 rounded text-sm font-medium ${
                 selectedDMA.performance === "high" 
@@ -427,6 +533,7 @@ export default function RegionalPerformanceTracker() {
               </button>
             </div>
           </div>
+          )}
 
           {/* ROI Calculator */}
           <div className="bg-white rounded-xl p-6 border border-gray-200">
@@ -446,7 +553,7 @@ export default function RegionalPerformanceTracker() {
                 <label className="text-sm text-gray-600">Target Stores</label>
                 <input
                   type="number"
-                  defaultValue={selectedDMA.stores}
+                  defaultValue={selectedDMA?.stores || 10}
                   className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-lg"
                 />
               </div>
@@ -457,7 +564,7 @@ export default function RegionalPerformanceTracker() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-600">Expected ROAS</span>
-                  <span className="font-bold text-green-600">{selectedDMA.roas}x</span>
+                  <span className="font-bold text-green-600">{selectedDMA?.roas || 3.5}x</span>
                 </div>
               </div>
             </div>
@@ -576,8 +683,8 @@ export default function RegionalPerformanceTracker() {
               Local Business Intelligence
             </h4>
             <p className="text-gray-700 mb-4">
-              Based on your TV campaign in the {selectedDMA.name} DMA, we're seeing strong foot traffic lift 
-              at {selectedDMA.stores} store locations. The {(selectedDMA.correlation * 100).toFixed(0)}% correlation 
+              Based on your TV campaign in the {selectedDMA?.dmaName || selectedDMA?.name || "selected"} DMA, we're seeing strong foot traffic lift 
+              at {selectedDMA?.stores || 0} store locations. The {((selectedDMA?.correlation || 0.8) * 100).toFixed(0)}% correlation 
               between TV exposure and store visits indicates your creative is driving real-world action.
             </p>
             <div className="flex items-center gap-4">

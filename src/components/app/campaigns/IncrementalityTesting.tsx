@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { FlaskConical, Users, TrendingUp, AlertTriangle, Play, Pause, CheckCircle, ChevronRight, Info } from "lucide-react";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend } from "recharts";
 
@@ -153,9 +156,75 @@ const DAILY_RESULTS = Array.from({ length: 14 }, (_, i) => ({
 }));
 
 export default function IncrementalityTesting() {
+  const { user } = useAuth();
   const [selectedTest, setSelectedTest] = useState<IncrementalityTest>(ACTIVE_TESTS[0]);
   const [showMethodology, setShowMethodology] = useState(false);
   const [isCreatingTest, setIsCreatingTest] = useState(false);
+  const [simulationActive, setSimulationActive] = useState(false);
+
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Get tests
+  const tests = useQuery(api.incrementality.getTests,
+    convexUser?._id ? { buyerId: convexUser._id } : "skip"
+  );
+
+  // Get daily results for selected test
+  const dailyResults = useQuery(api.incrementality.getDailyResults,
+    selectedTest && selectedTest.id !== "1" && selectedTest.id !== "2" && selectedTest.id !== "3" 
+      ? { testId: selectedTest.id as any } 
+      : "skip"
+  );
+
+  // Mutations
+  const createTest = useMutation(api.incrementality.createTest);
+  const updateTestStatus = useMutation(api.incrementality.updateTestStatus);
+  const simulateData = useMutation(api.incrementality.simulateIncrementalityData);
+
+  // Use Convex data or fall back to mock
+  const testsToUse = tests?.length > 0 ? tests.map((t: any) => ({
+    id: t._id,
+    name: t.name,
+    campaign: t.campaign,
+    status: t.status,
+    startDate: new Date(t.startDate).toISOString().split('T')[0],
+    duration: t.duration,
+    progress: t.progress,
+    groups: t.groups,
+    lift: t.lift,
+    insights: t.insights,
+  })) : ACTIVE_TESTS;
+
+  const dailyDataToUse = dailyResults?.length > 0 ? dailyResults : DAILY_RESULTS;
+
+  // Update selected test when data loads
+  useEffect(() => {
+    if (testsToUse.length > 0 && !selectedTest) {
+      setSelectedTest(testsToUse[0]);
+    }
+  }, [tests]);
+
+  // Simulate data on activation
+  useEffect(() => {
+    if (!convexUser?._id || !simulationActive) return;
+
+    const simulate = async () => {
+      try {
+        await simulateData({ buyerId: convexUser._id });
+      } catch (error) {
+        console.error("Failed to simulate data:", error);
+      }
+    };
+    
+    simulate(); // Run immediately
+    
+    const interval = setInterval(simulate, 45000); // Every 45 seconds
+
+    return () => clearInterval(interval);
+  }, [convexUser?._id, simulationActive, simulateData]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -185,23 +254,38 @@ export default function IncrementalityTesting() {
             <p className="text-sm text-medium-gray">Measure true campaign impact with holdout groups</p>
           </div>
         </div>
-        <button
-          onClick={() => setIsCreatingTest(true)}
-          className="bg-warm-coral text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
-        >
-          <FlaskConical className="w-4 h-4" />
-          New Test
-        </button>
+        <div className="flex items-center gap-3">
+          {/* Simulation Toggle */}
+          {convexUser && (
+            <button
+              onClick={() => setSimulationActive(!simulationActive)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                simulationActive 
+                  ? "bg-warm-coral text-white" 
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {simulationActive ? "Simulation On" : "Simulation Off"}
+            </button>
+          )}
+          <button
+            onClick={() => setIsCreatingTest(true)}
+            className="bg-warm-coral text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+          >
+            <FlaskConical className="w-4 h-4" />
+            New Test
+          </button>
+        </div>
       </div>
 
       {/* Active Tests */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {ACTIVE_TESTS.map((test) => (
+        {testsToUse.map((test) => (
           <button
             key={test.id}
             onClick={() => setSelectedTest(test)}
             className={`p-4 rounded-lg border transition-all text-left ${
-              selectedTest.id === test.id
+              selectedTest?.id === test.id
                 ? "border-warm-coral bg-warm-coral/5"
                 : "border-silk-gray hover:border-medium-gray"
             }`}
@@ -339,7 +423,7 @@ export default function IncrementalityTesting() {
           <h3 className="font-medium text-dark-gray mb-4">Daily Performance</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={DAILY_RESULTS}>
+              <LineChart data={dailyDataToUse}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E5E7" />
                 <XAxis dataKey="day" stroke="#86868B" />
                 <YAxis stroke="#86868B" />
@@ -396,20 +480,40 @@ export default function IncrementalityTesting() {
         </button>
 
         <div className="flex items-center gap-3">
-          {selectedTest.status === "running" && (
-            <button className="bg-white text-dark-gray px-4 py-2 rounded-lg border border-silk-gray hover:bg-light-gray transition-colors flex items-center gap-2">
+          {selectedTest?.status === "running" && (
+            <button 
+              onClick={async () => {
+                if (selectedTest.id !== "1" && selectedTest.id !== "2" && selectedTest.id !== "3") {
+                  await updateTestStatus({ 
+                    testId: selectedTest.id as any, 
+                    status: "completed" 
+                  });
+                }
+              }}
+              className="bg-white text-dark-gray px-4 py-2 rounded-lg border border-silk-gray hover:bg-light-gray transition-colors flex items-center gap-2"
+            >
               <Pause className="w-4 h-4" />
               Pause Test
             </button>
           )}
-          {selectedTest.status === "completed" && (
+          {selectedTest?.status === "completed" && (
             <button className="bg-warm-coral text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2">
               <CheckCircle className="w-4 h-4" />
               Apply Learnings
             </button>
           )}
-          {selectedTest.status === "planning" && (
-            <button className="bg-brand-green text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
+          {selectedTest?.status === "planning" && (
+            <button 
+              onClick={async () => {
+                if (selectedTest.id !== "1" && selectedTest.id !== "2" && selectedTest.id !== "3") {
+                  await updateTestStatus({ 
+                    testId: selectedTest.id as any, 
+                    status: "running" 
+                  });
+                }
+              }}
+              className="bg-brand-green text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+            >
               <Play className="w-4 h-4" />
               Start Test
             </button>

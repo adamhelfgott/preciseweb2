@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   TrendingUp,
   Award,
@@ -107,16 +110,84 @@ const contributionMetrics: ContributionMetric[] = [
 ];
 
 export default function AttributionBreakdown() {
+  const { user } = useAuth();
   const [selectedTimeframe, setSelectedTimeframe] = useState("7d");
   const [showDetails, setShowDetails] = useState<string | null>(null);
+  const [simulationActive, setSimulationActive] = useState(false);
 
-  const totalEarnings = mockAttributions.reduce(
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Get data assets for the user
+  const dataAssets = useQuery(api.dataAssets.getDataAssets,
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+
+  // Get Shapley values for the user's assets
+  const shapleyValues = useQuery(api.attribution.getShapleyValues,
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+
+  // Get campaigns that use the user's data
+  const campaigns = useQuery(api.campaigns.getCampaigns, "skip"); // We'll need to filter these
+
+  // Mutation for calculating Shapley values
+  const calculateShapley = useMutation(api.attribution.calculateShapleyValues);
+
+  // Simulate Shapley value calculations
+  useEffect(() => {
+    if (!convexUser?._id || !dataAssets?.length || !simulationActive) return;
+
+    const interval = setInterval(async () => {
+      try {
+        // Simulate for first data asset
+        const asset = dataAssets[0];
+        const campaignNames = ["Nike Q4", "Adidas Winter", "Under Armour", "Lululemon Fall"];
+        const randomCampaign = campaignNames[Math.floor(Math.random() * campaignNames.length)];
+        
+        await calculateShapley({
+          assetId: asset._id,
+          ownerId: convexUser._id,
+          campaignId: asset._id as any, // In real app, would be actual campaign ID
+          shapleyValue: 0.2 + Math.random() * 0.3,
+          marginalContribution: 500 + Math.random() * 1000,
+          coalitionSize: 3 + Math.floor(Math.random() * 5),
+        });
+      } catch (error) {
+        console.error("Failed to calculate Shapley values:", error);
+      }
+    }, 20000); // Every 20 seconds
+
+    return () => clearInterval(interval);
+  }, [convexUser?._id, dataAssets, simulationActive, calculateShapley]);
+
+  // Map Shapley values to attribution format
+  const attributions: ShapleyAttribution[] = shapleyValues?.length > 0 
+    ? shapleyValues.slice(0, 4).map((sv: any, index: number) => {
+        const asset = dataAssets?.find((a: any) => a._id === sv.assetId);
+        return {
+          id: sv._id,
+          campaign: mockAttributions[index % mockAttributions.length].campaign,
+          advertiser: mockAttributions[index % mockAttributions.length].advertiser,
+          totalConversions: Math.floor(sv.marginalContribution * 20),
+          yourContribution: Math.floor(sv.marginalContribution * sv.shapleyValue * 20),
+          shapleyValue: sv.shapleyValue,
+          fairShare: sv.marginalContribution,
+          earnings: sv.marginalContribution,
+          trend: sv.shapleyValue > 0.3 ? "up" : sv.shapleyValue > 0.2 ? "neutral" : "down",
+        };
+      })
+    : mockAttributions;
+
+  const totalEarnings = attributions.reduce(
     (sum, attr) => sum + attr.earnings,
     0
   );
   const avgShapleyValue =
-    mockAttributions.reduce((sum, attr) => sum + attr.shapleyValue, 0) /
-    mockAttributions.length;
+    attributions.reduce((sum, attr) => sum + attr.shapleyValue, 0) /
+    attributions.length;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-silk-gray p-6">
@@ -129,26 +200,51 @@ export default function AttributionBreakdown() {
             Your Shapley value contribution to campaign success
           </p>
         </div>
-        <select
-          value={selectedTimeframe}
-          onChange={(e) => setSelectedTimeframe(e.target.value)}
-          className="px-3 py-2 text-sm border border-silk-gray rounded-lg focus:outline-none focus:border-brand-purple"
-        >
-          <option value="24h">Last 24 hours</option>
-          <option value="7d">Last 7 days</option>
-          <option value="30d">Last 30 days</option>
-        </select>
+        <div className="flex items-center gap-3">
+          {/* Simulation Toggle */}
+          {convexUser && (
+            <button
+              onClick={() => setSimulationActive(!simulationActive)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                simulationActive 
+                  ? "bg-bright-purple text-white" 
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {simulationActive ? "Simulation On" : "Simulation Off"}
+            </button>
+          )}
+          <select
+            value={selectedTimeframe}
+            onChange={(e) => setSelectedTimeframe(e.target.value)}
+            className="px-3 py-2 text-sm border border-silk-gray rounded-lg focus:outline-none focus:border-bright-purple"
+          >
+            <option value="24h">Last 24 hours</option>
+            <option value="7d">Last 7 days</option>
+            <option value="30d">Last 30 days</option>
+          </select>
+        </div>
       </div>
 
+      {/* Loading State */}
+      {!user || !convexUser ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-bright-purple mx-auto mb-4"></div>
+            <p className="text-sm text-medium-gray">Loading attribution data...</p>
+          </div>
+        </div>
+      ) : (
+      <>
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-brand-purple/10 to-brand-blue/10 rounded-xl p-4"
+          className="bg-gradient-to-br from-bright-purple/10 to-brand-blue/10 rounded-xl p-4"
         >
           <div className="flex items-center justify-between mb-2">
-            <DollarSign size={20} className="text-brand-purple" />
+            <DollarSign size={20} className="text-bright-purple" />
             <span className="text-xs text-brand-green">+28%</span>
           </div>
           <p className="text-2xl font-bold text-dark-gray">
@@ -182,7 +278,7 @@ export default function AttributionBreakdown() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gradient-to-br from-brand-orange/10 to-brand-purple/10 rounded-xl p-4"
+          className="bg-gradient-to-br from-brand-orange/10 to-bright-purple/10 rounded-xl p-4"
         >
           <div className="flex items-center justify-between mb-2">
             <Target size={20} className="text-brand-orange" />
@@ -199,7 +295,7 @@ export default function AttributionBreakdown() {
           Campaign Attribution Details
         </h3>
         <div className="space-y-3">
-          {mockAttributions.map((attribution, index) => (
+          {attributions.map((attribution, index) => (
             <motion.div
               key={attribution.id}
               initial={{ opacity: 0, x: -20 }}
@@ -238,7 +334,7 @@ export default function AttributionBreakdown() {
                       : "→"}{" "}
                     Trending
                   </span>
-                  <p className="text-lg font-bold text-brand-purple">
+                  <p className="text-lg font-bold text-bright-purple">
                     ${attribution.earnings.toFixed(2)}
                   </p>
                 </div>
@@ -272,7 +368,7 @@ export default function AttributionBreakdown() {
               <div className="relative">
                 <div className="w-full bg-light-gray rounded-full h-3">
                   <div
-                    className="bg-gradient-to-r from-brand-purple to-brand-blue h-3 rounded-full transition-all duration-500"
+                    className="bg-gradient-to-r from-bright-purple to-brand-blue h-3 rounded-full transition-all duration-500"
                     style={{ width: `${attribution.shapleyValue * 100}%` }}
                   />
                 </div>
@@ -372,7 +468,7 @@ export default function AttributionBreakdown() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="mt-6 p-4 bg-gradient-to-r from-brand-purple/10 to-brand-blue/10 rounded-lg"
+        className="mt-6 p-4 bg-gradient-to-r from-bright-purple/10 to-brand-blue/10 rounded-lg"
       >
         <div className="flex items-center justify-between">
           <div>
@@ -383,12 +479,14 @@ export default function AttributionBreakdown() {
               Learn how to increase your Shapley value contribution
             </p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 bg-bright-purple text-white rounded-lg hover:bg-bright-purple/90 transition-colors">
             <span className="text-sm">View Tips</span>
             <ArrowRight size={16} />
           </button>
         </div>
       </motion.div>
+      </>
+      )}
     </div>
   );
 }

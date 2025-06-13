@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import { 
   Heart, 
   TrendingUp, 
@@ -11,6 +12,9 @@ import {
   Activity,
   Zap
 } from "lucide-react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface HealthMetric {
   name: string;
@@ -29,7 +33,7 @@ interface Campaign {
   recommendations: string[];
 }
 
-const CAMPAIGNS: Campaign[] = [
+const MOCK_CAMPAIGNS: Campaign[] = [
   {
     id: "1",
     name: "Just Do It 2025",
@@ -111,6 +115,115 @@ const getStatusIcon = (status: string) => {
 };
 
 export default function CampaignHealthMonitor() {
+  const { user } = useAuth();
+  const [simulationActive, setSimulationActive] = useState(false);
+  
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Fetch campaigns from Convex
+  const convexCampaigns = useQuery(api.campaigns.getCampaigns,
+    convexUser?._id ? { buyerId: convexUser._id } : "skip"
+  );
+
+  // Mutation for simulating DSP performance
+  const simulateDSP = useMutation(api.dspPerformance.simulateDSPPerformance);
+
+  // Get health data for first campaign only (can't use hooks in loops)
+  const firstCampaignId = convexCampaigns?.[0]?._id;
+  const firstCampaignHealth = useQuery(api.creatives.getCampaignHealth,
+    firstCampaignId ? { campaignId: firstCampaignId } : "skip"
+  );
+
+  // Build campaign health data from Convex or use mock data
+  const campaigns: Campaign[] = convexCampaigns?.length ? convexCampaigns.map((campaign: any, index: number) => {
+    // For now, use the first campaign's health data as a template for all
+    // In production, you'd fetch health data for each campaign separately
+    const health = index === 0 ? firstCampaignHealth : null;
+
+    if (!health) {
+      // Return mock data variant for this campaign
+      return {
+        ...MOCK_CAMPAIGNS[index % MOCK_CAMPAIGNS.length],
+        id: campaign._id,
+        name: campaign.name,
+        brand: campaign.name.split(' ')[0],
+      };
+    }
+
+    // Calculate metric scores from health data
+    const ctrScore = Math.max(0, Math.min(100, 80 + health.metrics.ctrTrend * 2));
+    const budgetScore = Math.max(0, Math.min(100, health.metrics.budgetUtilization));
+    const freshnessScore = Math.max(0, Math.min(100, health.metrics.creativeFreshness));
+    const roasScore = Math.max(0, Math.min(100, 80 + health.metrics.roasTrend));
+
+    const metrics: HealthMetric[] = [
+      { 
+        name: "CTR Performance", 
+        score: ctrScore, 
+        trend: health.metrics.ctrTrend > 0 ? "up" : health.metrics.ctrTrend < 0 ? "down" : "stable",
+        status: ctrScore >= 80 ? "healthy" : ctrScore >= 60 ? "warning" : "critical"
+      },
+      { 
+        name: "Budget Pacing", 
+        score: budgetScore,
+        trend: "stable",
+        status: budgetScore >= 80 ? "healthy" : budgetScore >= 60 ? "warning" : "critical"
+      },
+      { 
+        name: "Creative Freshness", 
+        score: freshnessScore,
+        trend: health.metrics.creativeFreshness > 70 ? "up" : "down",
+        status: freshnessScore >= 80 ? "healthy" : freshnessScore >= 60 ? "warning" : "critical"
+      },
+      { 
+        name: "ROAS Performance", 
+        score: roasScore,
+        trend: health.metrics.roasTrend > 0 ? "up" : health.metrics.roasTrend < 0 ? "down" : "stable",
+        status: roasScore >= 80 ? "healthy" : roasScore >= 60 ? "warning" : "critical"
+      }
+    ];
+
+    const alerts = health.alerts.map((a: any) => a.message);
+    
+    // Generate recommendations based on metrics
+    const recommendations = [];
+    if (ctrScore < 70) recommendations.push("Refresh creative assets to improve CTR");
+    if (budgetScore < 70) recommendations.push("Adjust bid strategy to improve pacing");
+    if (freshnessScore < 70) recommendations.push("Upload new creative variants");
+    if (roasScore > 85) recommendations.push("Consider scaling budget to capture opportunity");
+
+    return {
+      id: campaign._id,
+      name: campaign.name,
+      brand: campaign.name.split(' ')[0], // Extract brand from campaign name
+      overallHealth: Math.round(health.healthScore),
+      metrics,
+      alerts,
+      recommendations
+    };
+  }) : MOCK_CAMPAIGNS;
+
+  // Simulate performance updates
+  useEffect(() => {
+    if (!convexUser?._id || !simulationActive || !convexCampaigns?.length) return;
+
+    const interval = setInterval(async () => {
+      try {
+        // Simulate for first campaign
+        if (convexCampaigns[0]?._id) {
+          await simulateDSP({ campaignId: convexCampaigns[0]._id });
+        }
+      } catch (error) {
+        console.error("Failed to simulate DSP performance:", error);
+      }
+    }, 10000); // Update every 10 seconds
+
+    return () => clearInterval(interval);
+  }, [convexUser?._id, simulationActive, convexCampaigns, simulateDSP]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -124,25 +237,49 @@ export default function CampaignHealthMonitor() {
             Real-time health scores powered by Precise AI
           </p>
         </div>
-        <div className="flex items-center gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full" />
-            <span className="text-medium-gray">Healthy</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-yellow-500 rounded-full" />
-            <span className="text-medium-gray">Warning</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full" />
-            <span className="text-medium-gray">Critical</span>
+        <div className="flex items-center gap-4">
+          {/* Simulation Toggle */}
+          {convexUser && (
+            <button
+              onClick={() => setSimulationActive(!simulationActive)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                simulationActive 
+                  ? "bg-green-100 text-green-800" 
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {simulationActive ? "Simulation On" : "Simulation Off"}
+            </button>
+          )}
+          <div className="flex items-center gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-500 rounded-full" />
+              <span className="text-medium-gray">Healthy</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-yellow-500 rounded-full" />
+              <span className="text-medium-gray">Warning</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-red-500 rounded-full" />
+              <span className="text-medium-gray">Critical</span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Campaign Cards */}
+      {/* Loading State */}
+      {!user || !convexUser ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-orange mx-auto mb-4"></div>
+            <p className="text-medium-gray">Loading campaign health data...</p>
+          </div>
+        </div>
+      ) : (
+      /* Campaign Cards */
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {CAMPAIGNS.map((campaign, index) => (
+        {campaigns.map((campaign, index) => (
           <motion.div
             key={campaign.id}
             initial={{ opacity: 0, y: 20 }}
@@ -159,7 +296,7 @@ export default function CampaignHealthMonitor() {
                 </div>
                 <div className={`${getHealthBg(campaign.overallHealth)} px-3 py-1 rounded-full`}>
                   <span className={`text-sm font-bold ${getHealthColor(campaign.overallHealth)}`}>
-                    {campaign.overallHealth}%
+                    {campaign.overallHealth.toFixed(0)}%
                   </span>
                 </div>
               </div>
@@ -189,7 +326,7 @@ export default function CampaignHealthMonitor() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`text-sm font-medium ${getHealthColor(metric.score)}`}>
-                      {metric.score}%
+                      {metric.score.toFixed(0)}%
                     </span>
                     {metric.trend === "up" && <TrendingUp className="w-3 h-3 text-green-600" />}
                     {metric.trend === "down" && <TrendingDown className="w-3 h-3 text-red-600" />}
@@ -233,6 +370,7 @@ export default function CampaignHealthMonitor() {
           </motion.div>
         ))}
       </div>
+      )}
     </div>
   );
 }

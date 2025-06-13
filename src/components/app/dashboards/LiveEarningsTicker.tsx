@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { TrendingUp } from "lucide-react";
 
 interface Earning {
@@ -14,56 +17,47 @@ interface Earning {
 }
 
 export default function LiveEarningsTicker() {
-  const [earnings, setEarnings] = useState<Earning[]>([]);
-  const [totalToday, setTotalToday] = useState(0);
-  const [totalAllTime, setTotalAllTime] = useState(47230); // Start with mock data
+  const { user } = useAuth();
+  const [simulationActive, setSimulationActive] = useState(false);
+  
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+  
+  // Fetch real-time earnings from Convex
+  const recentEarnings = useQuery(api.earnings.getEarnings, 
+    convexUser?._id ? { ownerId: convexUser._id, limit: 5 } : "skip"
+  );
+  
+  // Get earnings stats
+  const earningsStats = useQuery(api.earnings.getEarningsStats,
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+  
+  // Mutation for simulating earnings
+  const simulateEarning = useMutation(api.earnings.simulateEarning);
+  
+  // Use Convex data or fall back to empty state
+  const earnings = recentEarnings || [];
+  const totalToday = earningsStats?.today || 0;
+  const totalAllTime = (earningsStats?.total || 0) + (earningsStats?.pending || 0);
 
-  // Simulate live earnings
+  // Simulate live earnings (for demo mode)
   useEffect(() => {
-    // Initialize with some recent earnings
-    const initialEarnings: Earning[] = [
-      {
-        id: "1",
-        amount: 0.12,
-        campaign: "Nike Summer Fitness",
-        impressions: 543,
-        timestamp: Date.now() - 5000,
-        assetName: "Fitness Activity Events",
-      },
-      {
-        id: "2",
-        amount: 0.08,
-        campaign: "Adidas Morning Warriors",
-        impressions: 321,
-        timestamp: Date.now() - 10000,
-        assetName: "User Demographics",
-      },
-    ];
-    setEarnings(initialEarnings);
-    setTotalToday(initialEarnings.reduce((sum, e) => sum + e.amount, 0));
-
+    if (!convexUser?._id || !simulationActive) return;
+    
     // Generate new earnings periodically
-    const interval = setInterval(() => {
-      const brands = ["Nike", "Adidas", "Under Armour", "Peloton", "Apple Fitness"];
-      const campaigns = ["Summer Fitness", "Morning Warriors", "Premium Athletes"];
-      const assets = ["Fitness Activity Events", "User Demographics"];
-      
-      const newEarning: Earning = {
-        id: Date.now().toString(),
-        amount: Number((Math.random() * 0.13 + 0.02).toFixed(2)),
-        campaign: `${brands[Math.floor(Math.random() * brands.length)]} ${campaigns[Math.floor(Math.random() * campaigns.length)]}`,
-        impressions: Math.floor(Math.random() * 1000 + 100),
-        timestamp: Date.now(),
-        assetName: assets[Math.floor(Math.random() * assets.length)],
-      };
-
-      setEarnings(prev => [newEarning, ...prev].slice(0, 5));
-      setTotalToday(prev => prev + newEarning.amount);
-      setTotalAllTime(prev => prev + newEarning.amount);
+    const interval = setInterval(async () => {
+      try {
+        await simulateEarning({ ownerId: convexUser._id });
+      } catch (error) {
+        console.error("Failed to simulate earning:", error);
+      }
     }, Math.random() * 3000 + 2000); // Random interval between 2-5 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [convexUser?._id, simulationActive, simulateEarning]);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-6">
@@ -91,24 +85,40 @@ export default function LiveEarningsTicker() {
         </div>
       </div>
 
+      {/* Simulation Toggle (for demo) */}
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-sm text-medium-gray">Demo Mode</p>
+        <button
+          onClick={() => setSimulationActive(!simulationActive)}
+          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+            simulationActive 
+              ? "bg-brand-green text-white" 
+              : "bg-light-gray text-medium-gray hover:bg-medium-gray/20"
+          }`}
+        >
+          {simulationActive ? "Simulation Active" : "Start Simulation"}
+        </button>
+      </div>
+
       {/* Live Feed */}
-      <div className="space-y-3">
-        <AnimatePresence>
-          {earnings.map((earning) => (
+      <div className="relative h-64 overflow-hidden">
+        <div className="space-y-3 absolute inset-0 overflow-y-auto">
+          <AnimatePresence mode="sync">
+            {earnings.map((earning: any) => (
             <motion.div
-              key={earning.id}
-              initial={{ opacity: 0, x: -20, scale: 0.95 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: 20, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
+              key={earning._id || earning.id}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+              transition={{ duration: 0.2 }}
               className="bg-light-gray rounded-lg p-4 relative overflow-hidden"
             >
               {/* Pulse effect for new earnings */}
               <motion.div
-                initial={{ scale: 0, opacity: 0.5 }}
-                animate={{ scale: 4, opacity: 0 }}
-                transition={{ duration: 1 }}
-                className="absolute inset-0 bg-brand-green rounded-full"
+                initial={{ scale: 0.8, opacity: 0.3 }}
+                animate={{ scale: 1.2, opacity: 0 }}
+                transition={{ duration: 0.6 }}
+                className="absolute inset-0 bg-brand-green rounded-lg pointer-events-none"
                 style={{ transformOrigin: "center" }}
               />
               
@@ -124,12 +134,13 @@ export default function LiveEarningsTicker() {
                   </div>
                 </div>
                 <p className="text-xs text-medium-gray">
-                  {new Date(earning.timestamp).toLocaleTimeString()}
+                  {new Date(earning.timestamp || earning._creationTime).toLocaleTimeString()}
                 </p>
               </div>
             </motion.div>
           ))}
-        </AnimatePresence>
+          </AnimatePresence>
+        </div>
       </div>
 
       {earnings.length === 0 && (

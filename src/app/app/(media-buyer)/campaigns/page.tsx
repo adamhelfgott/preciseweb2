@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { TrendingUp, DollarSign, Target, Activity, Plus, ChevronRight, Brain, Layers, LayoutGrid, BarChart3, RefreshCw } from "lucide-react";
 import { 
   LineChart, 
@@ -28,7 +31,7 @@ import CrossChannelIncrementality from "@/components/app/campaigns/CrossChannelI
 import CompetitiveIntelligence from "@/components/app/campaigns/CompetitiveIntelligence";
 import RegionalPerformanceTracker from "@/components/app/campaigns/RegionalPerformanceTracker";
 
-// Mock campaign data
+// Fallback mock campaign data (used when Convex is not available)
 const mockCampaigns = [
   {
     id: "1",
@@ -77,15 +80,36 @@ const mockCampaigns = [
 
 export default function CampaignsPage() {
   const searchParams = useSearchParams();
-  const [selectedCampaign, setSelectedCampaign] = useState(mockCampaigns[0]);
+  const { user } = useAuth();
+  const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [activeView, setActiveView] = useState<"overview" | "health" | "budget" | "audience" | "creatives">("overview");
+
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Fetch campaigns from Convex
+  const campaigns = useQuery(api.campaigns.getCampaigns, 
+    convexUser?._id ? { buyerId: convexUser._id } : "skip"
+  );
+
+  // Use Convex data if available, otherwise fall back to mock data
+  const campaignData = campaigns || mockCampaigns;
+
+  // Set initial selected campaign
+  useEffect(() => {
+    if (campaignData.length > 0 && !selectedCampaign) {
+      setSelectedCampaign(campaignData[0]);
+    }
+  }, [campaignData, selectedCampaign]);
 
   // Handle campaign selection from URL
   useEffect(() => {
     const campaignId = searchParams.get('campaign');
-    if (campaignId) {
-      const campaign = mockCampaigns.find(c => c.id === campaignId);
+    if (campaignId && campaignData.length > 0) {
+      const campaign = campaignData.find((c: any) => c.id === campaignId || c._id === campaignId);
       if (campaign) {
         setSelectedCampaign(campaign);
         setShowDetails(true);
@@ -96,11 +120,23 @@ export default function CampaignsPage() {
         }, 100);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, campaignData]);
 
-  const totalSpend = mockCampaigns.reduce((sum, c) => sum + c.spend, 0);
-  const avgROAS = mockCampaigns.reduce((sum, c) => sum + c.roas, 0) / mockCampaigns.length;
-  const avgCAC = mockCampaigns.reduce((sum, c) => sum + c.currentCAC, 0) / mockCampaigns.length;
+  const totalSpend = campaignData.reduce((sum: number, c: any) => sum + (c.spend || 0), 0);
+  const avgROAS = campaignData.length > 0 ? campaignData.reduce((sum: number, c: any) => sum + (c.roas || 0), 0) / campaignData.length : 0;
+  const avgCAC = campaignData.length > 0 ? campaignData.reduce((sum: number, c: any) => sum + (c.currentCAC || 0), 0) / campaignData.length : 0;
+
+  // Loading state
+  if (!user || !convexUser) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-electric-blue mx-auto mb-4"></div>
+          <p className="text-medium-gray">Loading campaigns...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -330,7 +366,7 @@ export default function CampaignsPage() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-2xl font-bold mb-2">{selectedCampaign.name}</h2>
-                <p className="text-white/80">Campaign ID: {selectedCampaign.id}</p>
+                <p className="text-white/80">Campaign ID: {selectedCampaign._id || selectedCampaign.id}</p>
               </div>
               <button
                 onClick={() => setShowDetails(false)}
@@ -355,7 +391,7 @@ export default function CampaignsPage() {
               <div>
                 <p className="text-white/70 text-sm">Spend</p>
                 <p className="text-2xl font-bold">${(selectedCampaign.spend / 1000).toFixed(0)}K</p>
-                <p className="text-xs text-white/60">{((selectedCampaign.spend / selectedCampaign.budget) * 100).toFixed(0)}% utilized</p>
+                <p className="text-xs text-white/60">{Math.round((selectedCampaign.spend / selectedCampaign.budget) * 100)}% utilized</p>
               </div>
             </div>
           </motion.div>
@@ -364,9 +400,9 @@ export default function CampaignsPage() {
 
       {/* Campaigns Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {mockCampaigns.map((campaign) => (
+        {campaignData.map((campaign: any) => (
           <motion.div
-            key={campaign.id}
+            key={campaign._id || campaign.id}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-xl shadow-sm border border-silk-gray overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
@@ -407,7 +443,7 @@ export default function CampaignsPage() {
                     ${campaign.currentCAC.toFixed(2)}
                   </p>
                   <p className="text-xs text-brand-green">
-                    -${(campaign.previousCAC - campaign.currentCAC).toFixed(2)} ({((campaign.previousCAC - campaign.currentCAC) / campaign.previousCAC * 100).toFixed(0)}%)
+                    -${(campaign.previousCAC - campaign.currentCAC).toFixed(2)} ({Math.round((campaign.previousCAC - campaign.currentCAC) / campaign.previousCAC * 100)}%)
                   </p>
                 </div>
                 <div>
@@ -467,7 +503,7 @@ export default function CampaignsPage() {
                         <span className={`text-xs ${
                           dsp.ecpmTrend < 0 ? "text-warm-coral" : "text-brand-green"
                         }`}>
-                          {dsp.ecpmTrend}%
+                          {dsp.ecpmTrend.toFixed(0)}%
                         </span>
                         <span className={`text-xs px-2 py-1 rounded-full ${
                           dsp.status === "scaling" 
@@ -502,10 +538,10 @@ export default function CampaignsPage() {
       {/* Creatives View */}
       {activeView === "creatives" && (
         <div className="space-y-6">
-          <CreativeCarousel />
+          <CreativeCarousel campaignId={selectedCampaign?._id || selectedCampaign?.id} />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <DSPArbitrage />
-            <MultiTouchAttribution />
+            <DSPArbitrage campaignId={selectedCampaign?._id || selectedCampaign?.id} />
+            <MultiTouchAttribution campaignId={selectedCampaign?._id || selectedCampaign?.id} />
           </div>
         </div>
       )}
