@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Plus, Database, TrendingUp, Lock, ChevronRight, DollarSign, Users, Zap, CheckCircle } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Enhancement {
   id: string;
@@ -167,16 +170,100 @@ const ASSET_CONTEXTS: DataAssetContext[] = [
 ];
 
 export default function DataEnhancementSuggestions() {
+  const { user } = useAuth();
   const [selectedEnhancement, setSelectedEnhancement] = useState<Enhancement | null>(null);
   const [implementingIds, setImplementingIds] = useState<string[]>([]);
   const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [simulationActive, setSimulationActive] = useState(false);
 
-  const filteredEnhancements = SUGGESTED_ENHANCEMENTS.filter(
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Get user's data assets
+  const dataAssets = useQuery(api.dataAssets.getDataAssets,
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+
+  // Get enhancement suggestions
+  const suggestions = useQuery(api.dataEnhancement.getSuggestions,
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+
+  // Mutations
+  const generateSuggestions = useMutation(api.dataEnhancement.generateAllSuggestions);
+  const updateStatus = useMutation(api.dataEnhancement.updateSuggestionStatus);
+
+  // Map Convex data to component format or use mock
+  const enhancements: Enhancement[] = suggestions ? suggestions.map((s: any) => ({
+    id: s._id,
+    title: s.title,
+    description: s.description,
+    dataType: s.assetName,
+    effort: s.effort,
+    impact: {
+      revenueIncrease: Math.round(s.potentialRevenue / 500), // Convert to percentage
+      demandIncrease: Math.round(s.potentialRevenue / 400),
+      qualityScore: s.impact === "high" ? 20 : s.impact === "medium" ? 15 : 10
+    },
+    requirements: s.requirements,
+    estimatedTime: s.effort === "low" ? "1 week" : s.effort === "medium" ? "2-3 weeks" : "4-6 weeks",
+    category: s.type === "enrichment" ? "enrich" : 
+              s.type === "validation" ? "quality" :
+              s.type === "expansion" ? "expand" : "compliance"
+  })) : SUGGESTED_ENHANCEMENTS;
+
+  // Build asset contexts from data assets or use mock
+  const assetContexts: DataAssetContext[] = dataAssets ? dataAssets.map((asset: any) => {
+    const assetSuggestions = suggestions?.filter((s: any) => s.assetId === asset._id) || [];
+    const potentialRevenue = assetSuggestions.reduce((sum: number, s: any) => sum + s.potentialRevenue, 0);
+    
+    return {
+      name: asset.name,
+      currentValue: asset.monthlyRevenue || 10000,
+      potentialValue: (asset.monthlyRevenue || 10000) + potentialRevenue,
+      activeEnhancements: assetSuggestions.filter((s: any) => s.status === "in_progress").length
+    };
+  }) : ASSET_CONTEXTS;
+
+  // Generate suggestions on first load if none exist
+  useEffect(() => {
+    if (convexUser?._id && suggestions && suggestions.length === 0 && dataAssets && dataAssets.length > 0) {
+      generateSuggestions({ ownerId: convexUser._id });
+    }
+  }, [convexUser?._id, suggestions, dataAssets, generateSuggestions]);
+
+  // Simulate suggestion generation
+  useEffect(() => {
+    if (!convexUser?._id || !simulationActive) return;
+
+    const interval = setInterval(async () => {
+      try {
+        await generateSuggestions({ ownerId: convexUser._id });
+      } catch (error) {
+        console.error("Failed to generate suggestions:", error);
+      }
+    }, 20000); // Update every 20 seconds
+
+    return () => clearInterval(interval);
+  }, [convexUser?._id, simulationActive, generateSuggestions]);
+
+  const filteredEnhancements = enhancements.filter(
     e => filterCategory === "all" || e.category === filterCategory
   );
 
-  const handleImplement = (enhancementId: string) => {
+  const handleImplement = async (enhancementId: string) => {
     setImplementingIds([...implementingIds, enhancementId]);
+    
+    // Update status in Convex if it's a real suggestion
+    if (suggestions?.find((s: any) => s._id === enhancementId)) {
+      await updateStatus({ 
+        suggestionId: enhancementId as any, 
+        status: "in_progress" 
+      });
+    }
+    
     setTimeout(() => {
       setImplementingIds(prev => prev.filter(id => id !== enhancementId));
     }, 2000);
@@ -201,7 +288,7 @@ export default function DataEnhancementSuggestions() {
     }
   };
 
-  const totalPotentialRevenue = ASSET_CONTEXTS.reduce((sum, asset) => 
+  const totalPotentialRevenue = assetContexts.reduce((sum, asset) => 
     sum + (asset.potentialValue - asset.currentValue), 0
   );
 
@@ -218,20 +305,55 @@ export default function DataEnhancementSuggestions() {
             <p className="text-sm text-medium-gray">AI-powered recommendations to increase data value</p>
           </div>
         </div>
-        <div className="text-right">
-          <p className="text-2xl font-bold text-brand-green">
-            +${(totalPotentialRevenue / 1000).toFixed(0)}k
-          </p>
-          <p className="text-sm text-medium-gray">Potential monthly revenue</p>
+        <div className="flex items-center gap-3">
+          {/* Simulation Toggle */}
+          {convexUser && (
+            <button
+              onClick={() => setSimulationActive(!simulationActive)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                simulationActive 
+                  ? "bg-green-100 text-green-800" 
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {simulationActive ? "Auto Suggest On" : "Auto Suggest Off"}
+            </button>
+          )}
+          <button
+            onClick={async () => {
+              if (convexUser?._id) {
+                await generateSuggestions({ ownerId: convexUser._id });
+              }
+            }}
+            className="text-sm text-bright-purple hover:text-purple-700 font-medium"
+          >
+            Generate New
+          </button>
+          <div className="text-right">
+            <p className="text-2xl font-bold text-brand-green">
+              +${(totalPotentialRevenue / 1000).toFixed(0)}k
+            </p>
+            <p className="text-sm text-medium-gray">Potential monthly revenue</p>
+          </div>
         </div>
       </div>
 
+      {/* Loading State */}
+      {!user || !convexUser ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-bright-purple mx-auto mb-4"></div>
+            <p className="text-medium-gray">Loading enhancement suggestions...</p>
+          </div>
+        </div>
+      ) : (
+      <>
       {/* Asset Value Overview */}
       <div className="bg-gradient-to-r from-bright-purple/10 to-electric-blue/10 rounded-lg p-6 mb-6">
         <h3 className="font-medium text-dark-gray mb-4">Revenue Potential by Asset</h3>
         <div className="h-48">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={ASSET_CONTEXTS}>
+            <BarChart data={assetContexts}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E5E5E7" />
               <XAxis dataKey="name" stroke="#86868B" tick={{ fontSize: 12 }} />
               <YAxis stroke="#86868B" tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`} />
@@ -458,6 +580,8 @@ export default function DataEnhancementSuggestions() {
           </button>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 }

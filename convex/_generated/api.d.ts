@@ -13,6 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as assetHealth from "../assetHealth.js";
 import type * as attribution from "../attribution.js";
 import type * as audienceOverlap from "../audienceOverlap.js";
 import type * as auth from "../auth.js";
@@ -24,10 +25,12 @@ import type * as creatives from "../creatives.js";
 import type * as crossChannel from "../crossChannel.js";
 import type * as customAttribution from "../customAttribution.js";
 import type * as dataAssets from "../dataAssets.js";
+import type * as dataEnhancement from "../dataEnhancement.js";
 import type * as dspPerformance from "../dspPerformance.js";
 import type * as earnings from "../earnings.js";
 import type * as incrementality from "../incrementality.js";
 import type * as initializeMockUsers from "../initializeMockUsers.js";
+import type * as marketBenchmarking from "../marketBenchmarking.js";
 import type * as marketplace from "../marketplace.js";
 import type * as migrations_migrateMediaBuyerCampaigns from "../migrations/migrateMediaBuyerCampaigns.js";
 import type * as recommendations from "../recommendations.js";
@@ -43,6 +46,7 @@ import type * as simulations from "../simulations.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  assetHealth: typeof assetHealth;
   attribution: typeof attribution;
   audienceOverlap: typeof audienceOverlap;
   auth: typeof auth;
@@ -54,10 +58,12 @@ declare const fullApi: ApiFromModules<{
   crossChannel: typeof crossChannel;
   customAttribution: typeof customAttribution;
   dataAssets: typeof dataAssets;
+  dataEnhancement: typeof dataEnhancement;
   dspPerformance: typeof dspPerformance;
   earnings: typeof earnings;
   incrementality: typeof incrementality;
   initializeMockUsers: typeof initializeMockUsers;
+  marketBenchmarking: typeof marketBenchmarking;
   marketplace: typeof marketplace;
   "migrations/migrateMediaBuyerCampaigns": typeof migrations_migrateMediaBuyerCampaigns;
   recommendations: typeof recommendations;
