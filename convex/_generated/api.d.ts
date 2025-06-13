@@ -37,6 +37,7 @@ import type * as migrations_migrateMediaBuyerCampaigns from "../migrations/migra
 import type * as recommendations from "../recommendations.js";
 import type * as regional from "../regional.js";
 import type * as simulations from "../simulations.js";
+import type * as usageAnalytics from "../usageAnalytics.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -71,6 +72,7 @@ declare const fullApi: ApiFromModules<{
   recommendations: typeof recommendations;
   regional: typeof regional;
   simulations: typeof simulations;
+  usageAnalytics: typeof usageAnalytics;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
