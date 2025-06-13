@@ -641,4 +641,254 @@ export default defineSchema({
   })
     .index("by_buyer", ["buyerId"])
     .index("by_campaign", ["campaignId"]),
+
+  // Phase 8: Data Controller Advanced Features
+  
+  // Data asset health scores
+  assetHealthScores: defineTable({
+    assetId: v.id("dataAssets"),
+    ownerId: v.id("users"),
+    overallScore: v.float64(),
+    completeness: v.float64(),
+    accuracy: v.float64(),
+    freshness: v.float64(),
+    consistency: v.float64(),
+    uniqueness: v.float64(),
+    recommendations: v.array(v.string()),
+    scoreHistory: v.array(v.object({
+      date: v.string(),
+      score: v.float64(),
+    })),
+    lastUpdated: v.number(),
+  })
+    .index("by_asset", ["assetId"])
+    .index("by_owner", ["ownerId"]),
+
+  // Market rate benchmarking
+  marketRates: defineTable({
+    segment: v.string(),
+    avgCPM: v.float64(),
+    minCPM: v.float64(),
+    maxCPM: v.float64(),
+    volume: v.number(),
+    qualityPremium: v.float64(),
+    lastUpdated: v.number(),
+  })
+    .index("by_segment", ["segment"]),
+
+  // Asset market positioning
+  assetMarketPosition: defineTable({
+    assetId: v.id("dataAssets"),
+    ownerId: v.id("users"),
+    segment: v.string(),
+    currentCPM: v.float64(),
+    marketAvgCPM: v.float64(),
+    percentile: v.float64(),
+    competitorCount: v.number(),
+    demandLevel: v.union(v.literal("high"), v.literal("medium"), v.literal("low")),
+    pricingOpportunity: v.optional(v.object({
+      suggestedCPM: v.float64(),
+      potentialRevenue: v.float64(),
+      rationale: v.string(),
+    })),
+    timestamp: v.number(),
+  })
+    .index("by_asset", ["assetId"])
+    .index("by_owner", ["ownerId"])
+    .index("by_segment", ["segment"]),
+
+  // Data enhancement suggestions
+  enhancementSuggestions: defineTable({
+    assetId: v.id("dataAssets"),
+    ownerId: v.id("users"),
+    type: v.union(v.literal("enrichment"), v.literal("validation"), v.literal("expansion"), v.literal("quality")),
+    title: v.string(),
+    description: v.string(),
+    impact: v.union(v.literal("high"), v.literal("medium"), v.literal("low")),
+    effort: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    potentialRevenue: v.float64(),
+    requirements: v.array(v.string()),
+    status: v.union(v.literal("pending"), v.literal("in_progress"), v.literal("completed"), v.literal("dismissed")),
+    createdAt: v.number(),
+  })
+    .index("by_asset", ["assetId"])
+    .index("by_owner", ["ownerId"])
+    .index("by_status", ["status"]),
+
+  // Buyer requests
+  buyerRequests: defineTable({
+    buyerId: v.id("users"),
+    title: v.string(),
+    description: v.string(),
+    segments: v.array(v.string()),
+    budget: v.float64(),
+    targetCAC: v.float64(),
+    targetAudience: v.string(),
+    requiredAttributes: v.array(v.string()),
+    preferredAttributes: v.array(v.string()),
+    campaignType: v.string(),
+    timeline: v.string(),
+    status: v.union(v.literal("active"), v.literal("matched"), v.literal("expired")),
+    expiresAt: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_status", ["status"])
+    .index("by_created", ["createdAt"]),
+
+  // Request matches
+  requestMatches: defineTable({
+    requestId: v.id("buyerRequests"),
+    assetId: v.id("dataAssets"),
+    ownerId: v.id("users"),
+    matchScore: v.float64(),
+    matchedAttributes: v.array(v.string()),
+    missingAttributes: v.array(v.string()),
+    pricing: v.object({
+      cpm: v.float64(),
+      estimatedReach: v.number(),
+      totalCost: v.float64(),
+    }),
+    status: v.union(v.literal("pending"), v.literal("contacted"), v.literal("negotiating"), v.literal("accepted"), v.literal("rejected")),
+    timestamp: v.number(),
+  })
+    .index("by_request", ["requestId"])
+    .index("by_asset", ["assetId"])
+    .index("by_owner", ["ownerId"])
+    .index("by_status", ["status"]),
+
+  // Usage analytics
+  usageAnalytics: defineTable({
+    assetId: v.id("dataAssets"),
+    ownerId: v.id("users"),
+    date: v.string(),
+    accessCount: v.number(),
+    uniqueUsers: v.number(),
+    queries: v.array(v.object({
+      userId: v.id("users"),
+      timestamp: v.number(),
+      queryType: v.string(),
+      responseTime: v.number(),
+    })),
+    revenue: v.float64(),
+    topUseCase: v.string(),
+  })
+    .index("by_asset", ["assetId"])
+    .index("by_owner", ["ownerId"])
+    .index("by_date", ["date"]),
+
+  // Pricing recommendations
+  pricingRecommendations: defineTable({
+    assetId: v.id("dataAssets"),
+    ownerId: v.id("users"),
+    currentPrice: v.float64(),
+    recommendedPrice: v.float64(),
+    confidence: v.float64(),
+    factors: v.array(v.object({
+      name: v.string(),
+      impact: v.float64(),
+      description: v.string(),
+    })),
+    projectedRevenue: v.object({
+      monthly: v.float64(),
+      quarterly: v.float64(),
+      yearly: v.float64(),
+    }),
+    competitorPrices: v.array(v.object({
+      competitor: v.string(),
+      price: v.float64(),
+      quality: v.float64(),
+    })),
+    createdAt: v.number(),
+  })
+    .index("by_asset", ["assetId"])
+    .index("by_owner", ["ownerId"]),
+
+  // Data validation results
+  validationResults: defineTable({
+    assetId: v.id("dataAssets"),
+    ownerId: v.id("users"),
+    validationType: v.union(v.literal("schema"), v.literal("completeness"), v.literal("accuracy"), v.literal("consistency")),
+    passed: v.boolean(),
+    issues: v.array(v.object({
+      severity: v.union(v.literal("error"), v.literal("warning"), v.literal("info")),
+      field: v.string(),
+      message: v.string(),
+      count: v.number(),
+    })),
+    summary: v.object({
+      totalRecords: v.number(),
+      validRecords: v.number(),
+      invalidRecords: v.number(),
+      validationScore: v.float64(),
+    }),
+    autoFixed: v.number(),
+    timestamp: v.number(),
+  })
+    .index("by_asset", ["assetId"])
+    .index("by_owner", ["ownerId"])
+    .index("by_type", ["validationType"]),
+
+  // Revenue shares
+  revenueShares: defineTable({
+    ownerId: v.id("users"),
+    name: v.string(),
+    description: v.string(),
+    participants: v.array(v.object({
+      userId: v.optional(v.id("users")),
+      email: v.string(),
+      name: v.string(),
+      role: v.string(),
+      sharePercentage: v.float64(),
+    })),
+    rules: v.array(v.object({
+      condition: v.string(),
+      adjustment: v.float64(),
+      description: v.string(),
+    })),
+    status: v.union(v.literal("draft"), v.literal("active"), v.literal("archived")),
+    effectiveDate: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_owner", ["ownerId"])
+    .index("by_status", ["status"]),
+
+  // White label reports
+  whitelabelReports: defineTable({
+    ownerId: v.id("users"),
+    name: v.string(),
+    template: v.string(),
+    branding: v.object({
+      logo: v.optional(v.string()),
+      primaryColor: v.string(),
+      secondaryColor: v.string(),
+      fontFamily: v.string(),
+    }),
+    sections: v.array(v.union(
+      v.literal("executive_summary"),
+      v.literal("performance_metrics"),
+      v.literal("attribution_analysis"),
+      v.literal("recommendations"),
+      v.literal("appendix")
+    )),
+    dataRange: v.object({
+      start: v.number(),
+      end: v.number(),
+    }),
+    recipients: v.array(v.object({
+      email: v.string(),
+      name: v.string(),
+    })),
+    schedule: v.optional(v.object({
+      frequency: v.union(v.literal("daily"), v.literal("weekly"), v.literal("monthly")),
+      dayOfWeek: v.optional(v.number()),
+      dayOfMonth: v.optional(v.number()),
+      time: v.string(),
+    })),
+    lastGenerated: v.optional(v.number()),
+    status: v.union(v.literal("draft"), v.literal("active"), v.literal("paused")),
+    createdAt: v.number(),
+  })
+    .index("by_owner", ["ownerId"])
+    .index("by_status", ["status"]),
 });

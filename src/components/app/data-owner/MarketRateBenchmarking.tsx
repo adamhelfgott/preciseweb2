@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, DollarSign, Users, BarChart3, ArrowUp, ArrowDown, Info, Sparkles } from "lucide-react";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface MarketSegment {
   name: string;
@@ -98,8 +101,73 @@ const QUALITY_COMPARISON = [
 ];
 
 export default function MarketRateBenchmarking() {
+  const { user } = useAuth();
   const [selectedSegment, setSelectedSegment] = useState<MarketSegment>(MARKET_SEGMENTS[0]);
   const [viewMode, setViewMode] = useState<"segments" | "competitors" | "trends">("segments");
+  const [simulationActive, setSimulationActive] = useState(false);
+
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Get market rates
+  const marketRates = useQuery(api.marketBenchmarking.getMarketRates);
+
+  // Get asset market positions
+  const assetPositions = useQuery(api.marketBenchmarking.getAssetMarketPosition,
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+
+  // Mutations
+  const initializeRates = useMutation(api.marketBenchmarking.initializeMarketRates);
+  const updatePositions = useMutation(api.marketBenchmarking.updateAllMarketPositions);
+  const simulateMarket = useMutation(api.marketBenchmarking.simulateMarketChanges);
+
+  // Initialize market rates on first load
+  useEffect(() => {
+    if (marketRates && marketRates.length === 0) {
+      initializeRates();
+    }
+  }, [marketRates, initializeRates]);
+
+  // Build market segments from Convex data or use mock
+  const segments: MarketSegment[] = marketRates && assetPositions && assetPositions.length > 0 ? 
+    marketRates.map((rate: any) => {
+      const position = assetPositions.find((p: any) => p.segment === rate.segment);
+      return {
+        name: rate.segment,
+        yourRate: position?.currentCPM || rate.avgCPM * 0.9,
+        marketAvg: rate.avgCPM,
+        marketHigh: rate.maxCPM,
+        marketLow: rate.minCPM,
+        volume: rate.volume,
+        demand: position?.demandLevel || "medium"
+      };
+    }) : MARKET_SEGMENTS;
+
+  // Update selected segment when segments change
+  useEffect(() => {
+    if (segments.length > 0 && !segments.find(s => s.name === selectedSegment.name)) {
+      setSelectedSegment(segments[0]);
+    }
+  }, [segments]);
+
+  // Simulate market changes
+  useEffect(() => {
+    if (!convexUser?._id || !simulationActive) return;
+
+    const interval = setInterval(async () => {
+      try {
+        await simulateMarket();
+        await updatePositions({ ownerId: convexUser._id });
+      } catch (error) {
+        console.error("Failed to simulate market:", error);
+      }
+    }, 15000); // Update every 15 seconds
+
+    return () => clearInterval(interval);
+  }, [convexUser?._id, simulationActive, simulateMarket, updatePositions]);
 
   const getDemandColor = (demand: string) => {
     switch (demand) {
@@ -125,9 +193,9 @@ export default function MarketRateBenchmarking() {
     }
   };
 
-  const overallPosition = MARKET_SEGMENTS.reduce((sum, seg) => {
+  const overallPosition = segments.reduce((sum, seg) => {
     return sum + ((seg.yourRate - seg.marketAvg) / seg.marketAvg);
-  }, 0) / MARKET_SEGMENTS.length * 100;
+  }, 0) / segments.length * 100;
 
   const qualityScore = QUALITY_COMPARISON.reduce((sum, metric) => {
     return sum + (metric.yours * metric.weight);
@@ -150,11 +218,36 @@ export default function MarketRateBenchmarking() {
             <p className="text-sm text-medium-gray">Compare your pricing to market standards</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-medium-gray">Overall Position:</span>
-          <span className={`text-lg font-bold ${overallPosition > 0 ? "text-brand-green" : "text-warm-coral"}`}>
-            {overallPosition > 0 ? "+" : ""}{overallPosition.toFixed(1)}%
-          </span>
+        <div className="flex items-center gap-3">
+          {/* Simulation Toggle */}
+          {convexUser && (
+            <button
+              onClick={() => setSimulationActive(!simulationActive)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                simulationActive 
+                  ? "bg-green-100 text-green-800" 
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {simulationActive ? "Live Market On" : "Live Market Off"}
+            </button>
+          )}
+          <button
+            onClick={async () => {
+              if (convexUser?._id) {
+                await updatePositions({ ownerId: convexUser._id });
+              }
+            }}
+            className="text-sm text-electric-blue hover:text-blue-700 font-medium"
+          >
+            Refresh Rates
+          </button>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-medium-gray">Overall Position:</span>
+            <span className={`text-lg font-bold ${overallPosition > 0 ? "text-brand-green" : "text-warm-coral"}`}>
+              {overallPosition > 0 ? "+" : ""}{overallPosition.toFixed(1)}%
+            </span>
+          </div>
         </div>
       </div>
 
@@ -192,12 +285,22 @@ export default function MarketRateBenchmarking() {
         </button>
       </div>
 
+      {/* Loading State */}
+      {!user || !convexUser ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-electric-blue mx-auto mb-4"></div>
+            <p className="text-medium-gray">Loading market rates...</p>
+          </div>
+        </div>
+      ) : (
+      <>
       {/* Segments View */}
       {viewMode === "segments" && (
         <>
           {/* Segment Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-            {MARKET_SEGMENTS.map((segment) => (
+            {segments.map((segment) => (
               <button
                 key={segment.name}
                 onClick={() => setSelectedSegment(segment)}
@@ -454,6 +557,8 @@ export default function MarketRateBenchmarking() {
           View Recommendations
         </button>
       </div>
+      </>
+      )}
     </div>
   );
 }
