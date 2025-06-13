@@ -431,8 +431,8 @@ export default function EarningsPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-silk-gray">
-                {earningsData.map((earning: any) => (
-                  <tr key={earning.id} className="hover:bg-light-gray/50 transition-colors">
+                {earningsData.map((earning: any, index: number) => (
+                  <tr key={earning._id || earning.id || index} className="hover:bg-light-gray/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-dark-gray">
                       {new Date(earning.date).toLocaleDateString()}
                     </td>

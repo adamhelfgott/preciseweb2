@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Search, TrendingUp, Users, DollarSign, Clock, CheckCircle, X, ChevronRight, Filter, Sparkles, Check } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface BuyerRequest {
   id: string;
@@ -140,18 +143,95 @@ const DEMAND_TREND = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 export default function BuyerRequestDashboard() {
+  const { user } = useAuth();
   const [selectedRequest, setSelectedRequest] = useState<BuyerRequest | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [showOnlyMatches, setShowOnlyMatches] = useState(false);
+  const [simulationActive, setSimulationActive] = useState(false);
 
-  const filteredRequests = ACTIVE_REQUESTS.filter(req => {
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Get active buyer requests
+  const convexRequests = useQuery(api.buyerRequests.getActiveRequests);
+
+  // Get matches for this owner
+  const requestMatches = useQuery(api.buyerRequests.getRequestMatches,
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+
+  // Mutations
+  const simulateBuyerRequests = useMutation(api.buyerRequests.simulateBuyerRequests);
+  const updateMatchStatus = useMutation(api.buyerRequests.updateMatchStatus);
+
+  // Convert Convex data to component format
+  const activeRequests: BuyerRequest[] = convexRequests && convexRequests.length > 0 ? 
+    convexRequests.map((req: any) => ({
+      id: req._id,
+      buyerName: req.buyerName || req.buyerCompany || "Unknown Buyer",
+      buyerType: req.campaignType?.toLowerCase().includes("brand") ? "brand" : 
+                 req.campaignType?.toLowerCase().includes("dsp") ? "dsp" : "agency",
+      requestType: req.campaignType?.toLowerCase().includes("launch") ? "specific" : 
+                   req.campaignType?.toLowerCase().includes("awareness") ? "rfp" : "general",
+      segments: req.segments || [],
+      budget: req.budget || 0,
+      timeline: req.timeline || "Immediate",
+      status: "new",
+      matchScore: Math.floor(Math.random() * 30) + 70, // Will be replaced with actual match data
+      estimatedRevenue: (req.budget || 0) * 0.06, // 6% of budget as estimate
+      requirements: [
+        ...(req.requiredAttributes || []),
+        ...(req.preferredAttributes || [])
+      ].slice(0, 4),
+      createdAt: new Date(req.createdAt).toLocaleString()
+    })) : ACTIVE_REQUESTS;
+
+  // Update match scores based on actual matches
+  const requestsWithMatches = activeRequests.map(request => {
+    const match = requestMatches?.find((m: any) => m.requestId === request.id);
+    if (match) {
+      return {
+        ...request,
+        matchScore: match.matchScore,
+        estimatedRevenue: match.pricing?.totalCost || request.estimatedRevenue,
+        status: (match.status === "pending" ? "new" : 
+                match.status === "contacted" ? "reviewing" :
+                match.status === "negotiating" ? "negotiating" :
+                match.status === "accepted" ? "matched" : "declined") as "new" | "reviewing" | "negotiating" | "matched" | "declined"
+      };
+    }
+    return request;
+  });
+
+  // Use requests with matches if available
+  const requests = requestsWithMatches.length > 0 ? requestsWithMatches : activeRequests;
+
+  // Simulate buyer requests periodically
+  useEffect(() => {
+    if (!simulationActive || !convexUser) return;
+
+    const interval = setInterval(async () => {
+      try {
+        await simulateBuyerRequests();
+      } catch (error) {
+        console.error("Failed to simulate buyer requests:", error);
+      }
+    }, 20000); // Every 20 seconds
+
+    return () => clearInterval(interval);
+  }, [simulationActive, convexUser, simulateBuyerRequests]);
+
+  const filteredRequests = requests.filter(req => {
     if (filterStatus !== "all" && req.status !== filterStatus) return false;
     if (showOnlyMatches && req.matchScore < 80) return false;
     return true;
   });
 
   const totalPotentialRevenue = filteredRequests.reduce((sum, req) => sum + req.estimatedRevenue, 0);
-  const avgMatchScore = filteredRequests.reduce((sum, req) => sum + req.matchScore, 0) / filteredRequests.length;
+  const avgMatchScore = filteredRequests.length > 0 ? 
+    filteredRequests.reduce((sum, req) => sum + req.matchScore, 0) / filteredRequests.length : 0;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -173,6 +253,20 @@ export default function BuyerRequestDashboard() {
     }
   };
 
+  // Loading state
+  if (!user || !convexUser) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-warm-coral mx-auto mb-4"></div>
+            <p className="text-medium-gray">Loading buyer requests...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-6">
       {/* Header */}
@@ -187,6 +281,19 @@ export default function BuyerRequestDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-4">
+          {/* Simulation Toggle */}
+          {convexUser && (
+            <button
+              onClick={() => setSimulationActive(!simulationActive)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                simulationActive 
+                  ? "bg-green-100 text-green-800" 
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {simulationActive ? "Auto-Matching On" : "Auto-Matching Off"}
+            </button>
+          )}
           <div className="text-right">
             <p className="text-2xl font-bold text-brand-green">
               ${(totalPotentialRevenue / 1000).toFixed(0)}k
@@ -209,7 +316,7 @@ export default function BuyerRequestDashboard() {
               +12 today
             </span>
           </div>
-          <p className="text-2xl font-bold text-dark-gray">{ACTIVE_REQUESTS.length}</p>
+          <p className="text-2xl font-bold text-dark-gray">{requests.length}</p>
           <p className="text-sm text-medium-gray">Active Requests</p>
         </div>
         <div className="bg-light-gray rounded-lg p-4">
@@ -224,7 +331,7 @@ export default function BuyerRequestDashboard() {
             <DollarSign className="w-5 h-5 text-electric-blue" />
           </div>
           <p className="text-2xl font-bold text-dark-gray">
-            ${(ACTIVE_REQUESTS.reduce((sum, req) => sum + req.budget, 0) / 1000).toFixed(0)}k
+            ${(requests.reduce((sum, req) => sum + req.budget, 0) / 1000).toFixed(0)}k
           </p>
           <p className="text-sm text-medium-gray">Total Budget</p>
         </div>
@@ -418,9 +525,10 @@ export default function BuyerRequestDashboard() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-white rounded-xl shadow-2xl z-50 p-6 max-h-[90vh] overflow-y-auto"
+              className="fixed inset-4 md:inset-auto md:top-[5%] md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-2xl md:max-h-[90vh] bg-white rounded-xl shadow-2xl z-50 flex flex-col"
             >
-              <div className="flex items-start justify-between mb-6">
+              {/* Fixed Header */}
+              <div className="flex items-start justify-between p-6 border-b border-silk-gray">
                 <div>
                   <h2 className="text-2xl font-bold text-dark-gray">{selectedRequest.buyerName}</h2>
                   <p className="text-medium-gray capitalize">{selectedRequest.buyerType} • {selectedRequest.requestType} Request</p>
@@ -432,6 +540,9 @@ export default function BuyerRequestDashboard() {
                   <X className="w-5 h-5 text-medium-gray" />
                 </button>
               </div>
+
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto p-6">
 
               {/* Match Score */}
               <div className="bg-gradient-to-r from-brand-green/10 to-electric-blue/10 rounded-lg p-6 mb-6">
@@ -491,13 +602,29 @@ export default function BuyerRequestDashboard() {
                   ))}
                 </div>
               </div>
+              </div>
 
-              {/* Actions */}
-              <div className="flex gap-3">
-                <button className="flex-1 bg-brand-green text-white py-3 rounded-lg hover:bg-green-700 transition-colors">
+              {/* Fixed Actions Footer */}
+              <div className="flex gap-3 p-6 border-t border-silk-gray bg-light-gray/30">
+                <button 
+                  onClick={async () => {
+                    const match = requestMatches?.find((m: any) => m.request?._id === selectedRequest.id);
+                    if (match) {
+                      await updateMatchStatus({
+                        matchId: match._id,
+                        status: "contacted"
+                      });
+                      setSelectedRequest(null);
+                    }
+                  }}
+                  className="flex-1 bg-brand-green text-white py-3 rounded-lg hover:bg-green-700 transition-colors font-medium"
+                >
                   Accept & Connect
                 </button>
-                <button className="flex-1 bg-white text-dark-gray py-3 rounded-lg border border-silk-gray hover:bg-light-gray transition-colors">
+                <button 
+                  onClick={() => setSelectedRequest(null)}
+                  className="flex-1 bg-white text-dark-gray py-3 rounded-lg border border-silk-gray hover:bg-light-gray transition-colors font-medium"
+                >
                   Request More Info
                 </button>
               </div>

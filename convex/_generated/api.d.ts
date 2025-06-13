@@ -18,6 +18,7 @@ import type * as attribution from "../attribution.js";
 import type * as audienceOverlap from "../audienceOverlap.js";
 import type * as auth from "../auth.js";
 import type * as budgetReallocation from "../budgetReallocation.js";
+import type * as buyerRequests from "../buyerRequests.js";
 import type * as campaigns from "../campaigns.js";
 import type * as chat from "../chat.js";
 import type * as competitive from "../competitive.js";
@@ -51,6 +52,7 @@ declare const fullApi: ApiFromModules<{
   audienceOverlap: typeof audienceOverlap;
   auth: typeof auth;
   budgetReallocation: typeof budgetReallocation;
+  buyerRequests: typeof buyerRequests;
   campaigns: typeof campaigns;
   chat: typeof chat;
   competitive: typeof competitive;

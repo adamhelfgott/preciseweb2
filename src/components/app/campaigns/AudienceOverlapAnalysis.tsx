@@ -475,7 +475,7 @@ export default function AudienceOverlapAnalysis() {
           <div className="flex items-center justify-center gap-6 mt-4 text-sm">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-green-500" />
-              <span>High Performance (ROAS > 5)</span>
+              <span>High Performance (ROAS {'>'} 5)</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-blue-500" />
@@ -483,7 +483,7 @@ export default function AudienceOverlapAnalysis() {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-red-500" />
-              <span>Low Performance (ROAS < 4)</span>
+              <span>Low Performance (ROAS {'<'} 4)</span>
             </div>
           </div>
         </div>
