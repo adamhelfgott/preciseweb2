@@ -181,7 +181,7 @@ export default function AIAssistant() {
     if (chatHistory !== undefined && !chatLoaded) {
       setChatLoaded(true);
     }
-  }, [chatHistory, chatLoaded]);
+  }, [chatHistory]); // Removed chatLoaded from dependencies to prevent infinite loop
 
   useEffect(() => {
     scrollToBottom();
@@ -295,7 +295,7 @@ export default function AIAssistant() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
-            className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-primary-orange to-vibrant-orange text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 group"
+            className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-electric-blue to-bright-purple text-white rounded-full p-4 shadow-xl hover:shadow-2xl transition-all duration-300 group border-2 border-white/20"
             onClick={() => setIsOpen(true)}
           >
             <Bot className="w-6 h-6" />
@@ -329,7 +329,7 @@ export default function AIAssistant() {
                          bottom-0 right-0 left-0 max-lg:h-full max-lg:max-w-none max-lg:rounded-none"
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange p-3 text-white flex-shrink-0">
+              <div className="bg-gradient-to-r from-electric-blue to-bright-purple p-3 text-white flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="bg-white/20 p-2 rounded-lg">

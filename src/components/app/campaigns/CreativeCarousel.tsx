@@ -144,7 +144,7 @@ export default function CreativeCarousel({ campaignId }: CreativeCarouselProps) 
     }, 5000); // Update every 5 seconds
 
     return () => clearInterval(interval);
-  }, [convexUser?._id, simulationActive, simulatePerformance]);
+  }, [convexUser?._id, simulationActive]); // Removed simulatePerformance - mutations are stable
 
   const nextCreative = () => {
     setCurrentIndex((prev) => (prev + 1) % displayCreatives.length);

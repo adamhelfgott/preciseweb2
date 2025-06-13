@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
@@ -81,8 +81,6 @@ const mockCampaigns = [
 export default function CampaignsPage() {
   const searchParams = useSearchParams();
   const { user } = useAuth();
-  const [selectedCampaign, setSelectedCampaign] = useState<any>(null);
-  const [showDetails, setShowDetails] = useState(false);
   const [activeView, setActiveView] = useState<"overview" | "health" | "budget" | "audience" | "creatives">("overview");
 
   // Get user's Convex ID
@@ -98,29 +96,19 @@ export default function CampaignsPage() {
   // Use Convex data if available, otherwise fall back to mock data
   const campaignData = campaigns || mockCampaigns;
 
-  // Set initial selected campaign
-  useEffect(() => {
-    if (campaignData.length > 0 && !selectedCampaign) {
-      setSelectedCampaign(campaignData[0]);
+  // Determine selected campaign without useState to avoid loops
+  const urlCampaignId = searchParams.get('campaign');
+  let selectedCampaign = null;
+  const showDetails = !!urlCampaignId; // Show details if there's a campaign ID in URL
+  
+  if (campaignData && campaignData.length > 0) {
+    if (urlCampaignId) {
+      selectedCampaign = campaignData.find((c: any) => c.id === urlCampaignId || c._id === urlCampaignId);
     }
-  }, [campaignData, selectedCampaign]);
-
-  // Handle campaign selection from URL
-  useEffect(() => {
-    const campaignId = searchParams.get('campaign');
-    if (campaignId && campaignData.length > 0) {
-      const campaign = campaignData.find((c: any) => c.id === campaignId || c._id === campaignId);
-      if (campaign) {
-        setSelectedCampaign(campaign);
-        setShowDetails(true);
-        // Scroll to campaign section
-        setTimeout(() => {
-          const element = document.getElementById('campaign-details');
-          element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-      }
+    if (!selectedCampaign) {
+      selectedCampaign = campaignData[0];
     }
-  }, [searchParams, campaignData]);
+  }
 
   const totalSpend = campaignData.reduce((sum: number, c: any) => sum + (c.spend || 0), 0);
   const avgROAS = campaignData.length > 0 ? campaignData.reduce((sum: number, c: any) => sum + (c.roas || 0), 0) / campaignData.length : 0;
@@ -142,7 +130,7 @@ export default function CampaignsPage() {
     <div>
       
       {/* Creative Fatigue Alerts */}
-      <CreativeFatigueAlert />
+      {/* <CreativeFatigueAlert /> */}
       
       <div className="space-y-6">
       {/* Header */}
@@ -328,32 +316,33 @@ export default function CampaignsPage() {
         </motion.div>
       </div>
 
+      {/* TEMPORARILY DISABLE ALL COMPONENTS TO FIND THE ISSUE */}
       {/* Creative Performance */}
-      <CreativeCarousel />
+      {/* <CreativeCarousel /> */}
 
       {/* Predictive Analytics */}
-      <PredictiveCACForecasting />
+      {/* <PredictiveCACForecasting /> */}
 
       {/* Advanced Analytics Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <DSPArbitrage />
         <MultiTouchAttribution />
-      </div>
+      </div> */}
 
       {/* Testing & Attribution */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CustomAttributionWindows />
         <IncrementalityTesting />
-      </div>
+      </div> */}
 
       {/* Cross-Channel Incrementality - MadHive Feature */}
-      <CrossChannelIncrementality />
+      {/* <CrossChannelIncrementality /> */}
 
       {/* Competitive Intelligence */}
-      <CompetitiveIntelligence />
+      {/* <CompetitiveIntelligence /> */}
 
       {/* Regional Performance Tracker - MadHive Feature */}
-      <RegionalPerformanceTracker />
+      {/* <RegionalPerformanceTracker /> */}
 
       {/* Campaign Details Modal */}
       {showDetails && selectedCampaign && (
@@ -369,7 +358,12 @@ export default function CampaignsPage() {
                 <p className="text-white/80">Campaign ID: {selectedCampaign._id || selectedCampaign.id}</p>
               </div>
               <button
-                onClick={() => setShowDetails(false)}
+                onClick={() => {
+                  // Remove campaign from URL
+                  const url = new URL(window.location.href);
+                  url.searchParams.delete('campaign');
+                  window.history.pushState({}, '', url);
+                }}
                 className="text-white/80 hover:text-white"
               >
                 ✕
@@ -407,8 +401,12 @@ export default function CampaignsPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-xl shadow-sm border border-silk-gray overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => {
-              setSelectedCampaign(campaign);
-              setShowDetails(true);
+              // Navigate to URL with campaign ID
+              const url = new URL(window.location.href);
+              url.searchParams.set('campaign', campaign._id || campaign.id);
+              window.history.pushState({}, '', url);
+              // Force a re-render by changing the URL
+              window.dispatchEvent(new PopStateEvent('popstate'));
             }}
           >
             {/* Campaign Header */}
@@ -526,17 +524,18 @@ export default function CampaignsPage() {
         </>
       )}
 
+      {/* TEMPORARILY DISABLE VIEW-SPECIFIC COMPONENTS */}
       {/* Health Monitor View */}
-      {activeView === "health" && <CampaignHealthMonitor />}
+      {/* {activeView === "health" && <CampaignHealthMonitor />} */}
 
       {/* Budget Pacing View */}
-      {activeView === "budget" && <BudgetPacing />}
+      {/* {activeView === "budget" && <BudgetPacing />} */}
 
       {/* Audience Insights View */}
-      {activeView === "audience" && <AudienceInsights />}
+      {/* {activeView === "audience" && <AudienceInsights />} */}
 
       {/* Creatives View */}
-      {activeView === "creatives" && (
+      {/* {activeView === "creatives" && (
         <div className="space-y-6">
           <CreativeCarousel campaignId={selectedCampaign?._id || selectedCampaign?.id} />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -544,7 +543,7 @@ export default function CampaignsPage() {
             <MultiTouchAttribution campaignId={selectedCampaign?._id || selectedCampaign?.id} />
           </div>
         </div>
-      )}
+      )} */}
       </div>
     </div>
   );
