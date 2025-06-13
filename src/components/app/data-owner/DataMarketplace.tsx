@@ -200,7 +200,7 @@ export default function DataMarketplace() {
             Market demand, pricing optimization, and growth opportunities
           </p>
         </div>
-        <button className="px-4 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-colors text-sm">
+        <button className="px-4 py-2 bg-bright-purple text-white rounded-lg hover:bg-bright-purple/90 transition-colors text-sm">
           View Full Market Report
         </button>
       </div>
@@ -281,7 +281,7 @@ export default function DataMarketplace() {
           </h3>
           <button
             onClick={() => setShowPricingDetails(!showPricingDetails)}
-            className="text-xs text-brand-purple hover:text-brand-purple/80"
+            className="text-xs text-bright-purple hover:text-bright-purple/80"
           >
             {showPricingDetails ? "Hide" : "Show"} Details
           </button>
@@ -326,7 +326,7 @@ export default function DataMarketplace() {
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-medium-gray">Recommended</p>
-                  <p className="text-sm font-bold text-brand-purple">
+                  <p className="text-sm font-bold text-bright-purple">
                     ${rec.recommendedPrice}
                   </p>
                 </div>
@@ -366,7 +366,7 @@ export default function DataMarketplace() {
                   transition={{ delay: index * 0.05 }}
                   className={`border-b border-silk-gray/50 ${
                     competitor.name.includes("Your Data")
-                      ? "bg-brand-purple/5"
+                      ? "bg-bright-purple/5"
                       : ""
                   }`}
                 >
@@ -385,7 +385,7 @@ export default function DataMarketplace() {
                       </span>
                       <div className="w-16 bg-light-gray rounded-full h-2">
                         <div
-                          className="bg-brand-purple h-2 rounded-full"
+                          className="bg-bright-purple h-2 rounded-full"
                           style={{ width: `${competitor.qualityScore}%` }}
                         />
                       </div>
@@ -466,7 +466,7 @@ export default function DataMarketplace() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-medium-gray">Potential Revenue</p>
-                  <p className="text-lg font-bold text-brand-purple">
+                  <p className="text-lg font-bold text-bright-purple">
                     ${opportunity.potentialRevenue.toLocaleString()}
                   </p>
                 </div>

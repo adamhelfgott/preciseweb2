@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { DollarSign, Calendar, Download, TrendingUp, Clock, Filter, CheckCircle, Info } from "lucide-react";
 import EarningsPredictor from "@/components/app/data-owner/EarningsPredictor";
 import { 
@@ -22,7 +25,7 @@ import {
   Cell
 } from "recharts";
 
-// Mock earnings data
+// Fallback mock earnings data (used when Convex is not available)
 const mockEarnings = [
   { id: "1", date: "2025-05-23", amount: 1234.56, campaign: "Nike Summer Fitness", impressions: 45230, asset: "Fitness Activity Events", status: "distributed", permissionsVerified: true, vpHash: "0x7a9b..." },
   { id: "2", date: "2025-05-23", amount: 823.12, campaign: "Adidas Morning Warriors", impressions: 32100, asset: "User Demographics", status: "distributed", permissionsVerified: true, vpHash: "0x8c2d..." },
@@ -62,10 +65,47 @@ const COLORS = ["#1DB954", "#7B4FFF", "#1E90FF"];
 export default function EarningsPage() {
   const [timeRange, setTimeRange] = useState("30d");
   const [viewType, setViewType] = useState<"overview" | "transactions" | "analytics">("overview");
+  const { user } = useAuth();
 
-  const totalEarnings = dailyData.reduce((sum, d) => sum + d.earnings, 0);
-  const distributedEarnings = dailyData.reduce((sum, d) => sum + d.distributed, 0);
-  const pendingEarnings = dailyData.reduce((sum, d) => sum + d.pending, 0);
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Fetch earnings from Convex
+  const earnings = useQuery(api.earnings.getEarnings, 
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+
+  // Fetch earnings stats from Convex
+  const earningsStats = useQuery(api.earnings.getEarningsStats,
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+
+  // Use Convex data if available, otherwise fall back to mock data
+  const earningsData = earnings || mockEarnings;
+  const statsData = earningsStats || {
+    total: dailyData.reduce((sum, d) => sum + d.distributed, 0),
+    pending: dailyData.reduce((sum, d) => sum + d.pending, 0),
+    today: dailyData[dailyData.length - 1]?.earnings || 0,
+    count: mockEarnings.length,
+  };
+
+  const totalEarnings = (statsData.total || 0) + (statsData.pending || 0);
+  const distributedEarnings = statsData.total || 0;
+  const pendingEarnings = statsData.pending || 0;
+
+  // Loading state
+  if (!user || !convexUser) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green mx-auto mb-4"></div>
+          <p className="text-medium-gray">Loading earnings...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -185,7 +225,7 @@ export default function EarningsPage() {
               </div>
               <p className="text-sm text-medium-gray mb-1">Avg Daily</p>
               <p className="text-2xl font-bold text-dark-gray">
-                ${Math.round(totalEarnings / 30).toLocaleString()}
+                ${(statsData.avgDailyEarnings || Math.round(totalEarnings / 30)).toLocaleString()}
               </p>
               <p className="text-xs text-medium-gray mt-1">Last 30 days</p>
             </motion.div>
@@ -204,7 +244,7 @@ export default function EarningsPage() {
               </div>
               <p className="text-sm text-medium-gray mb-1">Permissions Verified</p>
               <p className="text-2xl font-bold text-dark-gray">
-                {mockEarnings.length}/{mockEarnings.length}
+                {earningsData.length}/{earningsData.length}
               </p>
               <p className="text-xs text-medium-gray mt-1">All activations verified</p>
             </motion.div>
@@ -319,8 +359,8 @@ export default function EarningsPage() {
                   { name: "Peloton Acquisition", revenue: 7560, change: "+23%" },
                   { name: "Under Armour Premium", revenue: 5670, change: "-5%" },
                   { name: "Apple Fitness+", revenue: 4510, change: "+12%" },
-                ].map((campaign) => (
-                  <div key={campaign.name} className="flex items-center justify-between">
+                ].map((campaign, index) => (
+                  <div key={`campaign-${index}-${campaign.name}`} className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <p className="text-sm font-medium text-dark-gray">{campaign.name}</p>
@@ -391,7 +431,7 @@ export default function EarningsPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-silk-gray">
-                {mockEarnings.map((earning) => (
+                {earningsData.map((earning: any) => (
                   <tr key={earning.id} className="hover:bg-light-gray/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-dark-gray">
                       {new Date(earning.date).toLocaleDateString()}

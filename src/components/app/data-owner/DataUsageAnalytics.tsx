@@ -135,7 +135,7 @@ export default function DataUsageAnalytics() {
           <select
             value={selectedTimeframe}
             onChange={(e) => setSelectedTimeframe(e.target.value)}
-            className="px-3 py-2 text-sm border border-silk-gray rounded-lg focus:outline-none focus:border-brand-purple"
+            className="px-3 py-2 text-sm border border-silk-gray rounded-lg focus:outline-none focus:border-bright-purple"
           >
             <option value="24h">Last 24 hours</option>
             <option value="7d">Last 7 days</option>
@@ -155,7 +155,7 @@ export default function DataUsageAnalytics() {
           className="bg-light-gray/50 rounded-xl p-4"
         >
           <div className="flex items-center justify-between mb-2">
-            <Activity size={20} className="text-brand-purple" />
+            <Activity size={20} className="text-bright-purple" />
             <span className="text-xs text-brand-green">+23%</span>
           </div>
           <p className="text-2xl font-bold text-dark-gray">10,048</p>
@@ -220,8 +220,8 @@ export default function DataUsageAnalytics() {
               className="flex items-center justify-between p-3 bg-light-gray/30 rounded-lg hover:bg-light-gray/50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-brand-purple/10 rounded-lg flex items-center justify-center">
-                  <Eye size={16} className="text-brand-purple" />
+                <div className="w-10 h-10 bg-bright-purple/10 rounded-lg flex items-center justify-center">
+                  <Eye size={16} className="text-bright-purple" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-dark-gray">
@@ -290,7 +290,7 @@ export default function DataUsageAnalytics() {
               </div>
               <div className="mt-2 w-full bg-light-gray rounded-full h-2">
                 <div
-                  className="bg-brand-purple h-2 rounded-full transition-all duration-500"
+                  className="bg-bright-purple h-2 rounded-full transition-all duration-500"
                   style={{ width: `${campaign.performance}%` }}
                 />
               </div>

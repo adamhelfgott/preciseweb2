@@ -211,7 +211,7 @@ export default function PrivacyDashboard() {
             onClick={() => setSelectedView("metrics")}
             className={`px-4 py-2 text-sm rounded-lg transition-colors ${
               selectedView === "metrics"
-                ? "bg-brand-purple text-white"
+                ? "bg-bright-purple text-white"
                 : "bg-light-gray text-medium-gray hover:bg-light-gray/80"
             }`}
           >
@@ -221,7 +221,7 @@ export default function PrivacyDashboard() {
             onClick={() => setSelectedView("compliance")}
             className={`px-4 py-2 text-sm rounded-lg transition-colors ${
               selectedView === "compliance"
-                ? "bg-brand-purple text-white"
+                ? "bg-bright-purple text-white"
                 : "bg-light-gray text-medium-gray hover:bg-light-gray/80"
             }`}
           >
@@ -234,11 +234,11 @@ export default function PrivacyDashboard() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-6 p-4 bg-gradient-to-r from-brand-purple/10 to-brand-blue/10 rounded-xl"
+        className="mb-6 p-4 bg-gradient-to-r from-bright-purple/10 to-brand-blue/10 rounded-xl"
       >
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <Shield size={20} className="text-brand-purple" />
+            <Shield size={20} className="text-bright-purple" />
             <h3 className="font-medium text-dark-gray">Privacy Budget Status</h3>
             <div className="group relative">
               <Info size={14} className="text-medium-gray cursor-help" />
@@ -260,7 +260,7 @@ export default function PrivacyDashboard() {
           </div>
           <div className="w-full bg-white rounded-full h-3">
             <div
-              className="bg-gradient-to-r from-brand-purple to-brand-blue h-3 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-bright-purple to-brand-blue h-3 rounded-full transition-all duration-500"
               style={{ width: `${privacyBudget.used}%` }}
             />
           </div>
@@ -280,7 +280,7 @@ export default function PrivacyDashboard() {
               </p>
               <div className="mt-1 w-full bg-light-gray rounded-full h-1">
                 <div
-                  className="bg-brand-purple h-1 rounded-full"
+                  className="bg-bright-purple h-1 rounded-full"
                   style={{ width: `${(alloc.used / alloc.allocated) * 100}%` }}
                 />
               </div>

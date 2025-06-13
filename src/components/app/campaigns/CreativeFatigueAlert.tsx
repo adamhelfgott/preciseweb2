@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle, TrendingDown, RefreshCw, X, ChevronRight, Zap } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface FatiguedCreative {
   id: string;
@@ -17,6 +20,9 @@ interface FatiguedCreative {
   recommendation: string;
   urgency: "high" | "medium" | "low";
   performanceData: Array<{ date: string; ctr: number }>;
+  ctrDrop?: number;
+  cvrDrop?: number;
+  impact?: string;
 }
 
 const MOCK_FATIGUED_CREATIVES: FatiguedCreative[] = [
@@ -71,24 +77,70 @@ const MOCK_FATIGUED_CREATIVES: FatiguedCreative[] = [
 ];
 
 export default function CreativeFatigueAlert() {
+  const { user } = useAuth();
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedCreative, setSelectedCreative] = useState<FatiguedCreative | null>(null);
-  const [alerts, setAlerts] = useState(MOCK_FATIGUED_CREATIVES);
   const [dismissedAlerts, setDismissedAlerts] = useState<string[]>([]);
+
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Fetch fatigue alerts from Convex
+  const fatigueAlerts = useQuery(api.creatives.getFatigueAlerts,
+    convexUser?._id ? { buyerId: convexUser._id, status: "active" } : "skip"
+  );
+
+  // Mutation for resolving alerts
+  const resolveAlert = useMutation(api.creatives.resolveFatigueAlert);
+
+  // Map Convex data to component format or use mock data
+  const alerts: FatiguedCreative[] = fatigueAlerts?.map((alert: any) => ({
+    id: alert._id,
+    campaignName: alert.campaign?.name || "Unknown Campaign",
+    creativeName: alert.creative?.name || "Unknown Creative",
+    impressions: alert.creative?.impressions || 0,
+    currentCTR: alert.creative?.ctr || 0,
+    peakCTR: (alert.creative?.ctr || 0) * (1 + Math.abs(alert.ctrDrop / 100)),
+    declineRate: -Math.abs(alert.ctrDrop),
+    daysActive: alert.creative?.daysActive || 0,
+    recommendation: alert.recommendedAction,
+    urgency: alert.severity === "critical" ? "high" : alert.severity === "warning" ? "medium" : "low",
+    ctrDrop: alert.ctrDrop,
+    cvrDrop: alert.cvrDrop,
+    impact: alert.impact,
+    performanceData: Array.from({ length: alert.creative?.daysActive || 7 }, (_, i) => ({
+      date: new Date(Date.now() - ((alert.creative?.daysActive || 7) - 1 - i) * 24 * 60 * 60 * 1000).toLocaleDateString(),
+      ctr: (alert.creative?.ctr || 2) * (1 + Math.abs(alert.ctrDrop / 100)) - (i * Math.abs(alert.ctrDrop / 100) / (alert.creative?.daysActive || 7)),
+    })),
+  })) || MOCK_FATIGUED_CREATIVES;
 
   const activeAlerts = alerts.filter(alert => !dismissedAlerts.includes(alert.id));
   const highUrgencyCount = activeAlerts.filter(a => a.urgency === "high").length;
 
-  const handleDismiss = (id: string) => {
+  const handleDismiss = async (id: string) => {
+    // Update local state immediately
     setDismissedAlerts([...dismissedAlerts, id]);
     if (selectedCreative?.id === id) {
       setSelectedCreative(null);
     }
+    
+    // Resolve alert in Convex
+    try {
+      await resolveAlert({ alertId: id as any });
+    } catch (error) {
+      console.error("Failed to resolve alert:", error);
+      // Optionally revert the local state on error
+      setDismissedAlerts(dismissedAlerts.filter(alertId => alertId !== id));
+    }
   };
 
-  const handleRefresh = (creative: FatiguedCreative) => {
+  const handleRefresh = async (creative: FatiguedCreative) => {
     console.log(`Refreshing creative: ${creative.creativeName}`);
-    // In a real app, this would trigger the creative refresh workflow
+    // Mark the alert as resolved when creative is refreshed
+    await handleDismiss(creative.id);
+    // In a real app, this would also trigger the creative refresh workflow
   };
 
   const getUrgencyColor = (urgency: string) => {

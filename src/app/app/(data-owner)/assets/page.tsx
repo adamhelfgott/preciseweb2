@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { Database, Plus, Settings, TrendingUp, AlertCircle, Play, Pause, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ProofBadge from "@/components/app/ProofBadge";
@@ -31,6 +34,7 @@ interface DataAsset {
   }[];
 }
 
+// Fallback mock assets data (used when Convex is not available)
 const mockAssets: DataAsset[] = [
   {
     id: "1",
@@ -87,18 +91,54 @@ const mockAssets: DataAsset[] = [
 ];
 
 export default function DataAssetsPage() {
-  const [assets, setAssets] = useState(mockAssets);
+  const { user } = useAuth();
   const [selectedAsset, setSelectedAsset] = useState<DataAsset | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [verificationModalOpen, setVerificationModalOpen] = useState(false);
   const [selectedVerification, setSelectedVerification] = useState<any>(null);
 
-  const toggleAssetStatus = (assetId: string) => {
-    setAssets(prev => prev.map(asset => 
-      asset.id === assetId 
-        ? { ...asset, status: asset.status === "active" ? "paused" : "active" }
-        : asset
-    ));
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Fetch data assets from Convex
+  const dataAssets = useQuery(api.dataAssets.getDataAssets, 
+    convexUser?._id ? { ownerId: convexUser._id } : "skip"
+  );
+
+  // Mutations
+  const updateAsset = useMutation(api.dataAssets.updateDataAsset);
+
+  // Use Convex data if available, otherwise fall back to mock data
+  const assets = dataAssets || mockAssets;
+
+  // Loading state
+  if (!user || !convexUser) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-green mx-auto mb-4"></div>
+          <p className="text-medium-gray">Loading assets...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const toggleAssetStatus = async (assetId: string) => {
+    if (dataAssets) {
+      // Use Convex mutation
+      const asset = assets.find((a: any) => a._id === assetId || a.id === assetId);
+      if (asset) {
+        await updateAsset({
+          assetId: asset._id,
+          status: asset.status === "active" ? "paused" : "active"
+        });
+      }
+    } else {
+      // Fallback for mock data - this won't persist
+      console.log("Toggle status for mock asset:", assetId);
+    }
   };
 
   const getQualityColor = (score: number) => {
@@ -190,9 +230,9 @@ export default function DataAssetsPage() {
 
       {/* Assets List */}
       <div className="space-y-6">
-        {assets.map((asset, index) => (
+        {assets.map((asset: any, index: number) => (
           <motion.div
-            key={asset.id}
+            key={asset._id || asset.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
@@ -214,14 +254,14 @@ export default function DataAssetsPage() {
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedVerification({
-                            proofId: `PRF-2024-${asset.id}-${Math.floor(Math.random() * 1000)}`,
+                            proofId: `PRF-2024-${asset._id || asset.id}-${Math.floor(Math.random() * 1000)}`,
                             timestamp: Date.now(),
                             blockHeight: 12345678,
                             dataHash: '0x' + Array(64).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join(''),
                             merkleRoot: '0x' + Array(64).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join(''),
                             dataAssets: [
                               {
-                                id: asset.id,
+                                id: asset._id || asset.id,
                                 name: asset.name,
                                 provider: 'Your Organization',
                                 contribution: 0.45
@@ -229,7 +269,7 @@ export default function DataAssetsPage() {
                             ],
                             campaign: {
                               id: '1',
-                              name: asset.campaigns[0]?.name || 'Direct Sale',
+                              name: (asset.campaignImpact?.[0] || asset.campaigns?.[0])?.name || 'Direct Sale',
                               advertiser: 'Nike Inc.'
                             },
                             totalValue: asset.monthlyRevenue,
@@ -261,7 +301,7 @@ export default function DataAssetsPage() {
                   </div>
                   
                   <button
-                    onClick={() => toggleAssetStatus(asset.id)}
+                    onClick={() => toggleAssetStatus(asset._id || asset.id)}
                     className={cn(
                       "p-2 rounded-lg transition-colors",
                       asset.status === "active" 
@@ -345,14 +385,14 @@ export default function DataAssetsPage() {
             </div>
 
             {/* Campaign Impact */}
-            {asset.campaigns.length > 0 && (
+            {((asset.campaignImpact && asset.campaignImpact.length > 0) || (asset.campaigns && asset.campaigns.length > 0)) && (
               <div className="px-6 pb-6">
                 <p className="text-sm font-medium text-dark-gray mb-3 flex items-center gap-2">
                   <TrendingUp size={16} className="text-brand-green" />
                   Campaign Impact
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  {asset.campaigns.map((campaign) => (
+                  {(asset.campaignImpact || asset.campaigns || []).map((campaign: any) => (
                     <div 
                       key={campaign.name}
                       className="bg-light-gray rounded-lg p-3 flex items-center justify-between"

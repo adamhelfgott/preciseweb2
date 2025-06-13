@@ -144,7 +144,7 @@ export default function RealtimeActivityFeed({
 
       <div className="flex-1 overflow-hidden">
         <div className="space-y-2 h-full overflow-y-auto">
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="sync">
           {events.slice(0, maxEvents).map((event) => (
             <motion.div
               key={event.id}

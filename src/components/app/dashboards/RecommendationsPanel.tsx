@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { Lightbulb, ChevronRight, X } from "lucide-react";
 
 interface Recommendation {
@@ -57,19 +60,57 @@ const mockRecommendations: Recommendation[] = [
 ];
 
 export default function RecommendationsPanel() {
-  const [recommendations, setRecommendations] = useState(mockRecommendations);
+  const { user } = useAuth();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const handleDismiss = (id: string) => {
-    setRecommendations(prev => prev.filter(rec => rec.id !== id));
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Fetch recommendations from Convex
+  const convexRecommendations = useQuery(api.recommendations.getRecommendations,
+    convexUser?._id ? { userId: convexUser._id } : "skip"
+  );
+
+  // Update recommendation status mutation
+  const updateStatus = useMutation(api.recommendations.updateRecommendationStatus);
+
+  // Use Convex data if available, otherwise fall back to mock data
+  const recommendations = convexRecommendations || mockRecommendations;
+
+  // Format Convex recommendations to match the component interface
+  const formattedRecommendations = recommendations.map((rec: any) => ({
+    id: rec._id || rec.id,
+    priority: rec.priority,
+    title: rec.title,
+    description: rec.description,
+    icon: rec.priority === "high" ? "💎" : rec.priority === "medium" ? "🔗" : "⚡",
+    estimatedImpact: rec.estimatedImpact || {
+      type: "revenue",
+      value: rec.priority === "high" ? 18400 : rec.priority === "medium" ? 12000 : 5000
+    },
+    status: rec.status,
+  }));
+
+  const handleDismiss = async (id: string) => {
+    if (convexRecommendations) {
+      // Update status in Convex
+      await updateStatus({ 
+        recommendationId: id, 
+        status: "dismissed" 
+      });
+    }
   };
 
-  const handleApply = (id: string) => {
-    setRecommendations(prev => 
-      prev.map(rec => 
-        rec.id === id ? { ...rec, status: "applied" as const } : rec
-      )
-    );
+  const handleApply = async (id: string) => {
+    if (convexRecommendations) {
+      // Update status in Convex
+      await updateStatus({ 
+        recommendationId: id, 
+        status: "applied" 
+      });
+    }
   };
 
   const getPriorityColor = (priority: string) => {
@@ -81,7 +122,23 @@ export default function RecommendationsPanel() {
     }
   };
 
-  const activeRecommendations = recommendations.filter(r => r.status !== "dismissed" && r.status !== "applied");
+  const activeRecommendations = formattedRecommendations.filter((r: any) => 
+    r.status !== "dismissed" && r.status !== "applied"
+  );
+
+  // Loading state
+  if (!user || !convexUser) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-6">
+        <div className="flex items-center justify-center h-32">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-green mx-auto mb-2"></div>
+            <p className="text-sm text-medium-gray">Loading recommendations...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (activeRecommendations.length === 0) {
     return null;
@@ -103,7 +160,7 @@ export default function RecommendationsPanel() {
 
       <div className="space-y-4">
         <AnimatePresence>
-          {activeRecommendations.map((rec) => (
+          {activeRecommendations.map((rec: any) => (
             <motion.div
               key={rec.id}
               initial={{ opacity: 0, y: 20 }}

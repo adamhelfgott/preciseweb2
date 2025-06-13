@@ -1,13 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Play, Pause, TrendingUp, AlertTriangle, Eye, MousePointer } from 'lucide-react';
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import Image from 'next/image';
 
 interface Creative {
   id: string;
-  type: 'image' | 'video';
+  type: 'image' | 'video' | 'carousel' | 'native';
   url: string;
   thumbnail?: string;
   name: string;
@@ -18,10 +21,10 @@ interface Creative {
   conversions: number;
   cvr: number;
   spend: number;
-  cac: number;
-  fatigue: number; // 0-100
-  daysRunning: number;
-  platforms: string[];
+  cpa: number;
+  fatigueScore: number; // 0-100
+  daysActive: number;
+  platforms?: string[];
 }
 
 const mockCreatives: Creative[] = [
@@ -37,9 +40,9 @@ const mockCreatives: Creative[] = [
     conversions: 1820,
     cvr: 3.78,
     spend: 15600,
-    cac: 8.57,
-    fatigue: 72,
-    daysRunning: 14,
+    cpa: 8.57,
+    fatigueScore: 72,
+    daysActive: 14,
     platforms: ['Instagram', 'Facebook', 'TikTok']
   },
   {
@@ -55,9 +58,9 @@ const mockCreatives: Creative[] = [
     conversions: 3584,
     cvr: 4.00,
     spend: 24000,
-    cac: 6.70,
-    fatigue: 25,
-    daysRunning: 5,
+    cpa: 6.70,
+    fatigueScore: 25,
+    daysActive: 5,
     platforms: ['TikTok', 'Instagram Reels', 'YouTube Shorts']
   },
   {
@@ -72,25 +75,83 @@ const mockCreatives: Creative[] = [
     conversions: 1100,
     cvr: 3.50,
     spend: 11000,
-    cac: 10.00,
-    fatigue: 45,
-    daysRunning: 10,
+    cpa: 10.00,
+    fatigueScore: 45,
+    daysActive: 10,
     platforms: ['Facebook', 'LinkedIn', 'Twitter']
   }
 ];
 
-export default function CreativeCarousel() {
+interface CreativeCarouselProps {
+  campaignId?: string;
+}
+
+export default function CreativeCarousel({ campaignId }: CreativeCarouselProps) {
+  const { user } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [simulationActive, setSimulationActive] = useState(false);
 
-  const currentCreative = mockCreatives[currentIndex];
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Fetch creatives from Convex
+  // Only use campaignId if it's a valid Convex ID (starts with 'j')
+  const isValidConvexId = campaignId?.startsWith('j');
+  const creatives = useQuery(api.creatives.getCreatives,
+    convexUser?._id && campaignId && isValidConvexId ? { campaignId: campaignId as any } : 
+    convexUser?._id ? { buyerId: convexUser._id } : "skip"
+  );
+
+  // Mutation for simulating performance
+  const simulatePerformance = useMutation(api.creatives.simulateCreativePerformance);
+
+  // Map Convex data to component format or use mock data
+  const displayCreatives: Creative[] = creatives?.map(c => ({
+    id: c._id,
+    type: c.type,
+    url: `/creatives/${c.name.toLowerCase().replace(/\s+/g, '-')}.jpg`,
+    name: c.name,
+    format: c.format,
+    impressions: c.impressions,
+    clicks: c.clicks,
+    ctr: c.ctr,
+    conversions: c.conversions,
+    cvr: c.cvr,
+    spend: c.spend,
+    cpa: c.cpa,
+    fatigueScore: c.fatigueScore,
+    daysActive: c.daysActive,
+    platforms: c.type === 'video' ? ['TikTok', 'Instagram Reels', 'YouTube Shorts'] :
+               c.type === 'carousel' ? ['Instagram', 'Facebook'] :
+               ['Facebook', 'Instagram', 'TikTok']
+  })) || mockCreatives;
+
+  const currentCreative = displayCreatives[currentIndex] || mockCreatives[0];
+
+  // Simulate performance updates
+  useEffect(() => {
+    if (!convexUser?._id || !simulationActive) return;
+
+    const interval = setInterval(async () => {
+      try {
+        await simulatePerformance({ buyerId: convexUser._id });
+      } catch (error) {
+        console.error("Failed to simulate performance:", error);
+      }
+    }, 5000); // Update every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [convexUser?._id, simulationActive, simulatePerformance]);
 
   const nextCreative = () => {
-    setCurrentIndex((prev) => (prev + 1) % mockCreatives.length);
+    setCurrentIndex((prev) => (prev + 1) % displayCreatives.length);
   };
 
   const prevCreative = () => {
-    setCurrentIndex((prev) => (prev - 1 + mockCreatives.length) % mockCreatives.length);
+    setCurrentIndex((prev) => (prev - 1 + displayCreatives.length) % displayCreatives.length);
   };
 
   const getFatigueColor = (fatigue: number) => {
@@ -104,26 +165,50 @@ export default function CreativeCarousel() {
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900">Creative Performance</h3>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={prevCreative}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <span className="text-sm text-gray-600">
-              {currentIndex + 1} / {mockCreatives.length}
-            </span>
-            <button
-              onClick={nextCreative}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+          <div className="flex items-center gap-4">
+            {/* Simulation Toggle */}
+            {convexUser && (
+              <button
+                onClick={() => setSimulationActive(!simulationActive)}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                  simulationActive 
+                    ? "bg-green-100 text-green-800" 
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {simulationActive ? "Live Updates On" : "Live Updates Off"}
+              </button>
+            )}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={prevCreative}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <span className="text-sm text-gray-600">
+                {currentIndex + 1} / {displayCreatives.length}
+              </span>
+              <button
+                onClick={nextCreative}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Loading State */}
+      {!user || !convexUser ? (
+        <div className="flex items-center justify-center h-96 p-6">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p className="text-sm text-gray-600">Loading creatives...</p>
+          </div>
+        </div>
+      ) : (
       <div className="grid lg:grid-cols-2 gap-6 p-6">
         {/* Creative Preview */}
         <div className="relative">
@@ -179,25 +264,25 @@ export default function CreativeCarousel() {
         {/* Performance Metrics */}
         <div className="space-y-4">
           {/* Creative Fatigue Indicator */}
-          <div className={`p-4 rounded-lg ${getFatigueColor(currentCreative.fatigue)}`}>
+          <div className={`p-4 rounded-lg ${getFatigueColor(currentCreative.fatigueScore)}`}>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5" />
                 <span className="font-medium">Creative Fatigue</span>
               </div>
-              <span className="text-2xl font-bold">{currentCreative.fatigue}%</span>
+              <span className="text-2xl font-bold">{currentCreative.fatigueScore.toFixed(0)}%</span>
             </div>
             <div className="w-full bg-white/50 rounded-full h-2">
               <motion.div
                 className="h-full bg-current rounded-full"
                 initial={{ width: 0 }}
-                animate={{ width: `${currentCreative.fatigue}%` }}
+                animate={{ width: `${currentCreative.fatigueScore.toFixed(0)}%` }}
                 transition={{ duration: 0.5 }}
               />
             </div>
             <p className="text-sm mt-2">
-              Running for {currentCreative.daysRunning} days • 
-              {currentCreative.fatigue > 60 && ' Consider refreshing creative'}
+              Running for {currentCreative.daysActive} days • 
+              {currentCreative.fatigueScore > 60 && ' Consider refreshing creative'}
             </p>
           </div>
 
@@ -212,7 +297,7 @@ export default function CreativeCarousel() {
                 {(currentCreative.impressions / 1000000).toFixed(1)}M
               </p>
               <p className="text-xs text-gray-500">
-                CTR: {currentCreative.ctr}%
+                CTR: {currentCreative.ctr.toFixed(1)}%
               </p>
             </div>
 
@@ -225,7 +310,7 @@ export default function CreativeCarousel() {
                 {(currentCreative.clicks / 1000).toFixed(1)}K
               </p>
               <p className="text-xs text-gray-500">
-                CVR: {currentCreative.cvr}%
+                CVR: {currentCreative.cvr.toFixed(1)}%
               </p>
             </div>
           </div>
@@ -250,9 +335,9 @@ export default function CreativeCarousel() {
                 </p>
               </div>
               <div>
-                <p className="text-xs text-gray-600">CAC</p>
+                <p className="text-xs text-gray-600">CPA</p>
                 <p className="text-lg font-bold text-green-600">
-                  ${currentCreative.cac.toFixed(2)}
+                  ${currentCreative.cpa.toFixed(2)}
                 </p>
               </div>
             </div>
@@ -264,17 +349,17 @@ export default function CreativeCarousel() {
             <div className="space-y-2 text-sm">
               <div className="flex items-center justify-between">
                 <span className="text-gray-300">Without Precise</span>
-                <span className="line-through text-gray-400">${(currentCreative.cac * 1.8).toFixed(2)} CAC</span>
+                <span className="line-through text-gray-400">${(currentCreative.cpa * 1.8).toFixed(2)} CPA</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-green-400">With Precise</span>
-                <span className="font-bold">${currentCreative.cac.toFixed(2)} CAC</span>
+                <span className="font-bold">${currentCreative.cpa.toFixed(2)} CPA</span>
               </div>
               <div className="pt-2 border-t border-gray-700">
                 <div className="flex items-center justify-between">
                   <span>Savings per conversion</span>
                   <span className="text-green-400 font-bold">
-                    ${(currentCreative.cac * 0.8).toFixed(2)}
+                    ${(currentCreative.cpa * 0.8).toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -282,6 +367,7 @@ export default function CreativeCarousel() {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

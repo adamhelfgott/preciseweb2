@@ -5,12 +5,19 @@ import { v } from "convex/values";
 export const getRecommendations = query({
   args: { 
     userId: v.id("users"),
+    type: v.optional(v.union(v.literal("data_optimization"), v.literal("campaign_optimization"))),
     status: v.optional(v.union(v.literal("new"), v.literal("viewed"), v.literal("applied"), v.literal("dismissed"))),
   },
   handler: async (ctx, args) => {
     let recommendationsQuery = ctx.db
       .query("recommendations")
       .withIndex("by_user", (q) => q.eq("userId", args.userId));
+    
+    if (args.type) {
+      recommendationsQuery = recommendationsQuery.filter((q) => 
+        q.eq(q.field("type"), args.type)
+      );
+    }
     
     if (args.status) {
       recommendationsQuery = recommendationsQuery.filter((q) => 

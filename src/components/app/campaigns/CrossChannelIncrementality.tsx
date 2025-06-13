@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   FlaskConical, 
   Users, 
@@ -151,14 +154,101 @@ const ACR_MATCHING = [
 const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
 
 export default function CrossChannelIncrementality() {
-  const [selectedRegion, setSelectedRegion] = useState(TEST_REGIONS[0]);
+  const { user } = useAuth();
+  const [selectedRegion, setSelectedRegion] = useState<any>(null);
   const [viewMode, setViewMode] = useState<"geographic" | "channel" | "timeline">("geographic");
   const [showMethodology, setShowMethodology] = useState(false);
   const [testStatus, setTestStatus] = useState<"running" | "paused" | "completed">("running");
+  const [simulationActive, setSimulationActive] = useState(false);
 
-  const totalLinearReach = TEST_REGIONS.reduce((sum, r) => sum + r.tvReach, 0);
-  const totalCTVReach = TEST_REGIONS.reduce((sum, r) => sum + r.ctvReach, 0);
-  const avgLift = TEST_REGIONS.filter(r => !r.control).reduce((sum, r) => sum + r.lift, 0) / TEST_REGIONS.filter(r => !r.control).length;
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Get active test
+  const activeTest = useQuery(api.crossChannel.getActiveTest,
+    convexUser?._id ? { buyerId: convexUser._id } : "skip"
+  );
+
+  // Get test regions
+  const testRegions = useQuery(api.crossChannel.getTestRegions,
+    activeTest?._id ? { testId: activeTest._id } : "skip"
+  );
+
+  // Get channel performance
+  const channelPerformance = useQuery(api.crossChannel.getChannelPerformance,
+    activeTest?._id ? { testId: activeTest._id, days: 28 } : "skip"
+  );
+
+  // Get ACR matching data
+  const acrMatching = useQuery(api.crossChannel.getACRMatching,
+    activeTest?._id ? { testId: activeTest._id } : "skip"
+  );
+
+  // Mutation for simulating test
+  const simulateTest = useMutation(api.crossChannel.simulateIncrementalityTest);
+
+  // Use Convex data or fall back to mock
+  const regionsToUse = testRegions?.length > 0 ? testRegions : TEST_REGIONS;
+  const selectedRegionData = selectedRegion || regionsToUse[0];
+
+  // Calculate metrics
+  const totalLinearReach = regionsToUse.reduce((sum: number, r: any) => sum + r.tvReach, 0);
+  const totalCTVReach = regionsToUse.reduce((sum: number, r: any) => sum + r.ctvReach, 0);
+  const avgLift = regionsToUse.filter((r: any) => !r.isControl).reduce((sum: number, r: any) => sum + r.lift, 0) / 
+    regionsToUse.filter((r: any) => !r.isControl).length || 0;
+
+  // Map channel performance data
+  const timeSeriesData = channelPerformance?.length > 0 
+    ? channelPerformance
+        .filter((p: any) => p.channel === "linear" || p.channel === "ctv" || p.channel === "combined" || p.channel === "control")
+        .reduce((acc: any[], p: any) => {
+          const existing = acc.find(d => d.day === new Date(p.date).getDate());
+          if (existing) {
+            existing[p.channel] = p.index;
+          } else {
+            acc.push({
+              day: new Date(p.date).getDate(),
+              [p.channel]: p.index,
+            });
+          }
+          return acc;
+        }, [])
+        .sort((a, b) => a.day - b.day)
+    : TIME_SERIES_DATA;
+
+  // Map ACR matching data
+  const acrMatchingData = acrMatching?.length > 0 ? acrMatching : ACR_MATCHING;
+
+  // Set initial selected region
+  useEffect(() => {
+    if (regionsToUse.length > 0 && !selectedRegion) {
+      setSelectedRegion(regionsToUse[0]);
+    }
+  }, [regionsToUse, selectedRegion]);
+
+  // Simulate test data
+  useEffect(() => {
+    if (!convexUser?._id || !simulationActive) return;
+
+    // Simulate immediately on activation
+    const simulate = async () => {
+      try {
+        await simulateTest({ 
+          buyerId: convexUser._id 
+        });
+      } catch (error) {
+        console.error("Failed to simulate test:", error);
+      }
+    };
+    
+    simulate(); // Run immediately
+    
+    const interval = setInterval(simulate, 45000); // Every 45 seconds
+
+    return () => clearInterval(interval);
+  }, [convexUser?._id, simulationActive, simulateTest]);
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-6">
@@ -174,6 +264,19 @@ export default function CrossChannelIncrementality() {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          {/* Simulation Toggle */}
+          {convexUser && (
+            <button
+              onClick={() => setSimulationActive(!simulationActive)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                simulationActive 
+                  ? "bg-purple-600 text-white" 
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {simulationActive ? "Simulation On" : "Simulation Off"}
+            </button>
+          )}
           <div className="flex bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => setViewMode("geographic")}
@@ -209,25 +312,25 @@ export default function CrossChannelIncrementality() {
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
               <span className="text-sm font-medium">Test Running</span>
             </div>
-            <span className="text-sm text-gray-600">Day 18 of 28</span>
+            <span className="text-sm text-gray-600">Day {activeTest?.daysRunning || 18} of 28</span>
           </div>
           <div className="flex items-center gap-6 text-sm">
             <div>
               <span className="text-gray-600">Test Regions:</span>
-              <span className="font-medium ml-1">3</span>
+              <span className="font-medium ml-1">{regionsToUse.filter((r: any) => !r.isControl).length}</span>
             </div>
             <div>
               <span className="text-gray-600">Control Regions:</span>
-              <span className="font-medium ml-1">2</span>
+              <span className="font-medium ml-1">{regionsToUse.filter((r: any) => r.isControl).length}</span>
             </div>
             <div>
               <span className="text-gray-600">Confidence:</span>
-              <span className="font-medium text-purple-600 ml-1">94.2%</span>
+              <span className="font-medium text-purple-600 ml-1">{activeTest?.confidence?.toFixed(1) || 94.2}%</span>
             </div>
           </div>
         </div>
         <div className="w-full bg-purple-100 rounded-full h-2">
-          <div className="bg-purple-600 h-2 rounded-full transition-all" style={{ width: "64%" }} />
+          <div className="bg-purple-600 h-2 rounded-full transition-all" style={{ width: `${((activeTest?.daysRunning || 18) / 28) * 100}%` }} />
         </div>
       </div>
 
@@ -319,15 +422,15 @@ export default function CrossChannelIncrementality() {
                       ))
                     }
                   </Geographies>
-                  {TEST_REGIONS.map((region) => (
+                  {regionsToUse.map((region: any) => (
                     <Marker
-                      key={region.id}
+                      key={region.regionId || region.id}
                       coordinates={region.coordinates}
                       onClick={() => setSelectedRegion(region)}
                     >
                       <motion.circle
                         r={20}
-                        fill={region.control ? "#EF4444" : "#8B5CF6"}
+                        fill={region.isControl || region.control ? "#EF4444" : "#8B5CF6"}
                         fillOpacity={0.7}
                         stroke="#fff"
                         strokeWidth={2}
@@ -339,7 +442,7 @@ export default function CrossChannelIncrementality() {
                         y={-25}
                         className="text-xs font-medium fill-gray-700"
                       >
-                        {region.name}
+                        {region.regionName || region.name}
                       </text>
                       <text
                         textAnchor="middle"
@@ -369,13 +472,13 @@ export default function CrossChannelIncrementality() {
           <div className="col-span-4 space-y-6">
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-lg font-semibold text-gray-900">{selectedRegion.name}</h4>
+                <h4 className="text-lg font-semibold text-gray-900">{selectedRegionData?.regionName || selectedRegionData?.name}</h4>
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  selectedRegion.control 
+                  selectedRegionData?.isControl || selectedRegionData?.control 
                     ? "bg-red-100 text-red-700" 
                     : "bg-purple-100 text-purple-700"
                 }`}>
-                  {selectedRegion.control ? "Control" : "Test"}
+                  {selectedRegionData?.isControl || selectedRegionData?.control ? "Control" : "Test"}
                 </span>
               </div>
 
@@ -383,50 +486,50 @@ export default function CrossChannelIncrementality() {
                 <div>
                   <div className="text-sm text-gray-600 mb-2">Channel Mix</div>
                   <div className="space-y-2">
-                    {selectedRegion.tvReach > 0 && (
+                    {selectedRegionData?.tvReach > 0 && (
                       <div className="flex items-center justify-between">
                         <span className="text-sm">Linear TV</span>
                         <span className="text-sm font-medium">
-                          {(selectedRegion.tvReach / 1000).toFixed(0)}K households
+                          {(selectedRegionData.tvReach / 1000).toFixed(0)}K households
                         </span>
                       </div>
                     )}
-                    {selectedRegion.ctvReach > 0 && (
+                    {selectedRegionData?.ctvReach > 0 && (
                       <div className="flex items-center justify-between">
                         <span className="text-sm">CTV</span>
                         <span className="text-sm font-medium">
-                          {(selectedRegion.ctvReach / 1000).toFixed(0)}K devices
+                          {(selectedRegionData.ctvReach / 1000).toFixed(0)}K devices
                         </span>
                       </div>
                     )}
-                    {selectedRegion.overlap > 0 && (
+                    {selectedRegionData?.overlap > 0 && (
                       <div className="flex items-center justify-between">
                         <span className="text-sm">Overlap</span>
                         <span className="text-sm font-medium">
-                          {(selectedRegion.overlap / 1000).toFixed(0)}K both
+                          {(selectedRegionData.overlap / 1000).toFixed(0)}K both
                         </span>
                       </div>
                     )}
                   </div>
                 </div>
 
-                {!selectedRegion.control && (
+                {!(selectedRegionData?.isControl || selectedRegionData?.control) && (
                   <div>
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm text-gray-600">Incremental Lift</span>
                       <span className="text-2xl font-bold text-purple-600">
-                        +{selectedRegion.lift}%
+                        +{selectedRegionData?.lift?.toFixed(0) || 0}%
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div 
                         className="bg-purple-600 h-2 rounded-full"
-                        style={{ width: `${selectedRegion.confidence}%` }}
+                        style={{ width: `${selectedRegionData?.confidence || 0}%` }}
                       />
                     </div>
                     <div className="flex justify-between mt-1">
                       <span className="text-xs text-gray-600">Confidence</span>
-                      <span className="text-xs font-medium">{selectedRegion.confidence}%</span>
+                      <span className="text-xs font-medium">{selectedRegionData?.confidence?.toFixed(0) || 0}%</span>
                     </div>
                   </div>
                 )}
@@ -521,7 +624,7 @@ export default function CrossChannelIncrementality() {
                   </tr>
                 </thead>
                 <tbody>
-                  {ACR_MATCHING.map((segment, i) => (
+                  {acrMatchingData.map((segment: any, i: number) => (
                     <tr key={i} className="border-b hover:bg-gray-50">
                       <td className="py-3 px-4 font-medium">{segment.segment}</td>
                       <td className="text-right py-3 px-4">{segment.linearReach}%</td>
@@ -558,7 +661,7 @@ export default function CrossChannelIncrementality() {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Channel Performance Over Time</h3>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={TIME_SERIES_DATA}>
+                <LineChart data={timeSeriesData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                   <XAxis dataKey="day" label={{ value: "Days", position: "insideBottom", offset: -5 }} />
                   <YAxis label={{ value: "Index (Base = 100)", angle: -90, position: "insideLeft" }} />

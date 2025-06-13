@@ -4,6 +4,7 @@ import { v } from "convex/values";
 export default defineSchema({
   // Users with roles
   users: defineTable({
+    mockId: v.optional(v.string()), // Mock user ID for demo accounts
     email: v.string(),
     name: v.string(),
     role: v.union(v.literal("DATA_OWNER"), v.literal("MEDIA_BUYER"), v.literal("SOLUTION_CREATOR")),
@@ -158,4 +159,486 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_timestamp", ["timestamp"]),
+
+  // Creative assets and performance
+  creatives: defineTable({
+    campaignId: v.id("campaigns"),
+    buyerId: v.id("users"),
+    name: v.string(),
+    type: v.union(v.literal("image"), v.literal("video"), v.literal("carousel"), v.literal("native")),
+    format: v.string(), // e.g., "300x250", "1920x1080", "16:9"
+    impressions: v.number(),
+    clicks: v.number(),
+    conversions: v.number(),
+    spend: v.number(),
+    ctr: v.number(), // Click-through rate
+    cvr: v.number(), // Conversion rate
+    cpa: v.number(), // Cost per acquisition
+    fatigueScore: v.number(), // 0-100, higher means more fatigue
+    daysActive: v.number(),
+    status: v.union(v.literal("active"), v.literal("paused"), v.literal("retired")),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_campaign", ["campaignId"])
+    .index("by_buyer", ["buyerId"])
+    .index("by_status", ["status"])
+    .index("by_fatigue", ["fatigueScore"]),
+
+  // Creative fatigue alerts
+  creativeFatigueAlerts: defineTable({
+    creativeId: v.id("creatives"),
+    campaignId: v.id("campaigns"),
+    buyerId: v.id("users"),
+    severity: v.union(v.literal("warning"), v.literal("critical")),
+    ctrDrop: v.number(), // Percentage drop in CTR
+    cvrDrop: v.number(), // Percentage drop in CVR
+    recommendedAction: v.string(),
+    impact: v.string(), // e.g., "$5.2K wasted spend"
+    status: v.union(v.literal("active"), v.literal("resolved"), v.literal("ignored")),
+    createdAt: v.number(),
+    resolvedAt: v.optional(v.number()),
+  })
+    .index("by_creative", ["creativeId"])
+    .index("by_campaign", ["campaignId"])
+    .index("by_buyer", ["buyerId"])
+    .index("by_status", ["status"]),
+
+  // Campaign health metrics
+  campaignHealth: defineTable({
+    campaignId: v.id("campaigns"),
+    buyerId: v.id("users"),
+    healthScore: v.number(), // 0-100
+    metrics: v.object({
+      ctrTrend: v.number(), // percentage change
+      cvrTrend: v.number(),
+      cacTrend: v.number(),
+      roasTrend: v.number(),
+      budgetUtilization: v.number(), // percentage
+      creativeFreshness: v.number(), // 0-100
+    }),
+    alerts: v.array(v.object({
+      type: v.string(),
+      severity: v.union(v.literal("info"), v.literal("warning"), v.literal("critical")),
+      message: v.string(),
+    })),
+    timestamp: v.number(),
+  })
+    .index("by_campaign", ["campaignId"])
+    .index("by_buyer", ["buyerId"])
+    .index("by_timestamp", ["timestamp"]),
+
+  // Creative performance history
+  creativePerformance: defineTable({
+    creativeId: v.id("creatives"),
+    date: v.number(),
+    hourlyData: v.array(v.object({
+      hour: v.number(),
+      impressions: v.number(),
+      clicks: v.number(),
+      conversions: v.number(),
+      spend: v.number(),
+      ctr: v.number(),
+      cvr: v.number(),
+    })),
+  })
+    .index("by_creative", ["creativeId"])
+    .index("by_date", ["date"]),
+
+  // Multi-touch attribution data
+  touchPoints: defineTable({
+    campaignId: v.id("campaigns"),
+    buyerId: v.id("users"),
+    conversionId: v.string(), // Unique conversion identifier
+    timestamp: v.number(),
+    touchPoints: v.array(v.object({
+      channel: v.string(),
+      timestamp: v.number(),
+      engagement: v.string(), // e.g., "impression", "click", "view"
+      attribution: v.number(), // Attribution percentage
+      dataSource: v.optional(v.string()),
+    })),
+    totalValue: v.number(),
+    modelType: v.union(v.literal("firstTouch"), v.literal("lastTouch"), v.literal("linear"), v.literal("timeDecay"), v.literal("dataDriver")),
+  })
+    .index("by_campaign", ["campaignId"])
+    .index("by_buyer", ["buyerId"])
+    .index("by_timestamp", ["timestamp"]),
+
+  // CAC predictions
+  cacPredictions: defineTable({
+    campaignId: v.id("campaigns"),
+    buyerId: v.id("users"),
+    timestamp: v.number(),
+    predictions: v.array(v.object({
+      week: v.number(), // 1-4 weeks ahead
+      predictedCAC: v.number(),
+      confidenceLow: v.number(),
+      confidenceHigh: v.number(),
+      factors: v.array(v.object({
+        name: v.string(),
+        impact: v.number(), // percentage impact
+        direction: v.union(v.literal("positive"), v.literal("negative")),
+      })),
+    })),
+    currentCAC: v.number(),
+    modelAccuracy: v.number(), // 0-100
+  })
+    .index("by_campaign", ["campaignId"])
+    .index("by_buyer", ["buyerId"])
+    .index("by_timestamp", ["timestamp"]),
+
+  // Regional performance (DMA-level data)
+  regionalPerformance: defineTable({
+    campaignId: v.id("campaigns"),
+    buyerId: v.id("users"),
+    dmaId: v.string(), // DMA code (e.g., "501" for NYC)
+    dmaName: v.string(), // e.g., "New York"
+    state: v.string(),
+    coordinates: v.array(v.float64()), // [longitude, latitude]
+    tvViewership: v.number(),
+    footTraffic: v.number(),
+    correlation: v.float64(), // TV to foot traffic correlation
+    lift: v.number(), // percentage lift
+    roas: v.float64(),
+    stores: v.number(),
+    avgSpend: v.float64(),
+    topBrands: v.array(v.string()),
+    performance: v.union(v.literal("high"), v.literal("medium"), v.literal("low")),
+    timestamp: v.number(),
+  })
+    .index("by_campaign", ["campaignId"])
+    .index("by_buyer", ["buyerId"])
+    .index("by_dma", ["dmaId"])
+    .index("by_timestamp", ["timestamp"]),
+
+  // Regional time series data
+  regionalTimeSeries: defineTable({
+    campaignId: v.id("campaigns"),
+    dmaId: v.string(),
+    date: v.string(),
+    tvImpressions: v.number(),
+    storeVisits: v.number(),
+    correlation: v.float64(),
+    roas: v.float64(),
+    timestamp: v.number(),
+  })
+    .index("by_campaign_dma", ["campaignId", "dmaId"])
+    .index("by_date", ["date"]),
+
+  // Shapley value calculations for data owners
+  shapleyValues: defineTable({
+    assetId: v.id("dataAssets"),
+    ownerId: v.id("users"),
+    campaignId: v.id("campaigns"),
+    calculationDate: v.number(),
+    shapleyValue: v.number(), // Contribution value 0-1
+    marginalContribution: v.number(), // Dollar value
+    coalitionSize: v.number(), // Number of data sources in coalition
+    computationTime: v.number(), // ms taken to calculate
+  })
+    .index("by_asset", ["assetId"])
+    .index("by_owner", ["ownerId"])
+    .index("by_campaign", ["campaignId"])
+    .index("by_date", ["calculationDate"]),
+
+  // Competitive intelligence data
+  competitiveIntelligence: defineTable({
+    buyerId: v.id("users"),
+    metric: v.string(), // e.g., "industryAvgCAC", "marketCTR", "avgROAS"
+    value: v.float64(),
+    change: v.float64(), // percentage change
+    timestamp: v.number(),
+    timeRange: v.union(v.literal("7d"), v.literal("30d"), v.literal("90d")),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_metric", ["metric"])
+    .index("by_timestamp", ["timestamp"]),
+
+  // Performance benchmarks
+  performanceBenchmarks: defineTable({
+    buyerId: v.id("users"),
+    metric: v.string(), // e.g., "Targeting Precision", "Creative Quality"
+    yourScore: v.number(),
+    industryAvg: v.number(),
+    top10Percentile: v.number(),
+    timestamp: v.number(),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_metric", ["metric"]),
+
+  // Creative trends tracking
+  creativeTrends: defineTable({
+    format: v.string(), // e.g., "Video 15s", "Interactive Cards"
+    adoption: v.number(), // percentage
+    performance: v.string(), // e.g., "+23% CTR"
+    momentum: v.union(v.literal("rising"), v.literal("stable"), v.literal("declining"), v.literal("emerging")),
+    timestamp: v.number(),
+  })
+    .index("by_format", ["format"])
+    .index("by_momentum", ["momentum"]),
+
+  // Data source rankings
+  dataSourceRankings: defineTable({
+    provider: v.string(),
+    marketShare: v.number(),
+    avgROAS: v.float64(),
+    trend: v.union(v.literal("up"), v.literal("down"), v.literal("stable")),
+    ranking: v.number(),
+    timestamp: v.number(),
+  })
+    .index("by_ranking", ["ranking"])
+    .index("by_provider", ["provider"]),
+
+  // Cross-channel incrementality test data
+  crossChannelTests: defineTable({
+    buyerId: v.id("users"),
+    testName: v.string(),
+    status: v.union(v.literal("running"), v.literal("paused"), v.literal("completed")),
+    startDate: v.number(),
+    endDate: v.optional(v.number()),
+    daysRunning: v.number(),
+    confidence: v.float64(),
+    timestamp: v.number(),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_status", ["status"]),
+
+  // Test regions for incrementality
+  testRegions: defineTable({
+    testId: v.id("crossChannelTests"),
+    regionId: v.string(),
+    regionName: v.string(),
+    coordinates: v.array(v.float64()),
+    testType: v.string(), // e.g., "Linear + CTV", "Linear Only", "Control"
+    isControl: v.boolean(),
+    tvReach: v.number(),
+    ctvReach: v.number(),
+    linearOnly: v.number(),
+    overlap: v.number(),
+    lift: v.float64(),
+    confidence: v.float64(),
+  })
+    .index("by_test", ["testId"])
+    .index("by_region", ["regionId"]),
+
+  // Channel performance metrics
+  channelPerformance: defineTable({
+    testId: v.id("crossChannelTests"),
+    date: v.string(),
+    channel: v.string(), // "linear", "ctv", "combined", "control"
+    index: v.float64(), // Performance index (base 100)
+    reach: v.number(),
+    conversions: v.number(),
+    incrementalLift: v.float64(),
+  })
+    .index("by_test_date", ["testId", "date"])
+    .index("by_channel", ["channel"]),
+
+  // ACR (Automatic Content Recognition) matching data
+  acrMatching: defineTable({
+    testId: v.id("crossChannelTests"),
+    segment: v.string(), // e.g., "Sports Viewers", "News Watchers"
+    linearReach: v.float64(), // percentage
+    ctvMatch: v.float64(), // percentage
+    incremental: v.float64(), // percentage
+    timestamp: v.number(),
+  })
+    .index("by_test", ["testId"])
+    .index("by_segment", ["segment"]),
+
+  // Custom attribution models
+  attributionModels: defineTable({
+    buyerId: v.id("users"),
+    name: v.string(),
+    description: v.string(),
+    isCustom: v.boolean(),
+    isActive: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_name", ["name"]),
+
+  // Attribution windows configuration
+  attributionWindows: defineTable({
+    modelId: v.id("attributionModels"),
+    name: v.string(),
+    duration: v.float64(), // in days
+    type: v.union(v.literal("click"), v.literal("view"), v.literal("engagement")),
+    weight: v.number(), // 0-100
+    isActive: v.boolean(),
+  })
+    .index("by_model", ["modelId"])
+    .index("by_type", ["type"]),
+
+  // Attribution model performance
+  attributionPerformance: defineTable({
+    modelId: v.id("attributionModels"),
+    campaignId: v.optional(v.id("campaigns")),
+    roas: v.float64(),
+    conversions: v.number(),
+    revenue: v.float64(),
+    timestamp: v.number(),
+  })
+    .index("by_model", ["modelId"])
+    .index("by_campaign", ["campaignId"]),
+
+  // Conversion timing data
+  conversionTiming: defineTable({
+    buyerId: v.id("users"),
+    day: v.number(), // days since exposure
+    conversions: v.number(),
+    revenue: v.float64(),
+    channel: v.optional(v.string()),
+    timestamp: v.number(),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_day", ["day"]),
+
+  // Incrementality tests
+  incrementalityTests: defineTable({
+    buyerId: v.id("users"),
+    name: v.string(),
+    campaign: v.string(),
+    status: v.union(v.literal("planning"), v.literal("running"), v.literal("completed")),
+    startDate: v.number(),
+    duration: v.number(), // days
+    progress: v.number(), // percentage
+    liftConversions: v.float64(),
+    liftRevenue: v.float64(),
+    confidence: v.float64(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_status", ["status"]),
+
+  // Test groups
+  testGroups: defineTable({
+    testId: v.id("incrementalityTests"),
+    name: v.string(),
+    size: v.number(),
+    spend: v.float64(),
+    conversions: v.number(),
+    revenue: v.float64(),
+    isControl: v.boolean(),
+  })
+    .index("by_test", ["testId"]),
+
+  // Test insights
+  testInsights: defineTable({
+    testId: v.id("incrementalityTests"),
+    insight: v.string(),
+    timestamp: v.number(),
+  })
+    .index("by_test", ["testId"]),
+
+  // Daily test results
+  dailyTestResults: defineTable({
+    testId: v.id("incrementalityTests"),
+    day: v.number(),
+    testValue: v.float64(),
+    controlValue: v.float64(),
+    lift: v.float64(),
+    timestamp: v.number(),
+  })
+    .index("by_test", ["testId"])
+    .index("by_day", ["day"]),
+
+  // Audience overlap analysis
+  audienceOverlap: defineTable({
+    buyerId: v.id("users"),
+    audienceA: v.string(),
+    audienceB: v.string(),
+    overlapPercentage: v.float64(),
+    uniqueA: v.float64(),
+    uniqueB: v.float64(),
+    totalReach: v.number(),
+    costSaving: v.float64(),
+    timestamp: v.number(),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_audiences", ["audienceA", "audienceB"]),
+
+  // Audience segments
+  audienceSegments: defineTable({
+    buyerId: v.id("users"),
+    name: v.string(),
+    size: v.number(),
+    cpm: v.float64(),
+    performance: v.object({
+      ctr: v.float64(),
+      cvr: v.float64(),
+      roas: v.float64(),
+    }),
+    providers: v.array(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_name", ["name"]),
+
+  // Overlap recommendations
+  overlapRecommendations: defineTable({
+    buyerId: v.id("users"),
+    recommendation: v.string(),
+    impact: v.string(),
+    savings: v.float64(),
+    priority: v.union(v.literal("high"), v.literal("medium"), v.literal("low")),
+    status: v.union(v.literal("new"), v.literal("applied"), v.literal("dismissed")),
+    timestamp: v.number(),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_status", ["status"]),
+
+  // Budget allocations
+  budgetAllocations: defineTable({
+    buyerId: v.id("users"),
+    campaignId: v.string(),
+    campaignName: v.string(),
+    currentBudget: v.float64(),
+    recommendedBudget: v.float64(),
+    currentROAS: v.float64(),
+    projectedROAS: v.float64(),
+    reason: v.string(),
+    confidence: v.float64(),
+    timestamp: v.number(),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_campaign", ["campaignId"]),
+
+  // Budget scenarios
+  budgetScenarios: defineTable({
+    buyerId: v.id("users"),
+    name: v.string(),
+    description: v.string(),
+    totalBudget: v.float64(),
+    projectedRevenue: v.float64(),
+    projectedROAS: v.float64(),
+    allocations: v.array(v.object({
+      campaignId: v.string(),
+      campaignName: v.string(),
+      budget: v.float64(),
+      percentage: v.float64(),
+    })),
+    status: v.union(v.literal("draft"), v.literal("active"), v.literal("archived")),
+    createdAt: v.number(),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_status", ["status"]),
+
+  // Performance predictions
+  performancePredictions: defineTable({
+    buyerId: v.id("users"),
+    campaignId: v.string(),
+    budgetLevel: v.float64(),
+    predictedClicks: v.number(),
+    predictedConversions: v.number(),
+    predictedRevenue: v.float64(),
+    predictedROAS: v.float64(),
+    confidence: v.float64(),
+    timestamp: v.number(),
+  })
+    .index("by_buyer", ["buyerId"])
+    .index("by_campaign", ["campaignId"]),
 });
