@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Brain, TrendingDown, TrendingUp, AlertCircle, Zap, Calendar, ChevronRight } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Area } from "recharts";
@@ -149,39 +149,54 @@ export default function PredictiveCACForecasting({ campaignId }: PredictiveCACFo
   // Mutation for simulating predictions
   const simulatePredictions = useMutation(api.attribution.simulateCACPredictions);
 
-  // Build campaign prediction from Convex data
-  const convexPrediction: CampaignPrediction | null = cacPredictions && campaign ? {
-    campaignId: campaign._id,
-    campaignName: campaign.name,
-    currentCAC: cacPredictions.currentCAC,
-    targetCAC: campaign.targetCAC || 28.00,
-    predictions: cacPredictions.predictions.map((p: any) => ({
-      week: `Week ${p.week}`,
-      predicted: p.predictedCAC,
-      confidence: { min: p.confidenceLow, max: p.confidenceHigh },
-      trend: p.predictedCAC < cacPredictions.currentCAC ? "improving" : 
-             p.predictedCAC === cacPredictions.currentCAC ? "stable" : "declining",
-      factors: p.factors.filter((f: any) => f.direction === "positive").map((f: any) => f.name).slice(0, 2),
-    })),
-    recommendations: [
-      cacPredictions.predictions[0]?.factors.find((f: any) => f.direction === "negative")?.name 
-        ? `Address ${cacPredictions.predictions[0].factors.find((f: any) => f.direction === "negative").name}`
-        : "Maintain current optimization strategy",
-      "Monitor creative performance closely",
-      "Consider audience expansion if CAC improves"
-    ],
-    riskLevel: cacPredictions.modelAccuracy > 90 ? "low" : cacPredictions.modelAccuracy > 80 ? "medium" : "high",
-    modelAccuracy: cacPredictions.modelAccuracy,
-  } : null;
+  // Build campaign prediction from Convex data - memoized to prevent infinite loops
+  const convexPrediction: CampaignPrediction | null = useMemo(() => {
+    if (!cacPredictions || !campaign) return null;
+    
+    return {
+      campaignId: campaign._id,
+      campaignName: campaign.name,
+      currentCAC: cacPredictions.currentCAC,
+      targetCAC: campaign.targetCAC || 28.00,
+      predictions: cacPredictions.predictions.map((p: any) => ({
+        week: `Week ${p.week}`,
+        predicted: p.predictedCAC,
+        confidence: { min: p.confidenceLow, max: p.confidenceHigh },
+        trend: p.predictedCAC < cacPredictions.currentCAC ? "improving" : 
+               p.predictedCAC === cacPredictions.currentCAC ? "stable" : "declining",
+        factors: p.factors.filter((f: any) => f.direction === "positive").map((f: any) => f.name).slice(0, 2),
+      })),
+      recommendations: [
+        cacPredictions.predictions[0]?.factors.find((f: any) => f.direction === "negative")?.name 
+          ? `Address ${cacPredictions.predictions[0].factors.find((f: any) => f.direction === "negative").name}`
+          : "Maintain current optimization strategy",
+        "Monitor creative performance closely",
+        "Consider audience expansion if CAC improves"
+      ],
+      riskLevel: cacPredictions.modelAccuracy > 90 ? "low" : cacPredictions.modelAccuracy > 80 ? "medium" : "high",
+      modelAccuracy: cacPredictions.modelAccuracy,
+    };
+  }, [cacPredictions, campaign]);
 
-  // Use Convex data or fall back to mock
+  // Use Convex data or fall back to mock based on campaignId
   useEffect(() => {
     if (convexPrediction) {
       setSelectedCampaign(convexPrediction);
-    } else if (!selectedCampaign && MOCK_PREDICTIONS.length > 0) {
-      setSelectedCampaign(MOCK_PREDICTIONS[0]);
+    } else if (campaignId) {
+      // Find mock prediction matching the campaignId
+      const mockPrediction = MOCK_PREDICTIONS.find(p => p.campaignId === campaignId);
+      if (mockPrediction) {
+        setSelectedCampaign(mockPrediction);
+      } else {
+        // If no matching mock, use the first one but update its ID
+        setSelectedCampaign({
+          ...MOCK_PREDICTIONS[0],
+          campaignId: campaignId,
+          campaignName: campaign?.name || MOCK_PREDICTIONS[0].campaignName
+        });
+      }
     }
-  }, [convexPrediction]); // Removed selectedCampaign from dependencies to prevent infinite loop
+  }, [convexPrediction, campaignId, campaign?.name]); // Dependencies are now safe because convexPrediction is memoized
 
   // Simulate predictions
   useEffect(() => {
@@ -242,7 +257,9 @@ export default function PredictiveCACForecasting({ campaignId }: PredictiveCACFo
           </div>
           <div>
             <h2 className="text-xl font-semibold text-dark-gray">Predictive CAC Forecasting</h2>
-            <p className="text-sm text-medium-gray">AI-powered 4-week predictions</p>
+            <p className="text-sm text-medium-gray">
+              {selectedCampaign?.campaignName || 'AI-powered 4-week predictions'}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -268,39 +285,35 @@ export default function PredictiveCACForecasting({ campaignId }: PredictiveCACFo
         </div>
       </div>
 
-      {/* Campaign Selector */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {MOCK_PREDICTIONS.map((campaign) => (
-          <button
-            key={campaign.campaignId}
-            onClick={() => setSelectedCampaign(campaign)}
-            className={`p-4 rounded-lg border transition-all text-left ${
-              selectedCampaign?.campaignId === campaign.campaignId
-                ? "border-electric-blue bg-electric-blue/5"
-                : "border-silk-gray hover:border-medium-gray"
-            }`}
-          >
-            <div className="flex items-start justify-between mb-2">
+      {/* Campaign Summary */}
+      {selectedCampaign && (
+        <div className="bg-light-gray rounded-lg p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-medium-gray mb-1">Current Campaign</p>
+              <h3 className="font-semibold text-dark-gray">{selectedCampaign.campaignName}</h3>
+            </div>
+            <div className="flex items-center gap-4">
               <div>
-                <h3 className="font-medium text-dark-gray">{campaign.campaignName}</h3>
-                <p className="text-sm text-medium-gray">
-                  Current: ${campaign.currentCAC} → Target: ${campaign.targetCAC}
-                </p>
+                <p className="text-xs text-medium-gray">Current CAC</p>
+                <p className="text-lg font-semibold text-dark-gray">${selectedCampaign.currentCAC}</p>
               </div>
-              <span className={`text-xs px-2 py-1 rounded-full ${getRiskColor(campaign.riskLevel)}`}>
-                {campaign.riskLevel} risk
-              </span>
+              <div className="w-px h-8 bg-medium-gray/20"></div>
+              <div>
+                <p className="text-xs text-medium-gray">Target CAC</p>
+                <p className="text-lg font-semibold text-brand-green">${selectedCampaign.targetCAC}</p>
+              </div>
+              <div className="w-px h-8 bg-medium-gray/20"></div>
+              <div>
+                <p className="text-xs text-medium-gray">Risk Level</p>
+                <span className={`text-sm font-medium px-2 py-1 rounded-full ${getRiskColor(selectedCampaign.riskLevel)}`}>
+                  {selectedCampaign.riskLevel}
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              {getTrendIcon(campaign.predictions[0].trend)}
-              <span className="text-medium-gray">
-                Week 1: ${campaign.predictions[0].predicted} 
-                ({campaign.predictions[0].trend})
-              </span>
-            </div>
-          </button>
-        ))}
-      </div>
+          </div>
+        </div>
+      )}
 
       {/* Prediction Chart */}
       {selectedCampaign && (

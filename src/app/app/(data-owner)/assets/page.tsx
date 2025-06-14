@@ -111,7 +111,7 @@ export default function DataAssetsPage() {
   const updateAsset = useMutation(api.dataAssets.updateDataAsset);
 
   // Use Convex data if available, otherwise fall back to mock data
-  const assets = dataAssets || mockAssets;
+  const assets = dataAssets || [] // DISABLED: mockAssets;
 
   // Loading state
   if (!user || !convexUser) {
@@ -269,8 +269,8 @@ export default function DataAssetsPage() {
                             ],
                             campaign: {
                               id: '1',
-                              name: (asset.campaignImpact?.[0] || asset.campaigns?.[0])?.name || 'Direct Sale',
-                              advertiser: 'Nike Inc.'
+                              name: (asset.campaignImpact?.[0] || asset.campaigns?.[0])?.name || 'Ticket Sales 2025',
+                              advertiser: 'Pro Sports Team'
                             },
                             totalValue: asset.monthlyRevenue,
                             status: 'verified'

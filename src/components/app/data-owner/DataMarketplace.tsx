@@ -14,6 +14,9 @@ import {
   Sparkles,
   Info,
 } from "lucide-react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { isMockDataEnabled } from "@/lib/utils/mockDataConfig";
 
 interface MarketDemand {
   category: string;
@@ -189,6 +192,17 @@ export default function DataMarketplace() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showPricingDetails, setShowPricingDetails] = useState(false);
 
+  // Fetch data from Convex
+  const convexMarketDemand = useQuery(api.marketplace.getMarketplaceDemand);
+  const convexCompetitors = useQuery(api.marketplace.getCompetitorBenchmarks);
+  const convexIntegrations = useQuery(api.marketplace.getIntegrationOpportunities);
+
+  // Use Convex data if available and mock data is disabled, otherwise use hardcoded data
+  const useMockData = isMockDataEnabled();
+  const marketDemand = (!useMockData && convexMarketDemand) || marketDemandData;
+  const competitors = (!useMockData && convexCompetitors) || competitorBenchmarks;
+  const integrations = (!useMockData && convexIntegrations) || integrationOpportunities;
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-silk-gray p-6">
       <div className="flex items-center justify-between mb-6">
@@ -211,7 +225,7 @@ export default function DataMarketplace() {
           Current Market Demand
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {marketDemandData.map((market, index) => (
+          {marketDemand.map((market, index) => (
             <motion.div
               key={market.category}
               initial={{ opacity: 0, y: 10 }}
@@ -234,14 +248,14 @@ export default function DataMarketplace() {
                           : "bg-light-gray text-medium-gray"
                       }`}
                     >
-                      {market.demand} demand
+                      {market.demand || (market.growth > 20 ? "high" : market.growth > 10 ? "medium" : "low")} demand
                     </span>
                   </div>
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-medium-gray">Avg CPM</p>
                   <p className="text-lg font-bold text-dark-gray">
-                    ${market.avgPrice}
+                    ${market.avgPrice || market.avgCPM || 0}
                   </p>
                 </div>
               </div>
@@ -358,7 +372,7 @@ export default function DataMarketplace() {
               </tr>
             </thead>
             <tbody>
-              {competitorBenchmarks.map((competitor, index) => (
+              {competitors.map((competitor, index) => (
                 <motion.tr
                   key={competitor.name}
                   initial={{ opacity: 0 }}
@@ -381,7 +395,7 @@ export default function DataMarketplace() {
                   <td className="py-3 text-center">
                     <div className="flex items-center justify-center gap-2">
                       <span className="text-sm font-medium text-dark-gray">
-                        {competitor.qualityScore}
+                        {competitor.qualityScore || competitor.dataQuality || 0}
                       </span>
                       <div className="w-16 bg-light-gray rounded-full h-2">
                         <div
@@ -392,7 +406,7 @@ export default function DataMarketplace() {
                     </div>
                   </td>
                   <td className="py-3 text-center text-sm text-dark-gray">
-                    ${competitor.avgPrice}
+                    ${competitor.avgPrice || competitor.avgCPM || 0}
                   </td>
                   <td className="py-3 text-center text-sm text-dark-gray">
                     {competitor.marketShare}%
@@ -429,7 +443,7 @@ export default function DataMarketplace() {
           Integration Opportunities
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {integrationOpportunities.map((opportunity, index) => (
+          {integrations.map((opportunity, index) => (
             <motion.div
               key={opportunity.partner}
               initial={{ opacity: 0, scale: 0.95 }}

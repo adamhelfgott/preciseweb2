@@ -120,7 +120,7 @@ export default function DSPArbitrage({ campaignId }: DSPArbitrageProps) {
     <div className="bg-white rounded-xl border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">DSP Arbitrage Opportunities</h3>
+          <h3 className="text-lg font-semibold text-gray-900">DSP Opportunities</h3>
           <p className="text-sm text-gray-600 mt-1">AI-detected budget optimization across platforms</p>
         </div>
         <div className="flex items-center gap-2 text-sm">

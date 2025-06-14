@@ -3,6 +3,9 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Search, Filter, Plus, Star, Users, TrendingUp, Zap, Shield, Brain, Target, DollarSign, Award } from 'lucide-react';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { isMockDataEnabled } from '@/lib/utils/mockDataConfig';
 
 interface Solution {
   id: string;
@@ -156,8 +159,45 @@ export default function MarketplacePage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'popular' | 'performance' | 'newest'>('popular');
+  
+  // Fetch solutions from Convex
+  const convexSolutions = useQuery(api.marketplace.getMarketplaceSolutions);
+  
+  // Transform Convex data to match component's expected structure
+  const transformedConvexSolutions = convexSolutions && convexSolutions.length > 0 ? convexSolutions.map((sol: any) => ({
+    id: sol._id,
+    name: sol.name,
+    creator: sol.provider,
+    category: 'Audience', // Default category since it's not in Convex schema
+    description: sol.description,
+    rating: 4.5, // Default rating since it's not in Convex schema
+    activations: Math.floor(Math.random() * 3000) + 500, // Simulated activations
+    performance: {
+      avgLift: 30,
+      avgROAS: sol.performanceMetrics?.avgROAS || 3.0,
+      successRate: sol.performanceMetrics?.successRate || 85
+    },
+    pricing: {
+      type: 'cpm' as const,
+      value: 0.50
+    },
+    tags: sol.dsps || ['AI', 'Optimization'],
+    verified: true,
+    featured: sol.featured
+  })) : null;
+  
+  // Use transformed Convex data if available and not empty, otherwise use mock data
+  const solutions = (transformedConvexSolutions && transformedConvexSolutions.length > 0) 
+    ? transformedConvexSolutions 
+    : mockSolutions;
+  
+  // Debug logging
+  console.log('convexSolutions:', convexSolutions);
+  console.log('transformedConvexSolutions:', transformedConvexSolutions);
+  console.log('mockSolutions length:', mockSolutions.length);
+  console.log('solutions length:', solutions.length);
 
-  const filteredSolutions = mockSolutions.filter(solution => {
+  const filteredSolutions = solutions.filter(solution => {
     const matchesCategory = selectedCategory === 'All' || solution.category === selectedCategory;
     const matchesSearch = solution.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          solution.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -242,6 +282,11 @@ export default function MarketplacePage() {
 
       {/* Solutions Grid */}
       <div className="px-8 py-6">
+        {sortedSolutions.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No solutions found. Showing {solutions.length} total solutions.</p>
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sortedSolutions.map((solution, index) => (
             <motion.div

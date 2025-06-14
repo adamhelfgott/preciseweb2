@@ -64,7 +64,7 @@ const COLORS = ["#1DB954", "#7B4FFF", "#1E90FF"];
 
 export default function EarningsPage() {
   const [timeRange, setTimeRange] = useState("30d");
-  const [viewType, setViewType] = useState<"overview" | "transactions" | "analytics">("overview");
+  const [viewType, setViewType] = useState<"overview" | "transactions" | "analytics">("transactions");
   const { user } = useAuth();
 
   // Get user's Convex ID
@@ -83,7 +83,11 @@ export default function EarningsPage() {
   );
 
   // Use Convex data if available, otherwise fall back to mock data
-  const earningsData = earnings || mockEarnings;
+  const earningsData = (earnings || mockEarnings).sort((a: any, b: any) => {
+    const dateA = new Date(a.timestamp || a.date).getTime();
+    const dateB = new Date(b.timestamp || b.date).getTime();
+    return dateA - dateB; // Ascending order (oldest first)
+  });
   const statsData = earningsStats || {
     total: dailyData.reduce((sum, d) => sum + d.distributed, 0),
     pending: dailyData.reduce((sum, d) => sum + d.pending, 0),
@@ -123,8 +127,8 @@ export default function EarningsPage() {
         </button>
       </div>
 
-      {/* View Tabs */}
-      <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-1">
+      {/* View Tabs - Hidden per request */}
+      {/* <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-1">
         <div className="flex">
           <button
             onClick={() => setViewType("overview")}
@@ -157,7 +161,7 @@ export default function EarningsPage() {
             Usage Analytics
           </button>
         </div>
-      </div>
+      </div> */}
 
       {viewType === "overview" && (
         <>
@@ -434,7 +438,7 @@ export default function EarningsPage() {
                 {earningsData.map((earning: any, index: number) => (
                   <tr key={earning._id || earning.id || index} className="hover:bg-light-gray/50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-dark-gray">
-                      {new Date(earning.date).toLocaleDateString()}
+                      {new Date(earning.timestamp || earning.date).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-dark-gray">
                       {earning.campaign}

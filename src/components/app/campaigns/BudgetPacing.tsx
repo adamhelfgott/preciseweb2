@@ -86,19 +86,44 @@ const CAMPAIGN_BUDGETS: CampaignBudget[] = [
   }
 ];
 
-const BUDGET_ALLOCATION = [
-  { name: "Nike", value: 38500, percentage: 48 },
-  { name: "Tesla", value: 12000, percentage: 15 },
-  { name: "Disney+", value: 25000, percentage: 31 },
-  { name: "Available", value: 48500, percentage: 6 }
-];
+// const BUDGET_ALLOCATION = [
+//   { name: "Nike", value: 38500, percentage: 48 },
+//   { name: "Tesla", value: 12000, percentage: 15 },
+//   { name: "Disney+", value: 25000, percentage: 31 },
+//   { name: "Available", value: 48500, percentage: 6 }
+// ];
 
 const COLORS = ["#F97316", "#6366F1", "#10B981", "#E5E7EB"];
 
-export default function BudgetPacing() {
-  const totalBudget = CAMPAIGN_BUDGETS.reduce((sum, c) => sum + c.totalBudget, 0);
-  const totalSpent = CAMPAIGN_BUDGETS.reduce((sum, c) => sum + c.spent, 0);
+interface BudgetPacingProps {
+  campaignId?: string;
+}
+
+export default function BudgetPacing({ campaignId }: BudgetPacingProps) {
+  // Filter campaigns based on campaignId if provided
+  const campaigns = campaignId 
+    ? CAMPAIGN_BUDGETS.filter(c => c.id === campaignId)
+    : CAMPAIGN_BUDGETS;
+
+  const totalBudget = campaigns.reduce((sum, c) => sum + c.totalBudget, 0);
+  const totalSpent = campaigns.reduce((sum, c) => sum + c.spent, 0);
   const utilizationRate = (totalSpent / totalBudget) * 100;
+
+  // Create budget allocation data dynamically
+  const budgetAllocation = campaigns.map(c => ({
+    name: c.name.split(' ')[0], // Extract brand name
+    value: c.spent,
+    percentage: Math.round((c.spent / totalBudget) * 100)
+  }));
+  
+  // Add available budget
+  if (totalBudget > totalSpent) {
+    budgetAllocation.push({
+      name: "Available",
+      value: totalBudget - totalSpent,
+      percentage: Math.round(((totalBudget - totalSpent) / totalBudget) * 100)
+    });
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -121,7 +146,7 @@ export default function BudgetPacing() {
   return (
     <div className="space-y-6">
       {/* Header with Overview */}
-      <div className="bg-gradient-to-r from-primary-orange to-vibrant-orange rounded-xl p-6 text-white">
+      <div className="bg-gradient-to-r from-warm-coral to-electric-blue rounded-xl p-6 text-white">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <h3 className="text-xl font-semibold flex items-center gap-2 mb-2">
@@ -215,7 +240,7 @@ export default function BudgetPacing() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={BUDGET_ALLOCATION}
+                  data={budgetAllocation}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -223,7 +248,7 @@ export default function BudgetPacing() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {BUDGET_ALLOCATION.map((entry, index) => (
+                  {budgetAllocation.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -232,7 +257,7 @@ export default function BudgetPacing() {
             </ResponsiveContainer>
           </div>
           <div className="space-y-2 mt-4">
-            {BUDGET_ALLOCATION.map((item, index) => (
+            {budgetAllocation.map((item, index) => (
               <div key={item.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className={`w-3 h-3 rounded`} style={{ backgroundColor: COLORS[index] }} />
@@ -248,7 +273,7 @@ export default function BudgetPacing() {
       {/* Campaign Budget Details */}
       <div className="space-y-4">
         <h4 className="font-semibold text-dark-gray">Campaign Budget Status</h4>
-        {CAMPAIGN_BUDGETS.map((campaign, index) => (
+        {campaigns.map((campaign, index) => (
           <motion.div
             key={campaign.id}
             initial={{ opacity: 0, y: 20 }}

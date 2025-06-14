@@ -13,6 +13,10 @@ import {
   ChevronRight
 } from "lucide-react";
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Treemap } from "recharts";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { isMockDataEnabled } from "@/lib/utils/mockDataConfig";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface AudienceSegment {
   id: string;
@@ -159,10 +163,33 @@ const TREEMAP_DATA = [
   { name: "Lookalike: Fitness", size: 98000, fill: "#8B5CF6" }
 ];
 
-export default function AudienceInsights() {
-  const totalReach = AUDIENCE_SEGMENTS.reduce((sum, s) => sum + s.size, 0);
-  const avgCTR = AUDIENCE_SEGMENTS.reduce((sum, s) => sum + s.performance.ctr, 0) / AUDIENCE_SEGMENTS.length;
-  const verifiedPercentage = (AUDIENCE_SEGMENTS.filter(s => s.verified).length / AUDIENCE_SEGMENTS.length) * 100;
+interface AudienceInsightsProps {
+  campaignId?: Id<"campaigns">;
+}
+
+export default function AudienceInsights({ campaignId }: AudienceInsightsProps) {
+  // Fetch data from Convex if campaignId is provided
+  const convexSegments = useQuery(
+    api.audienceInsights.getAudienceSegments,
+    campaignId ? { campaignId } : "skip"
+  );
+  const convexTimeline = useQuery(
+    api.audienceInsights.getAudiencePerformanceTimeline,
+    campaignId ? { campaignId } : "skip"
+  );
+  const convexOverlap = useQuery(
+    api.audienceInsights.getAudienceOverlapData,
+    campaignId ? { campaignId } : "skip"
+  );
+
+  // Use Convex data if available and mock data is disabled, otherwise use hardcoded data
+  const useMockData = isMockDataEnabled();
+  const segments = (!useMockData && convexSegments) || AUDIENCE_SEGMENTS;
+  const timeline = (!useMockData && convexTimeline) || PERFORMANCE_TIMELINE;
+  const overlapData = (!useMockData && convexOverlap) || OVERLAP_DATA;
+  const totalReach = segments.reduce((sum, s) => sum + s.size, 0);
+  const avgCTR = segments.reduce((sum, s) => sum + (s.performance?.ctr || s.ctr || 0), 0) / segments.length;
+  const verifiedPercentage = (segments.filter(s => s.verified).length / segments.length) * 100;
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -214,7 +241,7 @@ export default function AudienceInsights() {
           <h4 className="font-semibold text-dark-gray mb-4">CTR Performance by Day</h4>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={PERFORMANCE_TIMELINE}>
+              <LineChart data={timeline}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
                 <XAxis dataKey="day" stroke="#6B7280" fontSize={12} />
                 <YAxis stroke="#6B7280" fontSize={12} />
@@ -239,7 +266,51 @@ export default function AudienceInsights() {
               <Treemap
                 data={TREEMAP_DATA}
                 dataKey="size"
-                content={<CustomTooltip />}
+                aspectRatio={4 / 3}
+                fill="#8884d8"
+                stroke="#fff"
+                content={(props: any) => {
+                  const { x, y, width, height, name, value, fill } = props;
+                  return (
+                    <g>
+                      <rect
+                        x={x}
+                        y={y}
+                        width={width}
+                        height={height}
+                        style={{
+                          fill: fill || '#8884d8',
+                          stroke: '#fff',
+                          strokeWidth: 2,
+                          strokeOpacity: 1,
+                        }}
+                      />
+                      {width > 50 && height > 50 && (
+                        <>
+                          <text
+                            x={x + width / 2}
+                            y={y + height / 2 - 10}
+                            textAnchor="middle"
+                            fill="#fff"
+                            fontSize={12}
+                            fontWeight="bold"
+                          >
+                            {name}
+                          </text>
+                          <text
+                            x={x + width / 2}
+                            y={y + height / 2 + 10}
+                            textAnchor="middle"
+                            fill="#fff"
+                            fontSize={11}
+                          >
+                            {value?.toLocaleString()}
+                          </text>
+                        </>
+                      )}
+                    </g>
+                  );
+                }}
               />
             </ResponsiveContainer>
           </div>
@@ -253,7 +324,7 @@ export default function AudienceInsights() {
           Segment Performance Analysis
         </h4>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {AUDIENCE_SEGMENTS.map((segment, index) => (
+          {segments.map((segment, index) => (
             <motion.div
               key={segment.id}
               initial={{ opacity: 0, x: -20 }}
@@ -293,19 +364,19 @@ export default function AudienceInsights() {
               <div className="grid grid-cols-4 gap-3 mb-4">
                 <div>
                   <p className="text-xs text-medium-gray">CTR</p>
-                  <p className="text-sm font-semibold text-dark-gray">{segment.performance.ctr}%</p>
+                  <p className="text-sm font-semibold text-dark-gray">{segment.performance?.ctr || segment.ctr || 0}%</p>
                 </div>
                 <div>
                   <p className="text-xs text-medium-gray">CVR</p>
-                  <p className="text-sm font-semibold text-dark-gray">{segment.performance.cvr}%</p>
+                  <p className="text-sm font-semibold text-dark-gray">{segment.performance?.cvr || segment.cvr || 0}%</p>
                 </div>
                 <div>
                   <p className="text-xs text-medium-gray">CPA</p>
-                  <p className="text-sm font-semibold text-dark-gray">${segment.performance.cpa}</p>
+                  <p className="text-sm font-semibold text-dark-gray">${segment.performance?.cpa || segment.cpc || 0}</p>
                 </div>
                 <div>
                   <p className="text-xs text-medium-gray">ROAS</p>
-                  <p className="text-sm font-semibold text-dark-gray">{segment.performance.roas}x</p>
+                  <p className="text-sm font-semibold text-dark-gray">{segment.performance?.roas || segment.roas || 0}x</p>
                 </div>
               </div>
 
@@ -333,7 +404,7 @@ export default function AudienceInsights() {
           Audience Overlap Opportunities
         </h4>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {OVERLAP_DATA.map((overlap, index) => (
+          {overlapData.map((overlap, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}

@@ -87,7 +87,7 @@ export default function LiveEarningsTicker() {
 
       {/* Simulation Toggle (for demo) */}
       <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-medium-gray">Demo Mode</p>
+        <p className="text-sm text-medium-gray"></p>
         <button
           onClick={() => setSimulationActive(!simulationActive)}
           className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${

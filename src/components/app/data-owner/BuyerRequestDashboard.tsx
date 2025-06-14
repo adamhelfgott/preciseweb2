@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, Search, TrendingUp, Users, DollarSign, Clock, CheckCircle, X, ChevronRight, Filter, Sparkles, Check } from "lucide-react";
+import { Bell, Search, TrendingUp, Users, DollarSign, Clock, CheckCircle, X, ChevronRight, Filter, Sparkles, Check, Trash2 } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
@@ -165,6 +165,7 @@ export default function BuyerRequestDashboard() {
   // Mutations
   const simulateBuyerRequests = useMutation(api.buyerRequests.simulateBuyerRequests);
   const updateMatchStatus = useMutation(api.buyerRequests.updateMatchStatus);
+  const deleteRequest = useMutation(api.buyerRequests.deleteBuyerRequest);
 
   // Convert Convex data to component format
   const activeRequests: BuyerRequest[] = convexRequests && convexRequests.length > 0 ? 
@@ -253,19 +254,8 @@ export default function BuyerRequestDashboard() {
     }
   };
 
-  // Loading state
-  if (!user || !convexUser) {
-    return (
-      <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-warm-coral mx-auto mb-4"></div>
-            <p className="text-medium-gray">Loading buyer requests...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Don't show loading state if user is not available - just render with mock data
+  // This ensures the component is visible even if auth is not fully loaded
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-6">
@@ -435,11 +425,10 @@ export default function BuyerRequestDashboard() {
           <motion.div
             key={request.id}
             layout
-            className="bg-white border border-silk-gray rounded-lg p-6 hover:shadow-md transition-all cursor-pointer"
-            onClick={() => setSelectedRequest(request)}
+            className="bg-white border border-silk-gray rounded-lg p-6 hover:shadow-md transition-all"
           >
             <div className="flex items-start justify-between mb-4">
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-4 flex-1 cursor-pointer" onClick={() => setSelectedRequest(request)}>
                 <div className={`p-2 rounded-lg ${
                   request.buyerType === "agency" ? "bg-electric-blue/10" :
                   request.buyerType === "brand" ? "bg-brand-green/10" :
@@ -447,7 +436,7 @@ export default function BuyerRequestDashboard() {
                 }`}>
                   {getBuyerTypeIcon(request.buyerType)}
                 </div>
-                <div>
+                <div className="flex-1">
                   <div className="flex items-center gap-3 mb-1">
                     <h3 className="font-semibold text-dark-gray">{request.buyerName}</h3>
                     <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(request.status)}`}>
@@ -464,21 +453,41 @@ export default function BuyerRequestDashboard() {
                   </div>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm text-medium-gray">Match</span>
-                  <span className={`text-2xl font-bold ${
-                    request.matchScore >= 90 ? "text-brand-green" :
-                    request.matchScore >= 80 ? "text-electric-blue" :
-                    request.matchScore >= 70 ? "text-vibrant-orange" :
-                    "text-warm-coral"
-                  }`}>
-                    {request.matchScore}%
-                  </span>
+              <div className="flex items-start gap-4">
+                <div className="text-right">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm text-medium-gray">Match</span>
+                    <span className={`text-2xl font-bold ${
+                      request.matchScore >= 90 ? "text-brand-green" :
+                      request.matchScore >= 80 ? "text-electric-blue" :
+                      request.matchScore >= 70 ? "text-vibrant-orange" :
+                      "text-warm-coral"
+                    }`}>
+                      {request.matchScore}%
+                    </span>
+                  </div>
+                  <p className="text-sm text-medium-gray">
+                    Est. ${(request.estimatedRevenue / 1000).toFixed(1)}k/mo
+                  </p>
                 </div>
-                <p className="text-sm text-medium-gray">
-                  Est. ${(request.estimatedRevenue / 1000).toFixed(1)}k/mo
-                </p>
+                {request.buyerName?.includes("Michael Rodriguez") && (
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      if (confirm(`Delete request from ${request.buyerName}?`)) {
+                        try {
+                          await deleteRequest({ requestId: request.id });
+                        } catch (error) {
+                          console.error("Failed to delete request:", error);
+                        }
+                      }
+                    }}
+                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Delete request"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
 
