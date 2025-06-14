@@ -5,12 +5,5 @@
       "demo-ux-only": false
     }
   },
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
-  "framework": "nextjs",
-  "buildCommand": "npm install && npm run build"
+  "framework": "nextjs"
 }
