@@ -102,7 +102,17 @@ export default function CampaignsPage() {
   // Initialize selected campaign ID if not set
   useEffect(() => {
     if (!selectedCampaignId && campaignData && campaignData.length > 0) {
-      setSelectedCampaignId(campaignData[0]._id || campaignData[0].id);
+      // Look for "Ticket Sales 2025" or "Professional Sports Team 2025" campaign first
+      const ticketSalesCampaign = campaignData.find((c: any) => 
+        c.name === "Ticket Sales 2025" || c.name === "Professional Sports Team 2025"
+      );
+      
+      if (ticketSalesCampaign) {
+        setSelectedCampaignId(ticketSalesCampaign._id || ticketSalesCampaign.id);
+      } else {
+        // Fall back to first campaign if not found
+        setSelectedCampaignId(campaignData[0]._id || campaignData[0].id);
+      }
     }
   }, [campaignData, selectedCampaignId]);
 

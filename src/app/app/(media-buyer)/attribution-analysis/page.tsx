@@ -1,22 +1,61 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { useAuth } from "@/contexts/AuthContext";
 import AttributionModelComparison from "@/components/app/attribution/AttributionModelComparison";
 import ChannelAttribution from "@/components/app/attribution/ChannelAttribution";
 import ConversionPaths from "@/components/app/attribution/ConversionPaths";
 import { BarChart3, GitBranch, TrendingUp, Filter } from "lucide-react";
 
 export default function AttributionAnalysisPage() {
+  const { user } = useAuth();
   const [selectedModel, setSelectedModel] = useState<"last-click" | "data-driven" | "mixed">("mixed");
-  const [selectedCampaign, setSelectedCampaign] = useState("Nike Summer Fitness 2025");
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
 
-  const campaigns = [
-    "Nike Summer Fitness 2025",
-    "Adidas Morning Warriors",
-    "Under Armour Elite Performance",
-    "Lululemon Mindful Movement"
-  ];
+  // Get user's Convex ID
+  const convexUser = useQuery(api.auth.getUserByEmail, 
+    user?.email ? { email: user.email } : "skip"
+  );
+
+  // Fetch campaigns from Convex
+  const campaigns = useQuery(api.campaigns.getCampaigns, 
+    convexUser?._id ? { buyerId: convexUser._id } : "skip"
+  );
+
+  // Initialize selected campaign
+  useEffect(() => {
+    if (!selectedCampaignId && campaigns && campaigns.length > 0) {
+      // Look for "Ticket Sales 2025" campaign first
+      const ticketSalesCampaign = campaigns.find((c: any) => 
+        c.name === "Ticket Sales 2025"
+      );
+      
+      if (ticketSalesCampaign) {
+        setSelectedCampaignId(ticketSalesCampaign._id);
+      } else {
+        // Fall back to first campaign if not found
+        setSelectedCampaignId(campaigns[0]._id);
+      }
+    }
+  }, [campaigns, selectedCampaignId]);
+
+  // Get the selected campaign object
+  const selectedCampaign = campaigns?.find((c: any) => c._id === selectedCampaignId);
+
+  // Loading state
+  if (!user || !convexUser || !campaigns) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-electric-blue mx-auto mb-4"></div>
+          <p className="text-medium-gray">Loading attribution data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -39,13 +78,14 @@ export default function AttributionAnalysisPage() {
               Campaign
             </label>
             <select
-              value={selectedCampaign}
-              onChange={(e) => setSelectedCampaign(e.target.value)}
+              value={selectedCampaignId || ''}
+              onChange={(e) => setSelectedCampaignId(e.target.value)}
               className="w-full px-4 py-2 border border-light-gray rounded-lg focus:ring-2 focus:ring-primary-orange focus:border-transparent"
             >
-              {campaigns.map((campaign) => (
-                <option key={campaign} value={campaign}>
-                  {campaign}
+              {!selectedCampaignId && <option value="">Select a campaign</option>}
+              {campaigns.map((campaign: any) => (
+                <option key={campaign._id} value={campaign._id}>
+                  {campaign.name}
                 </option>
               ))}
             </select>
@@ -98,7 +138,7 @@ export default function AttributionAnalysisPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <AttributionModelComparison campaign={selectedCampaign} />
+        <AttributionModelComparison campaign={selectedCampaign?.name} campaignId={selectedCampaignId} />
       </motion.div>
 
       {/* Channel Attribution */}
@@ -107,7 +147,7 @@ export default function AttributionAnalysisPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <ChannelAttribution campaign={selectedCampaign} model={selectedModel} />
+        <ChannelAttribution campaign={selectedCampaign?.name} campaignId={selectedCampaignId} model={selectedModel} />
       </motion.div>
 
       {/* Conversion Paths */}
@@ -116,7 +156,7 @@ export default function AttributionAnalysisPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <ConversionPaths campaign={selectedCampaign} model={selectedModel} />
+        <ConversionPaths campaign={selectedCampaign?.name} campaignId={selectedCampaignId} model={selectedModel} />
       </motion.div>
 
       {/* Attribution Insights */}
@@ -129,28 +169,40 @@ export default function AttributionAnalysisPage() {
         <div className="flex items-start gap-3">
           <BarChart3 className="w-6 h-6 text-indigo-600 mt-0.5" />
           <div>
-            <h3 className="font-semibold text-dark-gray mb-2">Attribution Insights</h3>
+            <h3 className="font-semibold text-dark-gray mb-2">Attribution Insights for {selectedCampaign?.name || 'Campaign'}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="bg-white rounded-lg p-4">
                 <h4 className="font-medium text-dark-gray mb-2">Cross-Channel Impact</h4>
                 <p className="text-sm text-medium-gray mb-2">
-                  Your campaigns show strong synergy effects between YouTube and Meta channels.
+                  {selectedCampaign?.name === "Ticket Sales 2025" 
+                    ? "Strong synergy between social media and search channels drives ticket purchases."
+                    : "Your campaigns show strong synergy effects between YouTube and Meta channels."}
                 </p>
-                <p className="text-sm font-medium text-indigo-600">+23% when combined</p>
+                <p className="text-sm font-medium text-indigo-600">
+                  {selectedCampaign?.name === "Ticket Sales 2025" ? "+34%" : "+23%"} when combined
+                </p>
               </div>
               <div className="bg-white rounded-lg p-4">
                 <h4 className="font-medium text-dark-gray mb-2">Attribution Drift</h4>
                 <p className="text-sm text-medium-gray mb-2">
-                  Last-click attribution is under-crediting your upper-funnel investments.
+                  {selectedCampaign?.name === "Ticket Sales 2025"
+                    ? "Last-click is missing early awareness touchpoints from sports content sites."
+                    : "Last-click attribution is under-crediting your upper-funnel investments."}
                 </p>
-                <p className="text-sm font-medium text-indigo-600">-31% YouTube value</p>
+                <p className="text-sm font-medium text-indigo-600">
+                  {selectedCampaign?.name === "Ticket Sales 2025" ? "-28%" : "-31%"} {selectedCampaign?.name === "Ticket Sales 2025" ? "sports media" : "YouTube"} value
+                </p>
               </div>
               <div className="bg-white rounded-lg p-4">
                 <h4 className="font-medium text-dark-gray mb-2">Optimization Opportunity</h4>
                 <p className="text-sm text-medium-gray mb-2">
-                  Shifting 15% budget to assisted channels could improve overall ROAS.
+                  {selectedCampaign?.name === "Ticket Sales 2025"
+                    ? "Increase budget on game-day targeting and retargeting campaigns."
+                    : "Shifting 15% budget to assisted channels could improve overall ROAS."}
                 </p>
-                <p className="text-sm font-medium text-indigo-600">+18% projected ROAS</p>
+                <p className="text-sm font-medium text-indigo-600">
+                  {selectedCampaign?.name === "Ticket Sales 2025" ? "+42%" : "+18%"} projected ROAS
+                </p>
               </div>
             </div>
           </div>

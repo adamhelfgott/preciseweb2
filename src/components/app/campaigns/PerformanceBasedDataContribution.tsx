@@ -77,8 +77,6 @@ interface PerformanceBasedDataContributionProps {
 }
 
 export default function PerformanceBasedDataContribution({ campaignId }: PerformanceBasedDataContributionProps) {
-  const [viewMode, setViewMode] = useState<"table" | "chart">("table");
-  
   // Find the contribution data for the selected campaign
   const contributionData = campaignId 
     ? CAMPAIGN_CONTRIBUTION_DATA.find(c => c.campaignId === campaignId) || CAMPAIGN_CONTRIBUTION_DATA[0]
@@ -141,39 +139,14 @@ export default function PerformanceBasedDataContribution({ campaignId }: Perform
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <p className="text-xs text-medium-gray">Total Value</p>
-            <p className="text-lg font-semibold text-dark-gray">${contributionData.totalValue.toLocaleString()}</p>
-          </div>
-          <div className="flex bg-light-gray rounded-lg p-1">
-            <button
-              onClick={() => setViewMode("table")}
-              className={`px-3 py-1 text-sm rounded-md transition-all ${
-                viewMode === "table" 
-                  ? "bg-white text-dark-gray shadow-sm" 
-                  : "text-medium-gray hover:text-dark-gray"
-              }`}
-            >
-              Table
-            </button>
-            <button
-              onClick={() => setViewMode("chart")}
-              className={`px-3 py-1 text-sm rounded-md transition-all ${
-                viewMode === "chart" 
-                  ? "bg-white text-dark-gray shadow-sm" 
-                  : "text-medium-gray hover:text-dark-gray"
-              }`}
-            >
-              Chart
-            </button>
-          </div>
+        <div className="text-right">
+          <p className="text-xs text-medium-gray">Total Value</p>
+          <p className="text-lg font-semibold text-dark-gray">${contributionData.totalValue.toLocaleString()}</p>
         </div>
       </div>
 
-      {viewMode === "table" ? (
-        /* Table View */
-        <div className="space-y-3">
+      {/* Table View */}
+      <div className="space-y-3 mb-6">
           {/* Table Header */}
           <div className="grid grid-cols-12 gap-4 px-4 py-2 text-xs font-medium text-medium-gray uppercase tracking-wider">
             <div className="col-span-4">Asset</div>
@@ -220,10 +193,10 @@ export default function PerformanceBasedDataContribution({ campaignId }: Perform
               </div>
             </motion.div>
           ))}
-        </div>
-      ) : (
-        /* Chart View */
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      </div>
+
+      {/* Chart View */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Pie Chart */}
           <div className="bg-light-gray rounded-lg p-4">
             <h3 className="font-medium text-dark-gray mb-4">Value Distribution by Owner</h3>
@@ -280,13 +253,16 @@ export default function PerformanceBasedDataContribution({ campaignId }: Perform
                   />
                   <YAxis />
                   <Tooltip formatter={(value: any) => value.toFixed(1)} />
-                  <Bar dataKey="shapleyValue" fill="#1DB954" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="shapleyValue" radius={[4, 4, 0, 0]}>
+                    {sortedContributions.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
-        </div>
-      )}
+      </div>
 
       {/* Insights Section */}
       <motion.div

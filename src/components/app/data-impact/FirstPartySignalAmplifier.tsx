@@ -45,6 +45,7 @@ import {
   Area,
   ComposedChart
 } from "recharts";
+import FilesWidget from "./FilesWidget";
 
 // Mock data for uploaded segments
 const UPLOADED_SEGMENTS = [
@@ -249,6 +250,9 @@ export default function FirstPartySignalAmplifier() {
           </motion.div>
         </div>
       </div>
+
+      {/* Files Widget */}
+      <FilesWidget />
 
       {/* View Mode Tabs */}
       <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-1">

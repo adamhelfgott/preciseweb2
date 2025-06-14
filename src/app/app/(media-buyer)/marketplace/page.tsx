@@ -159,6 +159,7 @@ export default function MarketplacePage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'popular' | 'performance' | 'newest'>('popular');
+  const [activatedSolutions, setActivatedSolutions] = useState<Set<string>>(new Set());
   
   // Fetch solutions from Convex
   const convexSolutions = useQuery(api.marketplace.getMarketplaceSolutions);
@@ -206,6 +207,14 @@ export default function MarketplacePage() {
   });
 
   const sortedSolutions = [...filteredSolutions].sort((a, b) => {
+    // First, sort by activation status (active solutions come first)
+    const aIsActive = activatedSolutions.has(a.id);
+    const bIsActive = activatedSolutions.has(b.id);
+    
+    if (aIsActive && !bIsActive) return -1;
+    if (!aIsActive && bIsActive) return 1;
+    
+    // If both have the same activation status, then sort by the selected criteria
     switch (sortBy) {
       case 'popular':
         return b.activations - a.activations;
@@ -217,6 +226,16 @@ export default function MarketplacePage() {
         return 0;
     }
   });
+
+  const toggleActivation = (solutionId: string) => {
+    const newActivated = new Set(activatedSolutions);
+    if (newActivated.has(solutionId)) {
+      newActivated.delete(solutionId);
+    } else {
+      newActivated.add(solutionId);
+    }
+    setActivatedSolutions(newActivated);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -369,9 +388,14 @@ export default function MarketplacePage() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-3 py-1.5 bg-black text-white text-sm rounded-lg hover:bg-gray-800 transition-colors"
+                  onClick={() => toggleActivation(solution.id)}
+                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                    activatedSolutions.has(solution.id)
+                      ? 'bg-brand-green text-white hover:bg-green-700'
+                      : 'bg-black text-white hover:bg-gray-800'
+                  }`}
                 >
-                  Activate
+                  {activatedSolutions.has(solution.id) ? 'Active' : 'Activate'}
                 </motion.button>
               </div>
             </motion.div>

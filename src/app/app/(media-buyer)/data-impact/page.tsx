@@ -17,9 +17,10 @@ import MediaCredits from "@/components/app/data-impact/MediaCredits";
 import DataContribution from "@/components/app/data-impact/DataContribution";
 import LiftAnalysis from "@/components/app/data-impact/LiftAnalysis";
 import FirstPartySignalAmplifier from "@/components/app/data-impact/FirstPartySignalAmplifier";
+import FilesWidget from "@/components/app/data-impact/FilesWidget";
 
 export default function DataImpactPage() {
-  const [activeTab, setActiveTab] = useState<"contribution" | "cohorts" | "credits" | "lift" | "amplifier">("contribution");
+  const [activeTab, setActiveTab] = useState<"amplifier" | "contribution" | "cohorts" | "credits" | "lift">("amplifier");
 
   return (
     <div className="space-y-6">
@@ -100,6 +101,16 @@ export default function DataImpactPage() {
       {/* Navigation Tabs */}
       <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide border-b border-light-gray">
         <button
+          onClick={() => setActiveTab("amplifier")}
+          className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-all ${
+            activeTab === "amplifier"
+              ? "text-primary-orange border-b-2 border-primary-orange"
+              : "text-medium-gray hover:text-dark-gray"
+          }`}
+        >
+          First-Party Amplifier
+        </button>
+        <button
           onClick={() => setActiveTab("contribution")}
           className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-all ${
             activeTab === "contribution"
@@ -138,16 +149,6 @@ export default function DataImpactPage() {
           }`}
         >
           Lift Analysis
-        </button>
-        <button
-          onClick={() => setActiveTab("amplifier")}
-          className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-all ${
-            activeTab === "amplifier"
-              ? "text-primary-orange border-b-2 border-primary-orange"
-              : "text-medium-gray hover:text-dark-gray"
-          }`}
-        >
-          First-Party Amplifier
         </button>
       </div>
 

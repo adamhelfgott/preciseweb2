@@ -105,7 +105,7 @@ export default function CampaignCohortPerformance({ campaignId }: CampaignCohort
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-6">
+    <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-6 flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
@@ -131,8 +131,10 @@ export default function CampaignCohortPerformance({ campaignId }: CampaignCohort
         </div>
       </div>
 
-      {/* Full Width Visualization */}
-      <div className="space-y-4">
+      {/* Main Content - Flex Grow */}
+      <div className="flex-grow">
+        {/* Full Width Visualization */}
+        <div className="space-y-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-medium text-dark-gray">Performance by Cohort</h3>
           <div className="flex items-center gap-4 text-sm text-medium-gray">
@@ -240,9 +242,10 @@ export default function CampaignCohortPerformance({ campaignId }: CampaignCohort
             </motion.div>
           );
         })}
+        </div>
       </div>
 
-      {/* Insights Section */}
+      {/* Insights Section - Anchored to Bottom */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
