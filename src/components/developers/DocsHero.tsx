@@ -35,7 +35,7 @@ print(asset.verification_status)  # 'verified'`,
 
 import (
     "fmt"
-    "github.com/precise/go-sdk"
+    "precise.ai/sdk"
 )
 
 func main() {
