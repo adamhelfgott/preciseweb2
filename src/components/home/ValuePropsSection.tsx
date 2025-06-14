@@ -6,53 +6,53 @@ import { TrendingUp, Brain, Shuffle, Target, Shield, ChartBar, Calculator, Activ
 export default function ValuePropsSection() {
   const mediaBuyerProps = [
     {
-      title: "Predictive CAC Forecasting",
-      description: "AI predicts customer acquisition costs weeks in advance. Plan budgets with confidence using verified data signals.",
+      title: "Beyond CAC Reduction",
+      description: "Drive outcomes across the entire funnel - awareness, consideration, conversion, and retention.",
       icon: TrendingUp,
       gradient: "from-electric-blue to-electric-blue/70",
     },
     {
-      title: "Creative Fatigue Detection",
-      description: "Know when to refresh creatives before performance drops. AI monitors engagement decay patterns 24/7.",
+      title: "Verified Attribution",
+      description: "Multi-touch attribution with deterministic signals. Know what's actually driving results.",
       icon: Brain,
       gradient: "from-warm-coral to-warm-coral/70",
     },
     {
-      title: "Multi-DSP Arbitrage",
-      description: "Automatically shift budgets between DSPs for optimal performance. Verified data quality across all channels.",
+      title: "Cross-Channel Optimization",
+      description: "Unified performance across DSPs, social, CTV, and more. One source of truth.",
       icon: Shuffle,
-      gradient: "from-soft-lavender to-soft-lavender/70",
+      gradient: "from-bright-purple to-bright-purple/70",
     },
     {
-      title: "Incrementality Testing",
-      description: "Built-in holdout groups prove real impact. Know exactly what's driving results vs. coincidence.",
+      title: "Real-Time Intelligence",
+      description: "Act on insights immediately, not weeks later. AI-powered recommendations 24/7.",
       icon: Target,
-      gradient: "from-golden-amber to-golden-amber/70",
+      gradient: "from-brand-green to-electric-blue",
     },
   ];
 
   const dataControllerProps = [
     {
-      title: "Maintain Control",
-      description: "Your data never leaves your infrastructure. Activate across more channels while maintaining GDPR/CCPA compliance.",
+      title: "3-5x Revenue Uplift",
+      description: "Command premium prices when you can prove performance. Move from CPM to value-based pricing.",
       icon: Shield,
       gradient: "from-brand-green to-brand-green/70",
     },
     {
-      title: "Prove Performance Impact",
-      description: "Automated attribution shows exactly how your data drives campaign results. Command premium pricing with proof.",
+      title: "Universal Activation",
+      description: "One integration reaches thousands of buyers. Works for both 1P brands and 3P brokers.",
       icon: ChartBar,
       gradient: "from-electric-blue to-electric-blue/70",
     },
     {
-      title: "Fair Value Attribution",
-      description: "Get paid based on actual campaign impact, not guesswork. Verification makes the activation valuable.",
+      title: "Quality Drives Price",
+      description: "Build reputation through verified performance. Higher quality scores unlock premium rates.",
       icon: Calculator,
-      gradient: "from-soft-lavender to-soft-lavender/70",
+      gradient: "from-bright-purple to-bright-purple/70",
     },
     {
-      title: "Performance Intelligence",
-      description: "See real-time performance data from campaigns using your segments. Optimize data value over time.",
+      title: "Real-Time Analytics",
+      description: "Track usage, revenue, and performance 24/7. Optimize pricing based on demand.",
       icon: Activity,
       gradient: "from-warm-coral to-warm-coral/70",
     },
@@ -70,10 +70,10 @@ export default function ValuePropsSection() {
         >
           <div className="text-center mb-12">
             <h2 className="text-display-medium font-bold text-dark-gray mb-4">
-              For Media Buyers: Verified Data That Drives Performance
+              For Media Buyers: Drive Better Outcomes
             </h2>
             <p className="text-body-large text-medium-gray max-w-3xl mx-auto">
-              Activate premium data segments with confidence. Reduce CAC with data you can actually rely on — with cryptographic validation of every action.
+              Access verified audiences with transparent attribution across the entire marketing funnel. From awareness to retention, optimize what matters.
             </p>
           </div>
 
@@ -123,10 +123,10 @@ export default function ValuePropsSection() {
         >
           <div className="text-center mb-12">
             <h2 className="text-display-medium font-bold text-dark-gray mb-4">
-              For Data Controllers: Turn Your Data Into a Performance Powerhouse
+              For Data Controllers: Monetize with Performance Proof
             </h2>
             <p className="text-body-large text-medium-gray max-w-3xl mx-auto">
-              Activate your data across more channels while maintaining control. Prove performance impact to command premium prices — with proof.
+              Whether you're a brand with first-party data or a broker with third-party segments, command premium prices through verified performance.
             </p>
           </div>
 

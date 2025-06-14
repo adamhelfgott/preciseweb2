@@ -9,7 +9,7 @@ interface LogoProps {
 export default function Logo({ className = "", width = 120, height = 50 }: LogoProps) {
   return (
     <Image
-      src="/logo.svg"
+      src="/icons/Precise-Logo.svg"
       alt="Precise"
       width={width}
       height={height}

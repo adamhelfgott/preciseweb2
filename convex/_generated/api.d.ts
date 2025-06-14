@@ -16,6 +16,8 @@ import type {
 import type * as auth from "../auth.js";
 import type * as campaigns from "../campaigns.js";
 import type * as chat from "../chat.js";
+import type * as cms from "../cms.js";
+import type * as contacts from "../contacts.js";
 import type * as dataAssets from "../dataAssets.js";
 import type * as earnings from "../earnings.js";
 import type * as marketplace from "../marketplace.js";
@@ -34,6 +36,8 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   campaigns: typeof campaigns;
   chat: typeof chat;
+  cms: typeof cms;
+  contacts: typeof contacts;
   dataAssets: typeof dataAssets;
   earnings: typeof earnings;
   marketplace: typeof marketplace;

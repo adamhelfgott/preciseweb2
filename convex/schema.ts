@@ -158,4 +158,29 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_timestamp", ["timestamp"]),
+
+  // CMS Content for marketing pages
+  cmsContent: defineTable({
+    page: v.string(), // page identifier (e.g., "company", "pricing", etc.)
+    content: v.any(), // flexible content structure for each page
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_page", ["page"]),
+
+  // Contact form submissions and leads
+  contacts: defineTable({
+    name: v.string(),
+    email: v.string(),
+    company: v.optional(v.string()),
+    role: v.optional(v.string()),
+    message: v.string(),
+    source: v.optional(v.string()), // "contact-form", "newsletter", etc.
+    status: v.union(v.literal("new"), v.literal("contacted"), v.literal("qualified"), v.literal("converted")),
+    createdAt: v.number(),
+    updatedAt: v.optional(v.number()),
+  })
+    .index("by_email", ["email"])
+    .index("by_status", ["status"])
+    .index("by_created", ["createdAt"]),
 });

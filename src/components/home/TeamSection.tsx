@@ -50,7 +50,7 @@ const TEAM_MEMBERS = [
     name: "Seth Redniss",
     role: "General Counsel",
     background: ["Redniss Law"],
-    image: "/team/seth_redniss.jpg",
+    image: "/team/seth-redniss.jpg",
     linkedin: "https://www.linkedin.com/in/seth-redniss-005b7b14",
   },
   {
@@ -59,13 +59,6 @@ const TEAM_MEMBERS = [
     background: ["NBCU", "Qonsent"],
     image: "/team/greg-couture.jpg",
     linkedin: "https://www.linkedin.com/in/greg-couture-785551",
-  },
-  {
-    name: "Greg Pier",
-    role: "Implementation & Solutions Design",
-    background: ["Qonsent"],
-    image: "/team/greg-pier.jpg",
-    linkedin: null,
   },
   {
     name: "Angelica Haase",
@@ -115,7 +108,7 @@ export default function TeamSection() {
               {/* Image container with LinkedIn overlay */}
               <div className="relative w-40 h-40 mx-auto mb-4">
                 <img 
-                  src={`https://precise.ai/static/img/photo/${member.image.split('/').pop()}`}
+                  src={member.image}
                   alt={member.name} 
                   className="w-full h-full object-cover rounded-lg"
                 />
@@ -153,23 +146,6 @@ export default function TeamSection() {
           ))}
         </div>
 
-        {/* Additional team note */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mt-16 pt-16 border-t border-light-gray"
-        >
-          <p className="text-medium-gray mb-6">
-            Backed by world-class investors and advisors
-          </p>
-          
-          {/* Placeholder for investor/advisor logos - commented out for now */}
-          {/* <div className="flex justify-center items-center gap-8 flex-wrap">
-            <img src="/investors/sequoia.svg" alt="Sequoia" className="h-8 opacity-60" />
-            <img src="/investors/andreessen.svg" alt="a16z" className="h-8 opacity-60" />
-          </div> */}
-        </motion.div>
       </div>
     </section>
   );
