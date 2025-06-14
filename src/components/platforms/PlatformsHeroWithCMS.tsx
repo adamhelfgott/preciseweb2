@@ -52,12 +52,9 @@ export default function PlatformsHeroWithCMS() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href={hero.primaryButtonHref} className="btn-primary">
-                {hero.primaryButtonText}
-                <ArrowRight size={20} />
-              </Link>
-              <Link href="/contact" className="btn-secondary">
+              <Link href="/contact" className="btn-primary">
                 Talk to partnerships
+                <ArrowRight size={20} />
               </Link>
             </div>
           </motion.div>

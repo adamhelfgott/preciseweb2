@@ -51,3 +51,6 @@ precise_images.zip
 .env.local.backup
 deploy-safe.sh
 fix-local.sh
+
+# database backups
+backups/

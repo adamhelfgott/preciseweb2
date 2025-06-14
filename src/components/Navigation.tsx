@@ -25,7 +25,7 @@ export default function Navigation() {
     { href: "/media-buyers", label: "For media buyers" },
     { href: "/measurement-partners", label: "For measurement" },
     { href: "/platforms", label: "For platforms" },
-    { href: "/company", label: "Company" },
+    { href: "/resources", label: "Resources" },
   ];
 
   return (
@@ -59,12 +59,6 @@ export default function Navigation() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-4">
-            <Link
-              href="/signin"
-              className="text-dark-gray hover:text-brand-green transition-colors duration-200"
-            >
-              Sign in
-            </Link>
             <Link href="/get-started" className="btn-primary">
               Get started
             </Link>
@@ -94,13 +88,6 @@ export default function Navigation() {
                 </Link>
               ))}
               <div className="pt-4 mt-4 border-t border-silk-gray flex flex-col gap-3">
-                <Link
-                  href="/signin"
-                  className="text-center py-3 text-dark-gray hover:text-brand-green transition-colors duration-200"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Sign in
-                </Link>
                 <Link
                   href="/get-started"
                   className="btn-primary justify-center"

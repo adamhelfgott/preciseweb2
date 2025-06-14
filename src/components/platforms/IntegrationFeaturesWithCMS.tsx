@@ -187,10 +187,7 @@ export default function IntegrationFeaturesWithCMS() {
             Join leading platforms already offering verified data collaboration to their clients
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/developers" className="btn-primary">
-              Explore documentation
-            </Link>
-            <Link href="/contact" className="btn-secondary">
+            <Link href="/contact" className="btn-primary">
               Schedule integration call
             </Link>
           </div>

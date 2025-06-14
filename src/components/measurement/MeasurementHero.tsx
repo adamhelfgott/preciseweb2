@@ -32,9 +32,6 @@ export default function MeasurementHero() {
                 Integrate Precise
                 <ArrowRight size={20} />
               </Link>
-              <Link href="/developers" className="btn-secondary">
-                View API docs
-              </Link>
             </div>
           </motion.div>
 

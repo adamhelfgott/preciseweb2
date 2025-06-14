@@ -14,15 +14,6 @@ export default function Footer() {
       ],
     },
     {
-      title: "Developers",
-      links: [
-        { href: "/developers", label: "Documentation" },
-        { href: "/contact", label: "API Reference" },
-        { href: "/contact", label: "SDKs" },
-        { href: "/contact", label: "Examples" },
-      ],
-    },
-    {
       title: "Company",
       links: [
         { href: "/about", label: "About" },
@@ -34,7 +25,6 @@ export default function Footer() {
       links: [
         { href: "/privacy", label: "Privacy Policy" },
         { href: "/terms", label: "Terms of Service" },
-        { href: "/contact", label: "Security" },
         { href: "/compliance", label: "Compliance" },
       ],
     },

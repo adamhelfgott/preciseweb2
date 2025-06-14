@@ -4,6 +4,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Copy } from "lucide-react";
 import Link from "next/link";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface AdvertiserOnboardingProps {
   onBack: () => void;
@@ -11,15 +13,24 @@ interface AdvertiserOnboardingProps {
 
 export default function AdvertiserOnboarding({ onBack }: AdvertiserOnboardingProps) {
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const createFormSubmission = useMutation(api.contacts.createFormSubmission);
+  
   const [formData, setFormData] = useState({
     company: "",
+    name: "",
+    email: "",
     role: "",
     objective: "",
     platforms: {
-      madhive: false,
+      meta: false,
+      dv360: false,
       ttd: false,
       amazon: false,
-      dv360: false,
+      microsoft: false,
+      tiktok: false,
+      linkedin: false,
+      madhive: false,
     },
     spend: "",
     challenges: {
@@ -52,21 +63,48 @@ export default function AdvertiserOnboarding({ onBack }: AdvertiserOnboardingPro
   const isStepValid = (stepNumber: number) => {
     switch (stepNumber) {
       case 1:
-        return formData.company && formData.role && formData.objective;
+        return formData.company && formData.name && formData.email && formData.role && formData.objective;
       case 2:
         return Object.values(formData.platforms).some(v => v) && formData.spend;
       case 3:
-        return formData.selectedPlatform;
+        return true; // Always valid for confirmation step
       default:
         return false;
     }
   };
 
-  const totalSteps = 3;
+  const totalSteps = 2;
   const progress = (step / totalSteps) * 100;
 
   const generateAPIKey = () => {
     return "pk_live_" + Math.random().toString(36).substring(2, 15);
+  };
+  
+  // Handle form submission
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      await createFormSubmission({
+        name: formData.name,
+        email: formData.email,
+        company: formData.company,
+        source: "advertiser-onboarding",
+        formType: "media-buyer",
+        role: formData.role,
+        objective: formData.objective,
+        platforms: formData.platforms,
+        spend: formData.spend,
+        challenges: formData.challenges,
+      });
+      
+      // Move to confirmation page
+      setStep(3);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      // You could show an error toast here
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -127,16 +165,17 @@ export default function AdvertiserOnboarding({ onBack }: AdvertiserOnboardingPro
       </div>
 
       {/* Footer */}
-      <div className="border-t border-silk-gray bg-white sticky bottom-0">
-        <div className="container py-4">
-          <div className="flex justify-between items-center">
-            <button
-              onClick={step === 1 ? onBack : () => setStep(step - 1)}
-              className="flex items-center gap-2 text-medium-gray hover:text-dark-gray transition-colors"
-            >
-              <ArrowLeft size={20} />
-              Back
-            </button>
+      {step !== 3 && ( // Hide footer on confirmation page
+        <div className="border-t border-silk-gray bg-white sticky bottom-0">
+          <div className="container py-4">
+            <div className="flex justify-between items-center">
+              <button
+                onClick={step === 1 ? onBack : () => setStep(step - 1)}
+                className="flex items-center gap-2 text-medium-gray hover:text-dark-gray transition-colors"
+              >
+                <ArrowLeft size={20} />
+                Back
+              </button>
             
             {step < totalSteps ? (
               <button
@@ -149,16 +188,18 @@ export default function AdvertiserOnboarding({ onBack }: AdvertiserOnboardingPro
               </button>
             ) : (
               <button
-                disabled={!isStepValid(step)}
-                className={`btn-primary ${!isStepValid(step) ? "opacity-50 cursor-not-allowed" : ""}`}
+                onClick={handleSubmit}
+                disabled={!isStepValid(step) || isSubmitting}
+                className={`btn-primary ${!isStepValid(step) || isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
               >
-                Complete setup
+                {isSubmitting ? "Submitting..." : "Submit"}
                 <ArrowRight size={20} />
               </button>
             )}
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
@@ -190,6 +231,32 @@ function StepOne({ formData, updateForm }: any) {
             value={formData.company}
             onChange={(e) => updateForm("company", e.target.value)}
             placeholder="Your company"
+            className="w-full px-4 py-3 border border-silk-gray rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-dark-gray mb-2">
+            Your name
+          </label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => updateForm("name", e.target.value)}
+            placeholder="John Doe"
+            className="w-full px-4 py-3 border border-silk-gray rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-dark-gray mb-2">
+            Email address
+          </label>
+          <input
+            type="email"
+            value={formData.email}
+            onChange={(e) => updateForm("email", e.target.value)}
+            placeholder="john@company.com"
             className="w-full px-4 py-3 border border-silk-gray rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent"
           />
         </div>
@@ -266,10 +333,14 @@ function StepTwo({ formData, updateForm, updatePlatform, updateChallenge }: any)
           </label>
           <div className="space-y-3">
             {Object.entries({
-              madhive: "MadHive",
+              meta: "Meta (Facebook/Instagram)",
+              dv360: "Google DV360",
               ttd: "The Trade Desk",
               amazon: "Amazon DSP",
-              dv360: "Google DV360",
+              microsoft: "Microsoft Advertising",
+              tiktok: "TikTok Ads",
+              linkedin: "LinkedIn Campaign Manager",
+              madhive: "MadHive",
             }).map(([key, label]) => (
               <label key={key} className="flex items-center gap-3">
                 <input
@@ -339,127 +410,79 @@ function StepTwo({ formData, updateForm, updatePlatform, updateChallenge }: any)
 }
 
 function StepThree({ formData, updateForm, generateAPIKey }: any) {
-  const [apiKey] = useState(generateAPIKey());
-  const [copied, setCopied] = useState(false);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(apiKey);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const availablePlatforms = Object.entries(formData.platforms)
-    .filter(([_, selected]) => selected)
-    .map(([key, _]) => ({
-      key,
-      name: {
-        madhive: "MadHive",
-        ttd: "The Trade Desk",
-        amazon: "Amazon DSP",
-        dv360: "Google DV360",
-      }[key],
-    }));
-
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="space-y-8"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="flex flex-col items-center justify-center text-center py-12"
     >
-      <div>
-        <h2 className="text-display-medium font-bold text-dark-gray mb-2">
-          Connect your first platform
+      {/* Success Icon */}
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+        className="w-24 h-24 bg-brand-green rounded-full flex items-center justify-center mb-6"
+      >
+        <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+      </motion.div>
+
+      {/* Thank You Message */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="space-y-4 max-w-lg"
+      >
+        <h2 className="text-display-medium font-bold text-dark-gray">
+          Thank you for your interest in Precise!
         </h2>
-        <p className="text-medium-gray">
-          Select a platform to connect and start accessing verified audiences
+        <p className="text-lg text-medium-gray">
+          Someone from our team will get in touch with you soon on how to get started with accessing verified audiences through our privacy-preserving infrastructure.
         </p>
-      </div>
+      </motion.div>
 
-      {availablePlatforms.length > 0 ? (
-        <>
-          <div className="space-y-4">
-            {availablePlatforms.map((platform) => (
-              <motion.button
-                key={platform.key}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                onClick={() => updateForm("selectedPlatform", platform.key)}
-                className={`w-full text-left p-6 rounded-xl border-2 transition-all ${
-                  formData.selectedPlatform === platform.key
-                    ? "border-brand-green bg-brand-green/5"
-                    : "border-silk-gray hover:border-medium-gray"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-dark-gray">
-                      {platform.name}
-                    </h3>
-                    {platform.key === "madhive" && (
-                      <p className="text-sm text-brand-green font-medium mt-1">
-                        Recommended - Native integration
-                      </p>
-                    )}
-                  </div>
-                  {formData.selectedPlatform === platform.key && (
-                    <div className="w-6 h-6 bg-brand-green rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  )}
-                </div>
-              </motion.button>
-            ))}
-          </div>
+      {/* Additional Info */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mt-8 p-6 bg-light-gray rounded-xl max-w-md"
+      >
+        <h4 className="font-semibold text-dark-gray mb-3">What happens next?</h4>
+        <ul className="space-y-2 text-left text-medium-gray">
+          <li className="flex items-start gap-2">
+            <svg className="w-5 h-5 text-brand-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>We'll review your information within 24 hours</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <svg className="w-5 h-5 text-brand-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>A specialist will contact you to discuss your specific needs</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <svg className="w-5 h-5 text-brand-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>We'll schedule a demo of our platform tailored to your use case</span>
+          </li>
+        </ul>
+      </motion.div>
 
-          {formData.selectedPlatform && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
-            >
-              <div className="p-6 bg-light-gray rounded-xl">
-                <h4 className="font-semibold text-dark-gray mb-3">
-                  Connect {availablePlatforms.find(p => p.key === formData.selectedPlatform)?.name}
-                </h4>
-                <ol className="list-decimal list-inside space-y-2 text-medium-gray mb-6">
-                  <li>Log into your {availablePlatforms.find(p => p.key === formData.selectedPlatform)?.name} account</li>
-                  <li>Navigate to integrations settings</li>
-                  <li>Add Precise as a data partner</li>
-                  <li>Enter your Precise API key below</li>
-                </ol>
-
-                <div className="bg-white rounded-lg p-4 border border-silk-gray">
-                  <label className="block text-sm font-medium text-dark-gray mb-2">
-                    Your API Key
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <code className="flex-1 bg-light-gray px-3 py-2 rounded font-mono text-sm">
-                      {apiKey}
-                    </code>
-                    <button
-                      onClick={copyToClipboard}
-                      className="p-2 hover:bg-light-gray rounded transition-colors"
-                    >
-                      {copied ? (
-                        <span className="text-brand-green text-sm">Copied!</span>
-                      ) : (
-                        <Copy size={20} className="text-medium-gray" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </>
-      ) : (
-        <div className="text-center py-12 text-medium-gray">
-          No platforms selected. Please go back and select at least one platform.
-        </div>
-      )}
+      {/* Contact Info */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+        className="mt-8 text-sm text-medium-gray"
+      >
+        <p>Have questions? Email us at <a href="mailto:info@precise.ai" className="text-brand-green hover:underline">info@precise.ai</a></p>
+      </motion.div>
     </motion.div>
   );
 }

@@ -10,6 +10,7 @@ export default defineSchema({
     company: v.string(),
     onboardingCompleted: v.boolean(),
     createdAt: v.number(),
+    mockId: v.optional(v.string()), // For demo/mock data
   })
     .index("by_email", ["email"])
     .index("by_role", ["role"]),
@@ -168,19 +169,59 @@ export default defineSchema({
   })
     .index("by_page", ["page"]),
 
-  // Contact form submissions and leads
+  // Contact form submissions and leads - unified table for all form submissions
   contacts: defineTable({
+    // Common fields
     name: v.string(),
     email: v.string(),
     company: v.optional(v.string()),
     role: v.optional(v.string()),
-    message: v.string(),
-    source: v.optional(v.string()), // "contact-form", "newsletter", etc.
+    message: v.optional(v.string()),
+    source: v.string(), // "contact-form", "data-owner-onboarding", "advertiser-onboarding", etc.
+    formType: v.string(), // specific form type for filtering
+    
+    // Additional fields for onboarding flows
+    industry: v.optional(v.string()),
+    objective: v.optional(v.string()),
+    
+    // Data owner specific fields
+    dataTypes: v.optional(v.object({
+      behavioral: v.optional(v.boolean()),
+      transaction: v.optional(v.boolean()),
+      location: v.optional(v.boolean()),
+      preference: v.optional(v.boolean()),
+    })),
+    userSize: v.optional(v.string()),
+    infrastructure: v.optional(v.string()),
+    
+    // Media buyer specific fields
+    platforms: v.optional(v.object({
+      meta: v.optional(v.boolean()),
+      dv360: v.optional(v.boolean()),
+      ttd: v.optional(v.boolean()),
+      amazon: v.optional(v.boolean()),
+      microsoft: v.optional(v.boolean()),
+      tiktok: v.optional(v.boolean()),
+      linkedin: v.optional(v.boolean()),
+      madhive: v.optional(v.boolean()),
+    })),
+    spend: v.optional(v.string()),
+    challenges: v.optional(v.object({
+      quality: v.optional(v.boolean()),
+      attribution: v.optional(v.boolean()),
+      compliance: v.optional(v.boolean()),
+      performance: v.optional(v.boolean()),
+    })),
+    
+    // Meta fields
     status: v.union(v.literal("new"), v.literal("contacted"), v.literal("qualified"), v.literal("converted")),
     createdAt: v.number(),
     updatedAt: v.optional(v.number()),
+    notes: v.optional(v.string()), // for internal follow-up notes
   })
     .index("by_email", ["email"])
     .index("by_status", ["status"])
-    .index("by_created", ["createdAt"]),
+    .index("by_created", ["createdAt"])
+    .index("by_source", ["source"])
+    .index("by_form_type", ["formType"]),
 });

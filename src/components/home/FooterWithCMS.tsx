@@ -77,15 +77,6 @@ const defaultFooterData: FooterData = {
       ],
     },
     {
-      title: "Developers",
-      links: [
-        { href: "/developers", label: "Documentation" },
-        { href: "/developers/api", label: "API Reference" },
-        { href: "/developers/sdks", label: "SDKs" },
-        { href: "/developers/examples", label: "Examples" },
-      ],
-    },
-    {
       title: "Company",
       links: [
         { href: "/company", label: "About" },
@@ -97,7 +88,6 @@ const defaultFooterData: FooterData = {
       links: [
         { href: "/privacy", label: "Privacy Policy" },
         { href: "/terms", label: "Terms of Service" },
-        { href: "/security", label: "Security" },
         { href: "/compliance", label: "Compliance" },
       ],
     },
@@ -179,83 +169,101 @@ export default async function FooterWithCMS() {
   return (
     <footer className="bg-soft-white border-t border-silk-gray">
       <div className="container py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Brand */}
-          <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 group mb-4">
-              <Icon size={32} className="transition-transform group-hover:scale-110" />
-              <span className="font-semibold text-xl text-dark-gray">{footerData.brandName}</span>
-            </Link>
-            <p className="text-medium-gray text-sm">
-              {footerData.brandTagline}
-            </p>
-          </div>
-
-          {/* Links */}
-          {footerData.sections?.map((section) => (
-            <div key={section.title}>
-              <h3 className="font-semibold text-dark-gray mb-4">{section.title}</h3>
-              <ul className="space-y-2">
-                {section.links.map((link) => (
-                  <li key={link.href}>
-                    {link.isExternal ? (
-                      <a
-                        href={link.href}
-                        className="text-medium-gray hover:text-dark-gray transition-colors duration-200 text-sm"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {link.label}
-                      </a>
-                    ) : (
-                      <Link
-                        href={link.href}
-                        className="text-medium-gray hover:text-dark-gray transition-colors duration-200 text-sm"
-                      >
-                        {link.label}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        {/* Security Badges */}
-        {footerData.securityBadges && footerData.securityBadges.length > 0 && (
-          <div className="mt-8 pt-8 border-t border-silk-gray">
-            <div className="flex flex-wrap justify-center items-center gap-8">
-              {footerData.securityBadges.map((badge) => (
-                <div key={badge.label} className="flex items-center gap-2 text-medium-gray">
-                  {getSecurityBadgeIcon(badge.label)}
-                  <span className="text-sm font-medium">{badge.label}</span>
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
+            {/* Brand - Takes more space */}
+            <div className="md:col-span-5">
+              <Link href="/" className="flex items-center gap-2 group mb-4">
+                <Icon size={32} className="transition-transform group-hover:scale-110" />
+                <span className="font-semibold text-xl text-dark-gray">{footerData.brandName}</span>
+              </Link>
+              <p className="text-medium-gray text-sm mb-6 max-w-sm">
+                {footerData.brandTagline}
+              </p>
+              
+              {/* Social Links - Moved under brand */}
+              {footerData.socialLinks && footerData.socialLinks.length > 0 && (
+                <div className="flex items-center gap-4">
+                  {footerData.socialLinks.map((social) => (
+                    <Link
+                      key={social.platform}
+                      href={social.url}
+                      className="text-medium-gray hover:text-dark-gray transition-colors duration-200 flex items-center gap-2"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                      </svg>
+                      <span className="text-sm">{social.label}</span>
+                    </Link>
+                  ))}
                 </div>
-              ))}
+              )}
+            </div>
+
+            {/* Links - Better spacing */}
+            <div className="md:col-span-7">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                {footerData.sections?.map((section) => (
+                  <div key={section.title}>
+                    <h3 className="font-semibold text-dark-gray mb-4">{section.title}</h3>
+                    <ul className="space-y-3">
+                      {section.links.map((link) => (
+                        <li key={link.href}>
+                          {link.isExternal ? (
+                            <a
+                              href={link.href}
+                              className="text-medium-gray hover:text-dark-gray transition-colors duration-200 text-sm block"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {link.label}
+                            </a>
+                          ) : (
+                            <Link
+                              href={link.href}
+                              className="text-medium-gray hover:text-dark-gray transition-colors duration-200 text-sm block"
+                            >
+                              {link.label}
+                            </Link>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        )}
 
-        {/* Bottom */}
-        <div className="mt-8 pt-8 border-t border-silk-gray flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-medium-gray text-sm">
-            {copyrightText}
-          </p>
-          {footerData.socialLinks && footerData.socialLinks.length > 0 && (
-            <div className="flex items-center gap-6">
-              {footerData.socialLinks.map((social) => (
-                <Link
-                  key={social.platform}
-                  href={social.url}
-                  className="text-medium-gray hover:text-dark-gray transition-colors duration-200"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {social.label}
-                </Link>
-              ))}
+          {/* Security Badges */}
+          {footerData.securityBadges && footerData.securityBadges.length > 0 && (
+            <div className="mt-12 pt-8 border-t border-silk-gray">
+              <div className="text-center mb-6">
+                <h4 className="text-sm font-semibold text-dark-gray uppercase tracking-wider">Security & Compliance</h4>
+              </div>
+              <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+                {footerData.securityBadges.map((badge) => (
+                  <div key={badge.label} className="flex items-center gap-2 text-medium-gray hover:text-dark-gray transition-colors group">
+                    <span className="group-hover:scale-110 transition-transform">
+                      {getSecurityBadgeIcon(badge.label)}
+                    </span>
+                    <span className="text-sm font-medium">{badge.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
+
+          {/* Bottom */}
+          <div className="mt-8 pt-8 border-t border-silk-gray">
+            <div className="text-center">
+              <p className="text-medium-gray text-sm">
+                {copyrightText}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
