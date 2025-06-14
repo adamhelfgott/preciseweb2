@@ -114,7 +114,7 @@ export default function HowItWorksPage() {
                   <div className="w-16 h-16 bg-electric-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Layers className="w-8 h-8 text-electric-blue" />
                   </div>
-                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Multi-DSP Arbitrage</h3>
+                  <h3 className="text-xl font-semibold text-dark-gray mb-2">Multi-DSP Optimization</h3>
                   <p className="text-medium-gray">
                     Automatically shift budgets between DSPs for 2.3x better performance
                   </p>
@@ -141,7 +141,7 @@ export default function HowItWorksPage() {
           <section className="py-16 md:py-24">
             <div className="container max-w-6xl">
               <h2 className="text-3xl font-bold text-center text-dark-gray mb-16">
-                How Our AI AdOps Command Center Works
+                How Our AI Performance Intelligence Command Center Works
               </h2>
               
               <div className="space-y-16">
