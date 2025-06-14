@@ -81,6 +81,7 @@ const defaultFooterData: FooterData = {
       links: [
         { href: "/company", label: "About" },
         { href: "/contact", label: "Contact" },
+        { href: "/faq", label: "FAQ" },
       ],
     },
     {

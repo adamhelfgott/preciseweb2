@@ -25,7 +25,6 @@ export default function Navigation() {
     { href: "/media-buyers", label: "For media buyers" },
     { href: "/measurement-partners", label: "For measurement" },
     { href: "/platforms", label: "For platforms" },
-    { href: "/resources", label: "Resources" },
   ];
 
   return (

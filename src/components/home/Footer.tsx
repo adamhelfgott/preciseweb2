@@ -27,6 +27,7 @@ export default function Footer() {
       links: [
         { href: "/company", label: "About" },
         { href: "/contact", label: "Contact" },
+        { href: "/faq", label: "FAQ" },
       ],
     },
     {

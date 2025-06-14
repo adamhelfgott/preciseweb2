@@ -10,7 +10,6 @@ const navigation = [
   { name: 'How it works', href: '/how-it-works' },
   { name: 'For data controllers', href: '/data-owners' },
   { name: 'For advertisers', href: '/advertisers' },
-  { name: 'Resources', href: '/resources' },
 ];
 
 export default function MobileNav() {
