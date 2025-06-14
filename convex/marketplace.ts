@@ -1,183 +1,218 @@
-import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { query, mutation } from "./_generated/server";
 
-// Get marketplace solutions
-export const getSolutions = query({
-  args: {
-    featured: v.optional(v.boolean()),
-    objective: v.optional(v.string()),
-    industry: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    let solutionsQuery = ctx.db.query("solutions")
-      .withIndex("by_status", (q) => q.eq("status", "active"));
-    
-    const solutions = await solutionsQuery.collect();
-    
-    // Filter by criteria
-    let filtered = solutions;
-    
-    if (args.featured !== undefined) {
-      filtered = filtered.filter(s => s.featured === args.featured);
-    }
-    
-    if (args.objective) {
-      filtered = filtered.filter(s => s.objective === args.objective);
-    }
-    
-    // Sort by performance
-    filtered.sort((a, b) => b.successRate - a.successRate);
-    
-    // Get creator info for each solution
-    const solutionsWithCreators = await Promise.all(
-      filtered.map(async (solution) => {
-        const creator = await ctx.db.get(solution.creatorId);
-        return {
-          ...solution,
-          creator: creator ? {
-            name: creator.name,
-            company: creator.company,
-            verified: creator.company === "Precise Team",
-          } : null,
-        };
-      })
-    );
-    
-    return solutionsWithCreators;
+// Get marketplace demand data
+export const getMarketplaceDemand = query({
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("marketplaceDemand")
+      .order("desc")
+      .take(10);
   },
 });
 
-// Create a new solution
-export const createSolution = mutation({
+// Get pricing recommendations for an asset
+export const getPricingRecommendations = query({
+  args: { assetId: v.id("dataAssets") },
+  handler: async (ctx, args) => {
+    const recommendations = await ctx.db
+      .query("marketplacePricing")
+      .withIndex("by_asset", (q) => q.eq("assetId", args.assetId))
+      .order("desc")
+      .first();
+    
+    return recommendations;
+  },
+});
+
+// Get competitor benchmarks
+export const getCompetitorBenchmarks = query({
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("marketplaceCompetitors")
+      .order("desc")
+      .take(10);
+  },
+});
+
+// Get integration opportunities
+export const getIntegrationOpportunities = query({
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("marketplaceIntegrations")
+      .order("desc")
+      .take(10);
+  },
+});
+
+// Get marketplace solutions for media buyers
+export const getMarketplaceSolutions = query({
   args: {
-    creatorId: v.id("users"),
-    name: v.string(),
-    description: v.string(),
-    cohortIds: v.array(v.id("dataAssets")),
-    dsps: v.array(v.string()),
-    objective: v.string(),
-    targetCAC: v.number(),
-    targetROAS: v.number(),
-    pricingModel: v.string(),
-    pricingDetails: v.string(),
+    objective: v.optional(v.string()),
+    featured: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
-    // Calculate aggregate metrics from cohorts
-    const cohorts = await Promise.all(
-      args.cohortIds.map(id => ctx.db.get(id))
-    );
-    
-    const totalReach = cohorts.reduce((sum, c) => sum + (c?.recordCount || 0), 0);
-    const avgQualityScore = cohorts.reduce((sum, c) => sum + (c?.qualityScore || 0), 0) / cohorts.length;
-    
-    return await ctx.db.insert("solutions", {
-      creatorId: args.creatorId,
-      name: args.name,
-      description: args.description,
-      featured: false,
-      cohortCount: cohorts.length,
-      totalReach,
-      avgQualityScore: Math.round(avgQualityScore),
-      dsps: args.dsps,
-      objective: args.objective,
-      targetCAC: args.targetCAC,
-      targetROAS: args.targetROAS,
-      activations: 0,
-      avgCAC: args.targetCAC, // Will improve with usage
-      successRate: 0,
-      totalSpend: 0,
-      totalRevenue: 0,
-      pricingModel: args.pricingModel,
-      pricingDetails: args.pricingDetails,
-      status: "active",
+    if (args.featured !== undefined) {
+      return await ctx.db
+        .query("marketplaceSolutions")
+        .withIndex("by_featured", (q) => 
+          q.eq("featured", args.featured!)
+        )
+        .order("desc")
+        .take(20);
+    } else if (args.objective) {
+      return await ctx.db
+        .query("marketplaceSolutions")
+        .withIndex("by_objective", (q) => 
+          q.eq("objective", args.objective!)
+        )
+        .order("desc")
+        .take(20);
+    } else {
+      return await ctx.db
+        .query("marketplaceSolutions")
+        .order("desc")
+        .take(20);
+    }
+  },
+});
+
+// Create marketplace demand data (for simulation/testing)
+export const createMarketplaceDemand = mutation({
+  args: {
+    category: v.string(),
+    avgCPM: v.float64(),
+    growth: v.float64(),
+    volume: v.string(),
+    topBuyers: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("marketplaceDemand", {
+      ...args,
+      timestamp: Date.now(),
+    });
+  },
+});
+
+// Create pricing recommendation
+export const createPricingRecommendation = mutation({
+  args: {
+    assetId: v.id("dataAssets"),
+    currentPrice: v.float64(),
+    recommendedPrice: v.float64(),
+    rationale: v.string(),
+    potentialRevenue: v.float64(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("marketplacePricing", {
+      ...args,
+      timestamp: Date.now(),
+    });
+  },
+});
+
+// Create competitor benchmark
+export const createCompetitorBenchmark = mutation({
+  args: {
+    competitor: v.string(),
+    marketShare: v.float64(),
+    avgCPM: v.float64(),
+    dataQuality: v.float64(),
+    categories: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("marketplaceCompetitors", {
+      ...args,
+      timestamp: Date.now(),
+    });
+  },
+});
+
+// Create integration opportunity
+export const createIntegrationOpportunity = mutation({
+  args: {
+    partner: v.string(),
+    type: v.string(),
+    potentialRevenue: v.float64(),
+    effort: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    description: v.string(),
+    benefits: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("marketplaceIntegrations", {
+      ...args,
+      timestamp: Date.now(),
+    });
+  },
+});
+
+// Create marketplace solution
+export const createMarketplaceSolution = mutation({
+  args: {
+    name: v.string(),
+    provider: v.string(),
+    description: v.string(),
+    featured: v.boolean(),
+    objective: v.string(),
+    cohortCount: v.number(),
+    totalReach: v.number(),
+    avgQualityScore: v.float64(),
+    performanceMetrics: v.object({
+      avgCAC: v.float64(),
+      avgROAS: v.float64(),
+      successRate: v.float64(),
+      totalSpend: v.float64(),
+      totalRevenue: v.float64(),
+    }),
+    dsps: v.array(v.string()),
+    pricingModel: v.string(),
+    pricingDetails: v.string(),
+    status: v.union(v.literal("active"), v.literal("coming_soon")),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("marketplaceSolutions", {
+      ...args,
       createdAt: Date.now(),
     });
   },
 });
 
-// Activate a solution
-export const activateSolution = mutation({
-  args: {
-    solutionId: v.id("solutions"),
-    campaignId: v.id("campaigns"),
-  },
-  handler: async (ctx, args) => {
-    const solution = await ctx.db.get(args.solutionId);
-    if (!solution) throw new Error("Solution not found");
-    
-    // Update solution metrics
-    await ctx.db.patch(args.solutionId, {
-      activations: solution.activations + 1,
-    });
-    
-    // Link to campaign
-    const campaign = await ctx.db.get(args.campaignId);
-    if (campaign) {
-      // Simulate immediate improvement
-      await ctx.db.patch(args.campaignId, {
-        currentCAC: campaign.currentCAC * 0.9, // 10% immediate improvement
-        preciseLaunchDate: Date.now(),
-      });
-    }
-    
-    return { success: true };
-  },
-});
-
-// Create default featured solution
-export const createFeaturedSolution = mutation({
-  args: {},
+// Create Weather Company marketplace solution (one-time setup)
+export const createWeatherCompanySolution = mutation({
   handler: async (ctx) => {
-    // Get or create Precise Team user
-    let preciseTeam = await ctx.db
-      .query("users")
-      .withIndex("by_email", (q) => q.eq("email", "team@precise.ai"))
+    // Check if Weather Company already exists
+    const existing = await ctx.db
+      .query("marketplaceSolutions")
+      .filter((q) => q.eq(q.field("name"), "Weather Company"))
       .first();
     
-    if (!preciseTeam) {
-      const teamId = await ctx.db.insert("users", {
-        email: "team@precise.ai",
-        name: "Precise Team",
-        role: "SOLUTION_CREATOR",
-        company: "Precise Team",
-        onboardingCompleted: true,
-        createdAt: Date.now(),
-      });
-      preciseTeam = await ctx.db.get(teamId);
+    if (existing) {
+      return { success: false, message: "Weather Company solution already exists" };
     }
     
-    if (!preciseTeam) return;
-    
-    // Check if featured solution already exists
-    const existing = await ctx.db
-      .query("solutions")
-      .withIndex("by_creator", (q) => q.eq("creatorId", preciseTeam._id))
-      .first();
-    
-    if (existing) return existing._id;
-    
-    // Create featured solution
-    return await ctx.db.insert("solutions", {
-      creatorId: preciseTeam._id,
-      name: "Premium Fitness Acquisition Blueprint",
-      description: "Complete acquisition strategy combining morning fitness enthusiasts, premium equipment buyers, and health-conscious millennials.",
-      featured: true,
-      cohortCount: 3,
-      totalReach: 2300000,
-      avgQualityScore: 94,
-      dsps: ["madhive", "ttd", "amazon"],
-      objective: "acquisition",
-      targetCAC: 28,
-      targetROAS: 4.5,
-      activations: 127,
-      avgCAC: 24.50,
-      successRate: 94,
-      totalSpend: 12700000,
-      totalRevenue: 57150000,
-      pricingModel: "performance",
-      pricingDetails: "2% of ad spend + $0.50 per conversion",
+    const result = await ctx.db.insert("marketplaceSolutions", {
+      name: "Weather Company",
+      provider: "Data Controller",
+      description: "A real-time data provider offering global, predictive, and granular weather insights that are reliable, scalable, timely, and highly contextual",
+      featured: false,
+      objective: "Contextual Targeting",
+      cohortCount: 15000000,
+      totalReach: 1,
+      avgQualityScore: 1,
+      performanceMetrics: {
+        avgCAC: 2,
+        avgROAS: 3,
+        successRate: 4,
+        totalSpend: 5,
+        totalRevenue: 6,
+      },
+      dsps: ["Google"],
+      pricingModel: "CPM",
+      pricingDetails: "Contact for custom pricing",
       status: "active",
-      createdAt: Date.now() - (30 * 24 * 60 * 60 * 1000), // 30 days ago
+      createdAt: Date.now(),
     });
+    
+    return { success: true, id: result };
   },
 });

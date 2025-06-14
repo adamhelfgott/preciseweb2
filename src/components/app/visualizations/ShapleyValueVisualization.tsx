@@ -4,6 +4,10 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Info, TrendingUp, Users, Database, Zap } from 'lucide-react';
 import { Sankey, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { isMockDataEnabled } from '@/lib/utils/mockDataConfig';
+import { Id } from '@/convex/_generated/dataModel';
 
 interface DataAssetContribution {
   id: string;
@@ -81,10 +85,59 @@ const generateShapleyData = (): CampaignAttribution => {
 
 const COLORS = ['#000000', '#333333', '#666666', '#999999', '#CCCCCC'];
 
-export default function ShapleyValueVisualization() {
-  const [attribution, setAttribution] = useState<CampaignAttribution>(generateShapleyData());
+interface ShapleyValueVisualizationProps {
+  ownerId?: Id<"users">;
+  campaignId?: Id<"campaigns">;
+}
+
+export default function ShapleyValueVisualization({ ownerId, campaignId }: ShapleyValueVisualizationProps) {
   const [selectedAsset, setSelectedAsset] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'sankey' | 'bar' | 'pie'>('sankey');
+  
+  // Fetch Shapley values from Convex if ownerId is provided
+  const convexShapleyValues = useQuery(
+    api.attribution.getShapleyValues,
+    ownerId ? { ownerId } : "skip"
+  );
+  
+  // Fetch data assets if we have Shapley values
+  const dataAssets = useQuery(
+    api.dataAssets.getDataAssets,
+    ownerId ? { ownerId } : "skip"
+  );
+  
+  // Generate attribution data from Convex or use mock data
+  const useMockData = isMockDataEnabled();
+  let attribution: CampaignAttribution;
+  
+  if (!useMockData && convexShapleyValues && dataAssets && convexShapleyValues.length > 0) {
+    // Convert Convex data to component format
+    const assets: DataAssetContribution[] = convexShapleyValues.map((sv: any) => {
+      const asset = dataAssets.find((a: any) => a._id === sv.assetId);
+      return {
+        id: sv.assetId,
+        name: asset?.name || 'Unknown Asset',
+        category: asset?.type || 'Unknown',
+        shapleyValue: sv.shapleyValue,
+        marginalContribution: sv.marginalContribution,
+        interactions: [], // Would need separate query for interactions
+        quality: asset?.qualityScore || 0
+      };
+    });
+    
+    // Calculate total value from Shapley values
+    const totalValue = assets.reduce((sum, a) => sum + a.marginalContribution, 0);
+    
+    attribution = {
+      campaignId: campaignId || '1',
+      campaignName: 'Campaign Attribution',
+      totalValue: totalValue,
+      assets
+    };
+  } else {
+    // Use mock data
+    attribution = generateShapleyData();
+  }
 
   // Generate Sankey diagram data
   const sankeyData = {

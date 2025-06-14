@@ -25,6 +25,8 @@ import BudgetPacing from "@/components/app/campaigns/BudgetPacing";
 import AudienceInsights from "@/components/app/campaigns/AudienceInsights";
 import CreativeFatigueAlert from "@/components/app/campaigns/CreativeFatigueAlert";
 import PredictiveCACForecasting from "@/components/app/campaigns/PredictiveCACForecasting";
+import CampaignCohortPerformance from "@/components/app/campaigns/CampaignCohortPerformance";
+import PerformanceBasedDataContribution from "@/components/app/campaigns/PerformanceBasedDataContribution";
 import CustomAttributionWindows from "@/components/app/campaigns/CustomAttributionWindows";
 import IncrementalityTesting from "@/components/app/campaigns/IncrementalityTesting";
 import CrossChannelIncrementality from "@/components/app/campaigns/CrossChannelIncrementality";
@@ -82,6 +84,7 @@ export default function CampaignsPage() {
   const searchParams = useSearchParams();
   const { user } = useAuth();
   const [activeView, setActiveView] = useState<"overview" | "health" | "budget" | "audience" | "creatives">("overview");
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string | null>(null);
 
   // Get user's Convex ID
   const convexUser = useQuery(api.auth.getUserByEmail, 
@@ -96,19 +99,17 @@ export default function CampaignsPage() {
   // Use Convex data if available, otherwise fall back to mock data
   const campaignData = campaigns || mockCampaigns;
 
-  // Determine selected campaign without useState to avoid loops
-  const urlCampaignId = searchParams.get('campaign');
-  let selectedCampaign = null;
-  const showDetails = !!urlCampaignId; // Show details if there's a campaign ID in URL
-  
-  if (campaignData && campaignData.length > 0) {
-    if (urlCampaignId) {
-      selectedCampaign = campaignData.find((c: any) => c.id === urlCampaignId || c._id === urlCampaignId);
+  // Initialize selected campaign ID if not set
+  useEffect(() => {
+    if (!selectedCampaignId && campaignData && campaignData.length > 0) {
+      setSelectedCampaignId(campaignData[0]._id || campaignData[0].id);
     }
-    if (!selectedCampaign) {
-      selectedCampaign = campaignData[0];
-    }
-  }
+  }, [campaignData, selectedCampaignId]);
+
+  // Get the selected campaign object
+  const selectedCampaign = campaignData?.find((c: any) => 
+    (c._id || c.id) === selectedCampaignId
+  ) || campaignData?.[0] || null;
 
   const totalSpend = campaignData.reduce((sum: number, c: any) => sum + (c.spend || 0), 0);
   const avgROAS = campaignData.length > 0 ? campaignData.reduce((sum: number, c: any) => sum + (c.roas || 0), 0) / campaignData.length : 0;
@@ -130,7 +131,7 @@ export default function CampaignsPage() {
     <div>
       
       {/* Creative Fatigue Alerts */}
-      {/* <CreativeFatigueAlert /> */}
+      <CreativeFatigueAlert />
       
       <div className="space-y-6">
       {/* Header */}
@@ -215,6 +216,29 @@ export default function CampaignsPage() {
         </button>
       </div>
 
+      {/* Campaign Selector - Only show in overview */}
+      {activeView === "overview" && campaignData && campaignData.length > 0 && (
+        <div className="bg-white rounded-xl shadow-sm border border-silk-gray p-4">
+          <div className="flex items-center gap-4">
+            <label htmlFor="campaign-select" className="text-sm font-medium text-dark-gray">
+              Select Campaign:
+            </label>
+            <select
+              id="campaign-select"
+              value={selectedCampaignId || ''}
+              onChange={(e) => setSelectedCampaignId(e.target.value)}
+              className="flex-1 max-w-md px-4 py-2 border border-silk-gray rounded-lg focus:outline-none focus:border-electric-blue"
+            >
+              {campaignData.map((campaign: any) => (
+                <option key={campaign._id || campaign.id} value={campaign._id || campaign.id}>
+                  {campaign.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
+
       {/* View Content */}
       {activeView === "overview" && (
         <>
@@ -259,13 +283,24 @@ export default function CampaignsPage() {
         >
           <div className="flex items-center justify-between mb-4">
             <Target className="text-brand-green" size={24} />
-            <span className="text-xs bg-brand-green/10 text-brand-green px-2 py-1 rounded-full">
-              -34.3%
-            </span>
+            {selectedCampaign?.currentCAC && selectedCampaign?.previousCAC && (
+              <span className={`text-xs px-2 py-1 rounded-full ${
+                selectedCampaign.currentCAC < selectedCampaign.previousCAC 
+                  ? 'bg-brand-green/10 text-brand-green' 
+                  : 'bg-warm-coral/10 text-warm-coral'
+              }`}>
+                {selectedCampaign.currentCAC < selectedCampaign.previousCAC ? '-' : '+'}
+                {Math.abs(((selectedCampaign.currentCAC - selectedCampaign.previousCAC) / selectedCampaign.previousCAC * 100)).toFixed(1)}%
+              </span>
+            )}
           </div>
-          <p className="text-xs sm:text-sm text-medium-gray mb-1">Portfolio CAC</p>
-          <p className="text-xl sm:text-2xl font-bold text-dark-gray">${avgCAC.toFixed(2)}</p>
-          <p className="text-xs text-medium-gray hidden sm:block">was $47.50</p>
+          <p className="text-xs sm:text-sm text-medium-gray mb-1">Current CAC</p>
+          <p className="text-xl sm:text-2xl font-bold text-dark-gray">
+            ${selectedCampaign?.currentCAC?.toFixed(2) || '0.00'}
+          </p>
+          <p className="text-xs text-medium-gray hidden sm:block">
+            was ${selectedCampaign?.previousCAC?.toFixed(2) || '0.00'}
+          </p>
         </motion.div>
 
         <motion.div
@@ -276,13 +311,20 @@ export default function CampaignsPage() {
         >
           <div className="flex items-center justify-between mb-4">
             <TrendingUp className="text-bright-purple" size={24} />
-            <span className="text-xs bg-bright-purple/10 text-bright-purple px-2 py-1 rounded-full">
-              +50%
-            </span>
+            {selectedCampaign?.ltv && selectedCampaign?.currentCAC && selectedCampaign?.previousCAC && (
+              <span className="text-xs bg-bright-purple/10 text-bright-purple px-2 py-1 rounded-full">
+                {(((selectedCampaign.ltv / selectedCampaign.currentCAC) - (selectedCampaign.ltv / selectedCampaign.previousCAC)) / (selectedCampaign.ltv / selectedCampaign.previousCAC) * 100) > 0 ? '+' : ''}
+                {(((selectedCampaign.ltv / selectedCampaign.currentCAC) - (selectedCampaign.ltv / selectedCampaign.previousCAC)) / (selectedCampaign.ltv / selectedCampaign.previousCAC) * 100).toFixed(0)}%
+              </span>
+            )}
           </div>
-          <p className="text-sm text-medium-gray mb-1">Blended LTV:CAC</p>
-          <p className="text-2xl font-bold text-dark-gray">4.2:1</p>
-          <p className="text-xs text-medium-gray">was 2.8:1</p>
+          <p className="text-sm text-medium-gray mb-1">LTV:CAC</p>
+          <p className="text-2xl font-bold text-dark-gray">
+            {selectedCampaign?.ltv && selectedCampaign?.currentCAC 
+              ? `${(selectedCampaign.ltv / selectedCampaign.currentCAC).toFixed(1)}:1`
+              : '0.0:1'}
+          </p>
+          <p className="text-xs text-medium-gray">Target: {selectedCampaign?.targetCAC ? `${(selectedCampaign.ltv / selectedCampaign.targetCAC).toFixed(1)}:1` : 'N/A'}</p>
         </motion.div>
 
         <motion.div
@@ -294,11 +336,11 @@ export default function CampaignsPage() {
           <div className="flex items-center justify-between mb-4">
             <DollarSign className="text-electric-blue" size={24} />
           </div>
-          <p className="text-sm text-medium-gray mb-1">Total Spend</p>
+          <p className="text-sm text-medium-gray mb-1">Campaign Spend</p>
           <p className="text-2xl font-bold text-dark-gray">
-            ${(totalSpend / 1000).toFixed(0)}K
+            ${((selectedCampaign?.spend || 0) / 1000).toFixed(0)}K
           </p>
-          <p className="text-xs text-medium-gray">This month</p>
+          <p className="text-xs text-medium-gray">of ${((selectedCampaign?.budget || 0) / 1000).toFixed(0)}K budget</p>
         </motion.div>
 
         <motion.div
@@ -310,87 +352,45 @@ export default function CampaignsPage() {
           <div className="flex items-center justify-between mb-4">
             <Activity className="text-brand-green" size={24} />
           </div>
-          <p className="text-sm text-medium-gray mb-1">Avg ROAS</p>
-          <p className="text-2xl font-bold text-dark-gray">{avgROAS.toFixed(1)}x</p>
-          <p className="text-xs text-brand-green">All campaigns</p>
+          <p className="text-sm text-medium-gray mb-1">Campaign ROAS</p>
+          <p className="text-2xl font-bold text-dark-gray">{(selectedCampaign?.roas || 0).toFixed(1)}x</p>
+          <p className="text-xs text-brand-green">{selectedCampaign?.status || 'Active'}</p>
         </motion.div>
       </div>
 
-      {/* TEMPORARILY DISABLE ALL COMPONENTS TO FIND THE ISSUE */}
-      {/* Creative Performance */}
-      {/* <CreativeCarousel /> */}
+      {/* Cohort and Attribution Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <CampaignCohortPerformance campaignId={selectedCampaign?._id || selectedCampaign?.id} />
+        <PerformanceBasedDataContribution campaignId={selectedCampaign?._id || selectedCampaign?.id} />
+      </div>
 
       {/* Predictive Analytics */}
-      {/* <PredictiveCACForecasting /> */}
+      <PredictiveCACForecasting campaignId={selectedCampaign?._id || selectedCampaign?.id} />
+
+      {/* Creative Performance */}
+      <CreativeCarousel campaignId={selectedCampaign?._id || selectedCampaign?.id} />
 
       {/* Advanced Analytics Grid */}
-      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <DSPArbitrage />
-        <MultiTouchAttribution />
-      </div> */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <DSPArbitrage campaignId={selectedCampaign?._id || selectedCampaign?.id} />
+        <MultiTouchAttribution campaignId={selectedCampaign?._id || selectedCampaign?.id} />
+      </div>
 
       {/* Testing & Attribution */}
-      {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <CustomAttributionWindows />
-        <IncrementalityTesting />
-      </div> */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <CustomAttributionWindows campaignId={selectedCampaign?._id || selectedCampaign?.id} />
+        <IncrementalityTesting campaignId={selectedCampaign?._id || selectedCampaign?.id} />
+      </div>
 
       {/* Cross-Channel Incrementality - MadHive Feature */}
-      {/* <CrossChannelIncrementality /> */}
+      <CrossChannelIncrementality campaignId={selectedCampaign?._id || selectedCampaign?.id} />
 
       {/* Competitive Intelligence */}
-      {/* <CompetitiveIntelligence /> */}
+      <CompetitiveIntelligence campaignId={selectedCampaign?._id || selectedCampaign?.id} />
 
       {/* Regional Performance Tracker - MadHive Feature */}
-      {/* <RegionalPerformanceTracker /> */}
+      <RegionalPerformanceTracker campaignId={selectedCampaign?._id || selectedCampaign?.id} />
 
-      {/* Campaign Details Modal */}
-      {showDetails && selectedCampaign && (
-        <div id="campaign-details" className="mb-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-r from-electric-blue to-bright-purple rounded-xl p-6 text-white"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">{selectedCampaign.name}</h2>
-                <p className="text-white/80">Campaign ID: {selectedCampaign._id || selectedCampaign.id}</p>
-              </div>
-              <button
-                onClick={() => {
-                  // Remove campaign from URL
-                  const url = new URL(window.location.href);
-                  url.searchParams.delete('campaign');
-                  window.history.pushState({}, '', url);
-                }}
-                className="text-white/80 hover:text-white"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <p className="text-white/70 text-sm">Current CAC</p>
-                <p className="text-2xl font-bold">${selectedCampaign.currentCAC.toFixed(2)}</p>
-              </div>
-              <div>
-                <p className="text-white/70 text-sm">ROAS</p>
-                <p className="text-2xl font-bold">{selectedCampaign.roas}x</p>
-              </div>
-              <div>
-                <p className="text-white/70 text-sm">Budget</p>
-                <p className="text-2xl font-bold">${(selectedCampaign.budget / 1000).toFixed(0)}K</p>
-              </div>
-              <div>
-                <p className="text-white/70 text-sm">Spend</p>
-                <p className="text-2xl font-bold">${(selectedCampaign.spend / 1000).toFixed(0)}K</p>
-                <p className="text-xs text-white/60">{Math.round((selectedCampaign.spend / selectedCampaign.budget) * 100)}% utilized</p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
 
       {/* Campaigns Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -524,18 +524,17 @@ export default function CampaignsPage() {
         </>
       )}
 
-      {/* TEMPORARILY DISABLE VIEW-SPECIFIC COMPONENTS */}
       {/* Health Monitor View */}
-      {/* {activeView === "health" && <CampaignHealthMonitor />} */}
+      {activeView === "health" && <CampaignHealthMonitor campaignId={selectedCampaign?._id || selectedCampaign?.id} />}
 
       {/* Budget Pacing View */}
-      {/* {activeView === "budget" && <BudgetPacing />} */}
+      {activeView === "budget" && <BudgetPacing campaignId={selectedCampaign?._id || selectedCampaign?.id} />}
 
       {/* Audience Insights View */}
-      {/* {activeView === "audience" && <AudienceInsights />} */}
+      {activeView === "audience" && <AudienceInsights campaignId={selectedCampaign?._id || selectedCampaign?.id} />}
 
       {/* Creatives View */}
-      {/* {activeView === "creatives" && (
+      {activeView === "creatives" && (
         <div className="space-y-6">
           <CreativeCarousel campaignId={selectedCampaign?._id || selectedCampaign?.id} />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -543,7 +542,7 @@ export default function CampaignsPage() {
             <MultiTouchAttribution campaignId={selectedCampaign?._id || selectedCampaign?.id} />
           </div>
         </div>
-      )} */}
+      )}
       </div>
     </div>
   );

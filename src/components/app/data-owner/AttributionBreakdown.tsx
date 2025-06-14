@@ -38,13 +38,13 @@ interface ContributionMetric {
 const mockAttributions: ShapleyAttribution[] = [
   {
     id: "1",
-    campaign: "Q1 Fitness Campaign",
-    advertiser: "Nike",
+    campaign: "Ticket Sales 2025",
+    advertiser: "Pro Sports Team",
     totalConversions: 24580,
-    yourContribution: 8920,
-    shapleyValue: 0.363,
-    fairShare: 8923.54,
-    earnings: 892.35,
+    yourContribution: 72320,
+    shapleyValue: 0.21,
+    fairShare: 72320,
+    earnings: 7232,
     trend: "up",
   },
   {

@@ -891,4 +891,126 @@ export default defineSchema({
   })
     .index("by_owner", ["ownerId"])
     .index("by_status", ["status"]),
+
+  // Marketplace demand data
+  marketplaceDemand: defineTable({
+    category: v.string(),
+    avgCPM: v.float64(),
+    growth: v.float64(),
+    volume: v.string(),
+    topBuyers: v.array(v.string()),
+    timestamp: v.number(),
+  })
+    .index("by_category", ["category"])
+    .index("by_timestamp", ["timestamp"]),
+
+  // Marketplace pricing recommendations  
+  marketplacePricing: defineTable({
+    assetId: v.id("dataAssets"),
+    currentPrice: v.float64(),
+    recommendedPrice: v.float64(),
+    rationale: v.string(),
+    potentialRevenue: v.float64(),
+    timestamp: v.number(),
+  })
+    .index("by_asset", ["assetId"])
+    .index("by_timestamp", ["timestamp"]),
+
+  // Marketplace competitor benchmarks
+  marketplaceCompetitors: defineTable({
+    competitor: v.string(),
+    marketShare: v.float64(),
+    avgCPM: v.float64(),
+    dataQuality: v.float64(),
+    categories: v.array(v.string()),
+    timestamp: v.number(),
+  })
+    .index("by_competitor", ["competitor"])
+    .index("by_timestamp", ["timestamp"]),
+
+  // Marketplace integration opportunities
+  marketplaceIntegrations: defineTable({
+    partner: v.string(),
+    type: v.string(),
+    potentialRevenue: v.float64(),
+    effort: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    description: v.string(),
+    benefits: v.array(v.string()),
+    timestamp: v.number(),
+  })
+    .index("by_partner", ["partner"])
+    .index("by_type", ["type"]),
+
+  // Audience insights segments
+  audienceInsightSegments: defineTable({
+    campaignId: v.id("campaigns"),
+    name: v.string(),
+    size: v.number(),
+    ctr: v.float64(),
+    cvr: v.float64(),
+    cpc: v.float64(),
+    roas: v.float64(),
+    demographics: v.object({
+      age: v.string(),
+      gender: v.string(),
+      income: v.string(),
+      interests: v.array(v.string()),
+    }),
+    timestamp: v.number(),
+  })
+    .index("by_campaign", ["campaignId"])
+    .index("by_name", ["name"]),
+
+  // Audience performance timeline
+  audiencePerformanceTimeline: defineTable({
+    campaignId: v.id("campaigns"),
+    segmentName: v.string(),
+    date: v.string(),
+    impressions: v.number(),
+    conversions: v.number(),
+    spend: v.float64(),
+    timestamp: v.number(),
+  })
+    .index("by_campaign_segment", ["campaignId", "segmentName"])
+    .index("by_date", ["date"]),
+
+  // Audience overlap data
+  audienceOverlapData: defineTable({
+    campaignId: v.id("campaigns"),
+    segment1: v.string(),
+    segment2: v.string(),
+    overlap: v.float64(),
+    wastedSpend: v.float64(),
+    recommendation: v.string(),
+    timestamp: v.number(),
+  })
+    .index("by_campaign", ["campaignId"])
+    .index("by_segments", ["segment1", "segment2"]),
+
+  // Marketplace solutions (media buyer)
+  marketplaceSolutions: defineTable({
+    name: v.string(),
+    provider: v.string(),
+    description: v.string(),
+    featured: v.boolean(),
+    objective: v.string(),
+    cohortCount: v.number(),
+    totalReach: v.number(),
+    avgQualityScore: v.float64(),
+    performanceMetrics: v.object({
+      avgCAC: v.float64(),
+      avgROAS: v.float64(),
+      successRate: v.float64(),
+      totalSpend: v.float64(),
+      totalRevenue: v.float64(),
+    }),
+    dsps: v.array(v.string()),
+    pricingModel: v.string(),
+    pricingDetails: v.string(),
+    status: v.union(v.literal("active"), v.literal("coming_soon")),
+    createdAt: v.number(),
+  })
+    .index("by_provider", ["provider"])
+    .index("by_objective", ["objective"])
+    .index("by_featured", ["featured"]),
 });

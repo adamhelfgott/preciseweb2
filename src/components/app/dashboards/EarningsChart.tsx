@@ -18,25 +18,56 @@ import {
 } from "recharts";
 import { Calendar } from "lucide-react";
 
-// Generate mock data for the last 30 days
+// Generate mock data starting from May 16
 const generateMockData = () => {
   const data = [];
+  const startDate = new Date(2024, 4, 16); // May 16, 2024
   const today = new Date();
   
-  for (let i = 29; i >= 0; i--) {
-    const date = new Date(today);
-    date.setDate(date.getDate() - i);
+  // Calculate days between start and today
+  const daysDiff = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+  const daysToShow = Math.min(daysDiff, 240); // Cap at 240 days for performance
+  
+  // Create a smooth growth curve with realistic patterns
+  let previousEarnings = 800;
+  
+  for (let i = 0; i <= daysToShow; i++) {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + i);
     
-    // Simulate growing earnings with some variance
-    const baseEarnings = 1200 + (29 - i) * 30; // Growing trend
-    const variance = Math.random() * 400 - 200; // +/- $200 variance
-    const earnings = Math.max(baseEarnings + variance, 800);
+    // Skip if date is in the future
+    if (date > today) break;
     
-    data.push({
-      date: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-      earnings: Math.round(earnings),
-      impressions: Math.floor(earnings * 8.5 + Math.random() * 1000),
-    });
+    // Create realistic growth patterns
+    const dayOfWeek = date.getDay();
+    const monthProgress = i / 30; // Months since start
+    
+    // Base growth: slow start, accelerating over time
+    const growthRate = 0.002 + (monthProgress * 0.001); // 0.2% to 0.8% daily growth
+    const baseGrowth = previousEarnings * (1 + growthRate);
+    
+    // Weekly patterns: lower on weekends
+    const weekendFactor = (dayOfWeek === 0 || dayOfWeek === 6) ? 0.7 : 1.0;
+    
+    // Monthly patterns: dip at month start, peak at month end
+    const dayOfMonth = date.getDate();
+    const monthlyFactor = 0.9 + (dayOfMonth / 30) * 0.2;
+    
+    // Small daily variance for realism
+    const dailyVariance = 1 + (Math.random() * 0.1 - 0.05); // ±5% variance
+    
+    // Calculate final earnings
+    const earnings = baseGrowth * weekendFactor * monthlyFactor * dailyVariance;
+    previousEarnings = earnings;
+    
+    // Only show last 30 days in the default view
+    if (i >= daysToShow - 29) {
+      data.push({
+        date: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        earnings: Math.round(earnings),
+        impressions: Math.floor(earnings * 8.5 + Math.random() * 1000),
+      });
+    }
   }
   
   return data;

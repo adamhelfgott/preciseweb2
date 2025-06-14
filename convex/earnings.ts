@@ -12,10 +12,21 @@ export const getEarnings = query({
     const earnings = await ctx.db
       .query("earnings")
       .withIndex("by_owner", (q) => q.eq("ownerId", args.ownerId))
-      .order("desc")
+      .order("asc")
       .take(limit);
     
-    return earnings;
+    // Fetch asset names for each earning
+    const earningsWithAssets = await Promise.all(
+      earnings.map(async (earning) => {
+        const asset = await ctx.db.get(earning.assetId);
+        return {
+          ...earning,
+          asset: asset?.name || "Unknown Asset",
+        };
+      })
+    );
+    
+    return earningsWithAssets;
   },
 });
 
@@ -135,5 +146,32 @@ export const distributeEarnings = internalMutation({
     }
     
     return pendingEarnings.length;
+  },
+});
+
+// Update earnings dates for specific campaigns
+export const updateEarningsDates = mutation({
+  args: {
+    ownerId: v.id("users"),
+    campaignName: v.string(),
+    newDate: v.string(), // Date string like "2025-06-12"
+  },
+  handler: async (ctx, args) => {
+    // Get all earnings for this owner with the specified campaign name
+    const earnings = await ctx.db
+      .query("earnings")
+      .withIndex("by_owner", (q) => q.eq("ownerId", args.ownerId))
+      .filter((q) => q.eq(q.field("campaign"), args.campaignName))
+      .collect();
+    
+    // Convert date string to timestamp
+    const newTimestamp = new Date(args.newDate).getTime();
+    
+    // Update each earning's timestamp
+    for (const earning of earnings) {
+      await ctx.db.patch(earning._id, { timestamp: newTimestamp });
+    }
+    
+    return earnings.length;
   },
 });

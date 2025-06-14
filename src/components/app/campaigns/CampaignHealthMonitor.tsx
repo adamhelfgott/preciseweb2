@@ -114,7 +114,11 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-export default function CampaignHealthMonitor() {
+interface CampaignHealthMonitorProps {
+  campaignId?: string;
+}
+
+export default function CampaignHealthMonitor({ campaignId }: CampaignHealthMonitorProps) {
   const { user } = useAuth();
   const [simulationActive, setSimulationActive] = useState(false);
   
@@ -131,17 +135,21 @@ export default function CampaignHealthMonitor() {
   // Mutation for simulating DSP performance
   const simulateDSP = useMutation(api.dspPerformance.simulateDSPPerformance);
 
-  // Get health data for first campaign only (can't use hooks in loops)
-  const firstCampaignId = convexCampaigns?.[0]?._id;
-  const firstCampaignHealth = useQuery(api.creatives.getCampaignHealth,
-    firstCampaignId ? { campaignId: firstCampaignId } : "skip"
+  // Get health data for the specified campaign or first campaign
+  const targetCampaignId = campaignId || convexCampaigns?.[0]?._id;
+  const campaignHealth = useQuery(api.creatives.getCampaignHealth,
+    targetCampaignId ? { campaignId: targetCampaignId } : "skip"
   );
 
+  // Filter campaigns based on campaignId prop
+  const filteredCampaigns = campaignId 
+    ? convexCampaigns?.filter((c: any) => c._id === campaignId) || []
+    : convexCampaigns || [];
+
   // Build campaign health data from Convex or use mock data
-  const campaigns: Campaign[] = convexCampaigns?.length ? convexCampaigns.map((campaign: any, index: number) => {
-    // For now, use the first campaign's health data as a template for all
-    // In production, you'd fetch health data for each campaign separately
-    const health = index === 0 ? firstCampaignHealth : null;
+  const campaigns: Campaign[] = filteredCampaigns?.length ? filteredCampaigns.map((campaign: any, index: number) => {
+    // Use the campaign health data if it matches the current campaign
+    const health = campaign._id === targetCampaignId ? campaignHealth : null;
 
     if (!health) {
       // Return mock data variant for this campaign
@@ -222,7 +230,7 @@ export default function CampaignHealthMonitor() {
     }, 10000); // Update every 10 seconds
 
     return () => clearInterval(interval);
-  }, [convexUser?._id, simulationActive, convexCampaigns, simulateDSP]);
+  }, [convexUser?._id, simulationActive, convexCampaigns]); // Removed simulateDSP - mutations are stable
 
   return (
     <div className="space-y-6">

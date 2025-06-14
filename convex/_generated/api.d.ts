@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as assetHealth from "../assetHealth.js";
 import type * as attribution from "../attribution.js";
+import type * as audienceInsights from "../audienceInsights.js";
 import type * as audienceOverlap from "../audienceOverlap.js";
 import type * as auth from "../auth.js";
 import type * as budgetReallocation from "../budgetReallocation.js";
@@ -54,6 +55,7 @@ import type * as usageAnalytics from "../usageAnalytics.js";
 declare const fullApi: ApiFromModules<{
   assetHealth: typeof assetHealth;
   attribution: typeof attribution;
+  audienceInsights: typeof audienceInsights;
   audienceOverlap: typeof audienceOverlap;
   auth: typeof auth;
   budgetReallocation: typeof budgetReallocation;

@@ -251,3 +251,49 @@ export const simulateBuyerRequests = mutation({
   },
 });
 
+// Delete a buyer request
+export const deleteBuyerRequest = mutation({
+  args: {
+    requestId: v.id("buyerRequests"),
+  },
+  handler: async (ctx, args) => {
+    // First delete all associated matches
+    const matches = await ctx.db
+      .query("requestMatches")
+      .withIndex("by_request", (q) => q.eq("requestId", args.requestId))
+      .collect();
+    
+    for (const match of matches) {
+      await ctx.db.delete(match._id);
+    }
+    
+    // Then delete the request itself
+    await ctx.db.delete(args.requestId);
+    
+    return { success: true };
+  },
+});
+
+// Get all buyer requests (for cleanup script)
+export const getBuyerRequests = query({
+  handler: async (ctx) => {
+    const requests = await ctx.db
+      .query("buyerRequests")
+      .order("desc")
+      .collect();
+
+    // Get buyer details for each request
+    const requestsWithBuyers = await Promise.all(
+      requests.map(async (request) => {
+        const buyer = await ctx.db.get(request.buyerId);
+        return {
+          ...request,
+          buyerName: buyer?.name || "Unknown Buyer",
+          buyerCompany: buyer?.company || "Unknown Company",
+        };
+      })
+    );
+
+    return requestsWithBuyers;
+  },
+});
