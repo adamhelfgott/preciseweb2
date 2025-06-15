@@ -97,6 +97,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Mock authentication
       const mockUser = MOCK_USERS[email];
       if (mockUser && password === "demo123") {
+        console.log("Authentication successful, syncing with Convex...");
+        console.log("Convex URL:", process.env.NEXT_PUBLIC_CONVEX_URL);
+        
         // Sync mock user with Convex
         await saveUserToConvex({
           id: mockUser.id,
@@ -129,6 +132,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error("Sign in error:", error);
+      console.error("Error details:", {
+        email,
+        mockUserFound: !!MOCK_USERS[email],
+        passwordMatch: password === "demo123",
+        error: error instanceof Error ? error.message : error
+      });
       throw error;
     } finally {
       setIsLoading(false);
