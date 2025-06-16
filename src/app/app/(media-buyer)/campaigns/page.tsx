@@ -264,9 +264,9 @@ export default function CampaignsPage() {
                   <Brain className="w-6 h-6" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold mb-1">Precise AdOps Intelligence</h2>
+                  <h2 className="text-lg font-semibold mb-1">Precise Intelligence</h2>
                   <p className="text-sm text-gray-300">
-                    Real-time attribution • DSP arbitrage • Creative fatigue detection • 
+                    Real-time attribution • DSP activation • Creative fatigue detection • 
                     Privacy-preserving data collaboration
                   </p>
                 </div>
