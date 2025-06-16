@@ -9,7 +9,6 @@ export default function Footer() {
         { href: "/how-it-works", label: "How it works" },
         { href: "/data-owners", label: "For data controllers" },
         { href: "/advertisers", label: "For advertisers" },
-        { href: "/case-studies", label: "Case studies" },
         { href: "/pricing", label: "Pricing" },
       ],
     },
