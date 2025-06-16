@@ -29,21 +29,6 @@ export default function SignInPage() {
     }
   };
 
-  const fillDemoCredentials = (role: "dataowner" | "mediabuyer" | "mario" | "luigi") => {
-    if (role === "dataowner") {
-      setEmail("dataowner@demo.com");
-      setPassword("demo123");
-    } else if (role === "mediabuyer") {
-      setEmail("mediabuyer@demo.com");
-      setPassword("demo123");
-    } else if (role === "mario") {
-      setEmail("mario@demo.com");
-      setPassword("demo123");
-    } else if (role === "luigi") {
-      setEmail("luigi@demo.com");
-      setPassword("demo123");
-    }
-  };
 
   return (
     <div className="min-h-screen flex">
@@ -71,38 +56,6 @@ export default function SignInPage() {
             </p>
           </div>
 
-          {/* Demo credentials */}
-          <div className="bg-brand-green/10 border border-brand-green/20 rounded-xl p-4 mb-8">
-            <p className="text-sm text-dark-gray mb-3">
-              <strong>Demo Credentials:</strong>
-            </p>
-            <div className="space-y-2">
-              <button
-                onClick={() => fillDemoCredentials("dataowner")}
-                className="w-full text-left text-sm p-2 hover:bg-brand-green/10 rounded transition-colors"
-              >
-                <strong>Data Controller:</strong> dataowner@demo.com / demo123
-              </button>
-              <button
-                onClick={() => fillDemoCredentials("mario")}
-                className="w-full text-left text-sm p-2 hover:bg-brand-green/10 rounded transition-colors"
-              >
-                <strong>Data Owner - Audience Acuity:</strong> mario@demo.com / demo123
-              </button>
-              <button
-                onClick={() => fillDemoCredentials("mediabuyer")}
-                className="w-full text-left text-sm p-2 hover:bg-brand-green/10 rounded transition-colors"
-              >
-                <strong>Media Buyer:</strong> mediabuyer@demo.com / demo123
-              </button>
-              <button
-                onClick={() => fillDemoCredentials("luigi")}
-                className="w-full text-left text-sm p-2 hover:bg-brand-green/10 rounded transition-colors"
-              >
-                <strong>Media Buyer - Pro Sports Team:</strong> luigi@demo.com / demo123
-              </button>
-            </div>
-          </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
