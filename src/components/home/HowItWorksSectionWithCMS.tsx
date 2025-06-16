@@ -48,7 +48,7 @@ export default function HowItWorksSectionWithCMS() {
       },
       {
         title: "Track value attribution",
-        description: "As campaigns run across commoditized DSPs, see exactly how your data contributes to outcomes. Automatic value distribution.",
+        description: "As campaigns run across DSPs, see exactly how your data contributes to outcomes. Automatic value distribution.",
         icon: "Zap",
       },
     ],
