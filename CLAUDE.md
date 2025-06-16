@@ -27,7 +27,7 @@ Key differentiators:
 - Global search functionality (Cmd+K)
 
 #### Media Buyer Features
-- **Campaigns Page**: Full AdOps command center with AI assistant
+- **Campaigns Page**: Full Activation Intelligence dashboard with AI assistant
 - **Creative Carousel**: Performance tracking with fatigue detection
 - **Creative Fatigue Alert**: Automated alerts when creatives need refresh
 - **DSP Arbitrage**: Multi-DSP optimization dashboard

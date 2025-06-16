@@ -136,7 +136,7 @@ export default function HowItWorksPage() {
           <section className="py-16 md:py-24">
             <div className="container max-w-6xl">
               <h2 className="text-3xl font-bold text-center text-dark-gray mb-16">
-                How Our AI AdOps Command Center Works
+                How Our AI Activation Intelligence Works
               </h2>
               
               <div className="space-y-16">
