@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Icon from '@/components/Icon';
 
 export default function Footer() {
   const footerSections = [
@@ -8,7 +9,6 @@ export default function Footer() {
         { href: "/how-it-works", label: "How it works" },
         { href: "/data-owners", label: "For data controllers" },
         { href: "/advertisers", label: "For advertisers" },
-        { href: "/case-studies", label: "Case studies" },
         { href: "/pricing", label: "Pricing" },
       ],
     },
@@ -25,9 +25,8 @@ export default function Footer() {
       title: "Company",
       links: [
         { href: "/company", label: "About" },
-        { href: "/blog", label: "Blog" },
-        { href: "/careers", label: "Careers" },
         { href: "/contact", label: "Contact" },
+        { href: "/faq", label: "FAQ" },
       ],
     },
     {
@@ -48,9 +47,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 group mb-4">
-              <div className="w-8 h-8 bg-brand-green rounded-full flex items-center justify-center transition-transform group-hover:scale-110">
-                <span className="text-white font-bold text-lg">P</span>
-              </div>
+              <Icon size={32} className="transition-transform group-hover:scale-110" />
               <span className="font-semibold text-xl text-dark-gray">Precise</span>
             </Link>
             <p className="text-medium-gray text-sm">
@@ -114,22 +111,6 @@ export default function Footer() {
             © {new Date().getFullYear()} Precise. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <Link
-              href="https://twitter.com/precise"
-              className="text-medium-gray hover:text-dark-gray transition-colors duration-200"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Twitter
-            </Link>
-            <Link
-              href="https://github.com/precise"
-              className="text-medium-gray hover:text-dark-gray transition-colors duration-200"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              GitHub
-            </Link>
             <Link
               href="https://linkedin.com/company/precise"
               className="text-medium-gray hover:text-dark-gray transition-colors duration-200"

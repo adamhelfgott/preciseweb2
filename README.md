@@ -1,6 +1,6 @@
-# Precise.ai - Infrastructure for the AI Data Economy
+# Precise - Infrastructure for the AI Data Economy
 
-A privacy-preserving data collaboration platform that enables brands and data controllers to work together without sharing raw data.
+A privacy-preserving data collaboration platform that creates targetable audiences from behavioral context and signals—not emails or device IDs. Enables brands, agencies, and data providers to collaborate without sharing raw data.
 
 ## Features
 
@@ -30,6 +30,9 @@ A privacy-preserving data collaboration platform that enables brands and data co
 ```bash
 git clone https://github.com/adamhelfgott/preciseweb2.git
 cd preciseweb2
+
+# For demo version (recommended)
+git checkout demo-ux-only
 ```
 
 2. Install dependencies:
@@ -39,12 +42,22 @@ npm install
 
 3. Set up environment variables:
 ```bash
-cp .env.example .env.local
+# Create .env.local file
+touch .env.local
 ```
 
-4. Configure your environment variables:
-   - `OPENAI_API_KEY`: Your OpenAI API key for the AI Assistant
-   - `NEXT_PUBLIC_CONVEX_URL`: Your Convex deployment URL
+4. Add to `.env.local`:
+```env
+# For demo mode
+NEXT_PUBLIC_MOCK_MODE=true
+
+# Optional - for AI chat features
+OPENAI_API_KEY=your_openai_key_here
+
+# Not needed for demo
+# NEXT_PUBLIC_CONVEX_URL=...
+# NEXT_PUBLIC_SUPABASE_URL=...
+```
 
 5. Run the development server:
 ```bash
@@ -53,10 +66,20 @@ npm run dev
 
 6. Open [http://localhost:3000](http://localhost:3000)
 
-### Demo Credentials
+### Demo Access
 
-- **Media Buyer**: `mediabuyer@demo.com` / `demo123`
-- **Data Controller**: `dataowner@demo.com` / `demo123`
+The `demo-ux-only` branch uses mock data. 
+
+**Public pages** (no login required):
+- `/` - Marketing homepage
+- `/omg-unified-dashboard-v3` - OMG command center with ZipAI Intelligence
+- `/data-owners`, `/media-buyers` - Marketing pages
+- `/madhive-integration` - Partnership showcase
+
+**Protected pages** (`/app/*` routes):
+- **Username**: `precise`
+- **Password**: `demo2025`
+- Example: `/app/dashboard` - Demo dashboard with mock data
 
 ## Deployment
 
@@ -71,7 +94,10 @@ The app is configured for easy deployment on Vercel:
 
 - **Frontend**: Next.js 15, React, TypeScript
 - **Styling**: Tailwind CSS, Framer Motion
-- **Backend**: Convex (real-time database)
+- **Backend**: 
+  - Convex (real-time) - Partially configured for chat/leads
+  - Supabase - Not yet configured
+  - Sanity CMS - Schemas defined, not populated
 - **AI**: OpenAI GPT-4 (via Vercel AI SDK)
 - **Charts**: Recharts
 - **Deployment**: Vercel

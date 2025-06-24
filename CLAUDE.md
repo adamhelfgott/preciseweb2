@@ -14,6 +14,9 @@ Key differentiators:
 - Marketing Mix Model (MMM) for media buyer attribution
 - Real-time campaign optimization with AI assistance
 
+## Memories
+- MadHive is wrong. Madhive is right.
+
 ## Current Project State (as of May 25, 2025)
 
 ### ✅ Completed Features

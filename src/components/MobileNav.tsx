@@ -4,13 +4,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import Icon from '@/components/Icon';
 
 const navigation = [
   { name: 'How it works', href: '/how-it-works' },
   { name: 'For data controllers', href: '/data-owners' },
   { name: 'For advertisers', href: '/advertisers' },
-  { name: 'Developers', href: '/developers' },
-  { name: 'Company', href: '/company' },
 ];
 
 export default function MobileNav() {
@@ -53,9 +52,7 @@ export default function MobileNav() {
             >
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
                 <Link href="/" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
-                  <div className="w-8 h-8 bg-brand-green rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">P</span>
-                  </div>
+                  <Icon size={32} />
                   <span className="font-semibold text-xl text-dark-gray">Precise</span>
                 </Link>
                 <button

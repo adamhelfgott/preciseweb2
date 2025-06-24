@@ -4,6 +4,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface DataOwnerOnboardingProps {
   onBack: () => void;
@@ -11,8 +13,13 @@ interface DataOwnerOnboardingProps {
 
 export default function DataOwnerOnboarding({ onBack }: DataOwnerOnboardingProps) {
   const [step, setStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const createFormSubmission = useMutation(api.contacts.createFormSubmission);
+  
   const [formData, setFormData] = useState({
     company: "",
+    name: "",
+    email: "",
     role: "",
     industry: "",
     dataTypes: {
@@ -40,18 +47,45 @@ export default function DataOwnerOnboarding({ onBack }: DataOwnerOnboardingProps
   const isStepValid = (stepNumber: number) => {
     switch (stepNumber) {
       case 1:
-        return formData.company && formData.role && formData.industry;
+        return formData.company && formData.name && formData.email && formData.role && formData.industry;
       case 2:
         return Object.values(formData.dataTypes).some(v => v) && formData.userSize && formData.infrastructure;
       case 3:
-        return formData.integration;
+        return true; // Always valid for confirmation step
       default:
         return false;
     }
   };
 
-  const totalSteps = 3;
+  const totalSteps = 2;
   const progress = (step / totalSteps) * 100;
+  
+  // Handle form submission
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      await createFormSubmission({
+        name: formData.name,
+        email: formData.email,
+        company: formData.company,
+        source: "data-owner-onboarding",
+        formType: "data-owner",
+        role: formData.role,
+        industry: formData.industry,
+        dataTypes: formData.dataTypes,
+        userSize: formData.userSize,
+        infrastructure: formData.infrastructure,
+      });
+      
+      // Move to confirmation page
+      setStep(3);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      // You could show an error toast here
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-soft-white">
@@ -109,16 +143,17 @@ export default function DataOwnerOnboarding({ onBack }: DataOwnerOnboardingProps
       </div>
 
       {/* Footer */}
-      <div className="border-t border-silk-gray bg-white sticky bottom-0">
-        <div className="container py-4">
-          <div className="flex justify-between items-center">
-            <button
-              onClick={step === 1 ? onBack : () => setStep(step - 1)}
-              className="flex items-center gap-2 text-medium-gray hover:text-dark-gray transition-colors"
-            >
-              <ArrowLeft size={20} />
-              Back
-            </button>
+      {step !== 3 && ( // Hide footer on confirmation page
+        <div className="border-t border-silk-gray bg-white sticky bottom-0">
+          <div className="container py-4">
+            <div className="flex justify-between items-center">
+              <button
+                onClick={step === 1 ? onBack : () => setStep(step - 1)}
+                className="flex items-center gap-2 text-medium-gray hover:text-dark-gray transition-colors"
+              >
+                <ArrowLeft size={20} />
+                Back
+              </button>
             
             {step < totalSteps ? (
               <button
@@ -131,16 +166,18 @@ export default function DataOwnerOnboarding({ onBack }: DataOwnerOnboardingProps
               </button>
             ) : (
               <button
-                disabled={!isStepValid(step)}
-                className={`btn-primary ${!isStepValid(step) ? "opacity-50 cursor-not-allowed" : ""}`}
+                onClick={handleSubmit}
+                disabled={!isStepValid(step) || isSubmitting}
+                className={`btn-primary ${!isStepValid(step) || isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
               >
-                Create account
+                {isSubmitting ? "Submitting..." : "Submit"}
                 <ArrowRight size={20} />
               </button>
             )}
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }
@@ -172,6 +209,32 @@ function StepOne({ formData, updateForm }: any) {
             value={formData.company}
             onChange={(e) => updateForm("company", e.target.value)}
             placeholder="Acme Corp"
+            className="w-full px-4 py-3 border border-silk-gray rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-dark-gray mb-2">
+            Your name
+          </label>
+          <input
+            type="text"
+            value={formData.name}
+            onChange={(e) => updateForm("name", e.target.value)}
+            placeholder="John Doe"
+            className="w-full px-4 py-3 border border-silk-gray rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-dark-gray mb-2">
+            Email address
+          </label>
+          <input
+            type="email"
+            value={formData.email}
+            onChange={(e) => updateForm("email", e.target.value)}
+            placeholder="john@company.com"
             className="w-full px-4 py-3 border border-silk-gray rounded-lg focus:ring-2 focus:ring-brand-green focus:border-transparent"
           />
         </div>
@@ -310,112 +373,79 @@ function StepTwo({ formData, updateForm, updateDataType }: any) {
 }
 
 function StepThree({ formData, updateForm }: any) {
-  const integrationOptions = [
-    {
-      id: "sdk",
-      title: "SDK Integration",
-      description: "Add our SDK to your application. Best for real-time data and custom implementations.",
-      time: "~30 minutes",
-    },
-    {
-      id: "warehouse",
-      title: "Data Warehouse",
-      description: "Native functions for Snowflake, Databricks, and BigQuery. Best for batch processing.",
-      time: "~1 hour",
-    },
-    {
-      id: "api",
-      title: "Direct API",
-      description: "RESTful API for maximum flexibility. Best for existing data pipelines.",
-      time: "~2 hours",
-    },
-  ];
-
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="space-y-8"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="flex flex-col items-center justify-center text-center py-12"
     >
-      <div>
-        <h2 className="text-display-medium font-bold text-dark-gray mb-2">
-          Choose your integration path
+      {/* Success Icon */}
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+        className="w-24 h-24 bg-brand-green rounded-full flex items-center justify-center mb-6"
+      >
+        <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+      </motion.div>
+
+      {/* Thank You Message */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="space-y-4 max-w-lg"
+      >
+        <h2 className="text-display-medium font-bold text-dark-gray">
+          Thank you for your interest in Precise!
         </h2>
-        <p className="text-medium-gray">
-          Select the approach that works best for your team
+        <p className="text-lg text-medium-gray">
+          Someone from our team will get in touch with you soon on how to get started with monetizing your data through our privacy-preserving infrastructure.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="space-y-4">
-        {integrationOptions.map((option) => (
-          <motion.button
-            key={option.id}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-            onClick={() => updateForm("integration", option.id)}
-            className={`w-full text-left p-6 rounded-xl border-2 transition-all ${
-              formData.integration === option.id
-                ? "border-brand-green bg-brand-green/5"
-                : "border-silk-gray hover:border-medium-gray"
-            }`}
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-brand-green/10 rounded-lg flex items-center justify-center">
-                {option.id === "sdk" && (
-                  <svg className="w-6 h-6 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                )}
-                {option.id === "warehouse" && (
-                  <svg className="w-6 h-6 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-                  </svg>
-                )}
-                {option.id === "api" && (
-                  <svg className="w-6 h-6 text-brand-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                  </svg>
-                )}
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-dark-gray mb-1">
-                  {option.title}
-                </h3>
-                <p className="text-medium-gray text-sm mb-2">
-                  {option.description}
-                </p>
-                <p className="text-brand-green text-sm font-medium">
-                  {option.time}
-                </p>
-              </div>
-              {formData.integration === option.id && (
-                <div className="w-6 h-6 bg-brand-green rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              )}
-            </div>
-          </motion.button>
-        ))}
-      </div>
+      {/* Additional Info */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mt-8 p-6 bg-light-gray rounded-xl max-w-md"
+      >
+        <h4 className="font-semibold text-dark-gray mb-3">What happens next?</h4>
+        <ul className="space-y-2 text-left text-medium-gray">
+          <li className="flex items-start gap-2">
+            <svg className="w-5 h-5 text-brand-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>We'll review your information within 24 hours</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <svg className="w-5 h-5 text-brand-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>A specialist will contact you to discuss your specific needs</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <svg className="w-5 h-5 text-brand-green flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>We'll schedule a demo of our platform tailored to your use case</span>
+          </li>
+        </ul>
+      </motion.div>
 
-      {formData.integration && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-8 p-6 bg-light-gray rounded-xl"
-        >
-          <h4 className="font-semibold text-dark-gray mb-3">Next steps</h4>
-          <ol className="list-decimal list-inside space-y-2 text-medium-gray">
-            <li>Create your account</li>
-            <li>Get API credentials</li>
-            <li>Follow our {formData.integration} guide</li>
-            <li>Create your first verified asset</li>
-          </ol>
-        </motion.div>
-      )}
+      {/* Contact Info */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+        className="mt-8 text-sm text-medium-gray"
+      >
+        <p>Have questions? Email us at <a href="mailto:info@precise.ai" className="text-brand-green hover:underline">info@precise.ai</a></p>
+      </motion.div>
     </motion.div>
   );
 }

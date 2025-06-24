@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import ClientOnlyAnimation from "./ClientOnlyAnimation";
 
 export default function HeroSection() {
   return (
@@ -50,7 +51,9 @@ export default function HeroSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative"
           >
-            <DataFlowAnimation />
+            <ClientOnlyAnimation>
+              <DataFlowAnimation />
+            </ClientOnlyAnimation>
           </motion.div>
         </div>
       </div>

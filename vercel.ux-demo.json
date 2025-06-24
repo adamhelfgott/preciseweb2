@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_MOCK_MODE": "true",
+    "NEXT_PUBLIC_SANITY_PROJECT_ID": "dummy",
+    "NEXT_PUBLIC_SANITY_DATASET": "production",
+    "NEXT_PUBLIC_CONVEX_URL": "https://animated-starfish-207.convex.cloud"
+  }
+}

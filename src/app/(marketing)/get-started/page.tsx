@@ -80,7 +80,7 @@ export default function GetStartedPage() {
               Access high-quality data with transparent attribution for campaigns
             </p>
             <span className="text-electric-blue font-medium group-hover:text-dark-gray transition-colors">
-              Get started as advertiser →
+              Get started as media buyer →
             </span>
           </motion.button>
         </div>

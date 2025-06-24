@@ -1,9 +1,7 @@
+# Ignore files for Vercel deployment
 .git
-.gitignore
-README.md
+.next
+node_modules
 .env.local
-scripts
-SETUP.md
-DEPLOYMENT_GUIDE.md
-PRODUCT_IMPROVEMENTS.md
-MESSAGING_GUIDELINES.md
+*.log
+.DS_Store

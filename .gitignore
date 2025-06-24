@@ -47,3 +47,10 @@ next-env.d.ts
 # feedback images
 precise/
 precise_images.zip
+.env.uxonly
+.env.local.backup
+deploy-safe.sh
+fix-local.sh
+
+# database backups
+backups/

@@ -21,11 +21,10 @@ export default function Navigation() {
 
   const navLinks = [
     { href: "/how-it-works", label: "How it works" },
-    { href: "/data-owners", label: "For data controllers" },
-    { href: "/advertisers", label: "For advertisers" },
-    { href: "/compliance", label: "Compliance" },
-    { href: "/developers", label: "Developers" },
-    { href: "/company", label: "Company" },
+    { href: "/data-controllers", label: "For data controllers" },
+    { href: "/media-buyers", label: "For media buyers" },
+    { href: "/measurement-partners", label: "For measurement" },
+    { href: "/platforms", label: "For platforms" },
   ];
 
   return (
@@ -59,12 +58,6 @@ export default function Navigation() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-4">
-            <Link
-              href="/signin"
-              className="text-dark-gray hover:text-brand-green transition-colors duration-200"
-            >
-              Sign in
-            </Link>
             <Link href="/get-started" className="btn-primary">
               Get started
             </Link>
@@ -94,13 +87,6 @@ export default function Navigation() {
                 </Link>
               ))}
               <div className="pt-4 mt-4 border-t border-silk-gray flex flex-col gap-3">
-                <Link
-                  href="/signin"
-                  className="text-center py-3 text-dark-gray hover:text-brand-green transition-colors duration-200"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Sign in
-                </Link>
                 <Link
                   href="/get-started"
                   className="btn-primary justify-center"
